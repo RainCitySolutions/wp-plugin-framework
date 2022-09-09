@@ -1,0 +1,8 @@
+bin export-ignore
+test export-ignore
+build.sh export-ignore
+build.xml export-ignore
+phpunit.xml export-ignore
+phpunit-bootstrap.php export-ignore
+resetVersionFiles.sh export-ignore
+version.txt export-ignore

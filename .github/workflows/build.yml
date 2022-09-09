@@ -1,0 +1,144 @@
+name: Build library
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # OS additions
+      - name: Add to OS
+        run: |
+           sudo apt-get install memcached
+           #sudo systemctl status memcached
+           
+      # Checkout our code 
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+            php-version: 7.4
+            extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, mysql, mysqli, pdo_mysql, bcmath, soap, intl, gd, exif, iconv, imagick
+            coverage: xdebug
+
+      # Validate the Composer files
+      - name: Validate composer.json and composer.lock
+        run: composer validate
+
+      # Fetch the vendor folder from the cache, keyed off the composer.lock file 
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v2
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+
+      # Run composer install if the vendor folder wasn't cached (based on the current composer.lock file) 
+      - name: Install dependencies
+        if: steps.composer-cache.outputs.cache-hit != 'true'
+        run: composer install --prefer-dist --no-progress
+
+      # Run the build
+      - name: Full build
+        run: |
+          PHING_PHAR="bin/phing*.phar"
+          php $PHING_PHAR
+
+      # Save versioned files 
+      - name: Commit version files
+        id: commit-version
+        run: |
+          git config --local user.email "$(git log --format='%ae' HEAD^!)"
+          git config --local user.name "$(git log --format='%an' HEAD^!)"
+          git add version.txt composer.json composer.lock
+          echo -n "Rev to version $(cat version.txt)" | git commit -F -
+          git push
+          echo "version-commit-ref=$(git show-ref --heads -s)" >>build.properties
+
+      - name: Save Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-properties
+          path: build.properties
+          retention-days: 5
+
+
+  release:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: build-properties
+
+      - name: Read Build Properties
+        run: |
+          IFS="="
+          while read -r key value
+          do
+            if [ -n $value ]; then
+              echo A
+              echo "$key=$value" >> $GITHUB_ENV
+            else
+              echo B
+              echo "$key=$value" >> $GITHUB_ENV
+            fi
+          done < build.properties
+          unset IFS
+    
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ env.version-commit-ref }}
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+            php-version: 7.4
+            extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, mysql, mysqli, pdo_mysql, bcmath, soap, intl, gd, exif, iconv, imagick
+            coverage: none
+
+      - name: Initialize Build Variables
+        id: build-vars
+        run: |
+          echo "::set-output name=version::$(cat version.txt)"
+          # From build.xml: grab the "project" element, then the "name" attribute value, then strip the leading and trailing quotes
+          echo "::set-output name=project-name::$(awk '/<project .*>/ {for (i=1;i<=NF;i++) { if (split($i,parts,"=")==2 && parts[1]=="name") print parts[2]}}' build.xml | sed "s/^\(\"\)\(.*\)\1\$/\2/g")"
+
+      # Run composer install (based on the current composer.lock file) 
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-dev
+
+      - name: Create Package
+        run: |
+          PHING_PHAR="bin/phing*.phar"
+          php $PHING_PHAR package -Dbuild.version=${{ steps.build-vars.outputs.version }}
+
+      - name: Create Release
+        id: create-release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.build-vars.outputs.version }}
+          release_name: Release ${{ steps.build-vars.outputs.version }}
+          commitish: ${{ env.version-commit-ref }}
+
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: build/${{ steps.build-vars.outputs.project-name }}_${{ steps.build-vars.outputs.version }}.zip
+          asset_name: ${{ steps.build-vars.outputs.project-name }}_${{ steps.build-vars.outputs.version }}.zip
+          asset_content_type: application/zip

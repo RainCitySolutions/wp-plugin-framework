@@ -1,0 +1,156 @@
+<?php
+namespace RainCity\WPF\Helpers;
+
+use RainCity\TestHelper\RainCityTestCase;
+
+/**
+ * WordpressTestCase base class.
+ */
+abstract class WordpressTestCase
+    extends RainCityTestCase
+{
+    const WP_DB_PREFIX = "test_wpdb_";
+
+    private $optionsTable, $siteOptionsTable, $userMeta;
+
+    /**
+     * Runs before each test.
+     */
+    protected function setUp(): void {
+        parent::setUp();
+
+        global $wpdb;
+
+        $wpdb = \Mockery::mock( '\wpdb' );
+        $wpdb->makePartial();
+        $wpdb->prefix = self::WP_DB_PREFIX;
+
+        // reset mock db tables
+        $this->optionsTable = $this->siteOptionsTable = $this->userMeta = array();
+
+        \Brain\Monkey\Functions\when('_doing_it_wrong')->alias(function ( $function, $message, $version) {
+            trigger_error(
+                sprintf('%1$s was called <strong>incorrectly</strong>. %2$s %3$s', $function, $message, $version),
+                E_USER_NOTICE);
+        });
+        \Brain\Monkey\Functions\when('wp_normalize_path')->alias(function ($path) {
+            return $path;
+        });
+        \Brain\Monkey\Functions\when('plugin_dir_path')->alias(function ($file) {
+            return '/var/www/wp-content/plugins/test-plugin/'.basename($file);
+        });
+
+        \Brain\Monkey\Functions\when('add_option')->alias(array($this, 'add_option'));
+        \Brain\Monkey\Functions\when('update_option')->alias(array($this, 'update_option'));
+        \Brain\Monkey\Functions\when('get_option')->alias(array($this, 'get_option'));
+        \Brain\Monkey\Functions\when('delete_option')->alias(array($this, 'delete_option'));
+
+        \Brain\Monkey\Functions\when('get_site_option')->alias(array($this, 'get_site_option'));
+        \Brain\Monkey\Functions\when('update_site_option')->alias(array($this, 'update_site_option'));
+
+        \Brain\Monkey\Functions\when('get_user_meta')->alias(array($this, 'get_user_meta'));
+        \Brain\Monkey\Functions\when('update_user_meta')->alias(array($this, 'update_user_meta'));
+    }
+
+    /**
+     * Runs after each test.
+     */
+    protected function tearDown(): void {
+        parent::tearDown();
+    }
+
+    public function add_option (string $option, $value = '', string $deprecated = '', $autoload = 'yes' ) {
+        $result = false;
+
+        if (!isset($this->optionsTable[$option])) {
+            $this->optionsTable[$option] = $value;
+            $result = true;
+        }
+
+        return $result;
+    }
+
+    public function update_option (string $option, $value, $autoload = null) {
+        $this->optionsTable[$option] = $value;
+        return true;
+    }
+
+    public function get_option (string $option, $default = false) {
+        $result = $default;
+
+        if (isset($this->optionsTable[$option])) {
+            $result = $this->optionsTable[$option];
+        }
+
+        return $result;
+    }
+
+    public function delete_option (string $option) {
+        $result = false;
+
+        if (isset($this->optionsTable[$option])) {
+            unset ($this->optionsTable[$option]);
+            $result = true;
+        }
+
+        return $result;
+    }
+
+    public function update_site_option (string $option, $value) {
+        $this->siteOptionsTable[$option] = $value;
+        return true;
+    }
+
+    public function get_site_option (string $option, $default = false, bool $deprecated = true) {
+        $result = false;
+
+        if (isset($this->siteOptionsTable[$option])) {
+            $result = $this->siteOptionsTable[$option];
+        }
+
+        return $result;
+    }
+
+    public function get_user_meta (int $user_id, string $key = '', bool $single = false) {
+        $result = false;
+
+        if (isset($this->userMeta[$user_id])) {
+            $userMeta = $this->userMeta[$user_id];
+
+            if (isset($userMeta[$key])) {
+                $result = $userMeta[$key];
+            }
+        }
+
+        return $result;
+    }
+
+    public function update_user_meta (int $user_id, string $meta_key, $meta_value, $prev_value = '') {
+        $result = false;
+
+        // Ensure the user has an entry in the array
+        if (!isset($this->userMeta[$user_id])) {
+            $this->userMeta[$user_id] = array();
+        }
+
+        $userMeta = &$this->userMeta[$user_id];
+
+        if (isset($userMeta[$meta_key])) {
+            if ($meta_value !== $userMeta[$meta_key]) {
+                $userMeta[$meta_key] = serialize($meta_value);
+                $result = true;
+            }
+        }
+        else {
+            $userMeta[$meta_key] = serialize($meta_value);
+            $result = 1;
+        }
+
+        return $result;
+    }
+}
+
+class WP_REST_ServerStub
+{
+    const READABLE = 'GET';
+}
