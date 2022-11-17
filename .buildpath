@@ -61,11 +61,6 @@
 			<attribute name="composer" value="vendor"/>
 		</attributes>
 	</buildpathentry>
-	<buildpathentry kind="src" path="vendor/iu-redcap/phpcap/src">
-		<attributes>
-			<attribute name="composer" value="vendor"/>
-		</attributes>
-	</buildpathentry>
 	<buildpathentry kind="src" path="vendor/mockery/mockery/library">
 		<attributes>
 			<attribute name="composer" value="vendor"/>
@@ -167,16 +162,6 @@
 		</attributes>
 	</buildpathentry>
 	<buildpathentry kind="src" path="vendor/raincity/php-library/test">
-		<attributes>
-			<attribute name="composer" value="vendor"/>
-		</attributes>
-	</buildpathentry>
-	<buildpathentry kind="src" path="vendor/raincity/redcap-library/src">
-		<attributes>
-			<attribute name="composer" value="vendor"/>
-		</attributes>
-	</buildpathentry>
-	<buildpathentry kind="src" path="vendor/raincity/redcap-library/test">
 		<attributes>
 			<attribute name="composer" value="vendor"/>
 		</attributes>

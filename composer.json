@@ -8,18 +8,13 @@
 	"repositories" : [{
 			"type" : "git",
 			"url" : "https://github.com/RainCitySolutions/php-library",
-			"name" : "php-ibrary"
-		}, {
-			"type" : "git",
-			"url" : "https://github.com/RainCitySolutions/redcap-library",
-			"name" : "redcap-library"
+			"name" : "php-library"
 		}
 	],
 	"require" : {
 		"php" : ">=7.4",
 		"composer/installers" : "~2.2",
 		"raincity/php-library" : "~2.0",
-		"raincity/redcap-library" : "~2.0",
 		"psr/log" : "~1.1",
 		"theiconic/php-ga-measurement-protocol" : "~2.9",
 		"soundasleep/html2text" : "~2.0"

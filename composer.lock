@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b25697ace8c7bfb10c62fc4468cb24d1",
+    "content-hash": "f6befef87c88144fa1ce71f907fca664",
     "packages": [
         {
             "name": "apix/cache",
@@ -577,52 +577,6 @@
             "time": "2022-10-26T14:07:24+00:00"
         },
         {
-            "name": "iu-redcap/phpcap",
-            "version": "1.4.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/IUREDCap/phpcap.git",
-                "reference": "8a16f0603ee9dce31d2f9019132d0908a6772f3f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/IUREDCap/phpcap/zipball/8a16f0603ee9dce31d2f9019132d0908a6772f3f",
-                "reference": "8a16f0603ee9dce31d2f9019132d0908a6772f3f",
-                "shasum": ""
-            },
-            "require": {
-                "ext-curl": "*",
-                "ext-openssl": "*",
-                "php": ">=5.6.0"
-            },
-            "require-dev": {
-                "erusev/parsedown": "1.7.4",
-                "kzykhys/php-csv-parser": "1.4.1",
-                "phpunit/phpunit": "9.5.25",
-                "smalot/pdfparser": "2.2.1",
-                "squizlabs/php_codesniffer": "3.7.1"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "IU\\PHPCap\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "PHP library for accessing the REDCap API",
-            "keywords": [
-                "redcap"
-            ],
-            "support": {
-                "issues": "https://github.com/IUREDCap/phpcap/issues",
-                "source": "https://github.com/IUREDCap/phpcap/tree/1.4.0"
-            },
-            "time": "2022-10-28T13:50:14+00:00"
-        },
-        {
             "name": "monolog/monolog",
             "version": "2.8.0",
             "source": {
@@ -1071,42 +1025,6 @@
             ],
             "description": "Library to support implementations in PHP",
             "time": "2022-11-17T00:31:20+00:00"
-        },
-        {
-            "name": "raincity/redcap-library",
-            "version": "2.0.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/RainCitySolutions/redcap-library",
-                "reference": "52519f14f8d9317caab5cd91f9643d112a0891cb"
-            },
-            "require": {
-                "composer/installers": "~2.2",
-                "iu-redcap/phpcap": "~1.4",
-                "php": ">=7.4",
-                "raincity/php-library": "~2.0"
-            },
-            "require-dev": {
-                "brain/monkey": "~2.6",
-                "phpunit/phpunit": "~9.5"
-            },
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    "src/"
-                ],
-                "psr-4": {
-                    "": [
-                        "src",
-                        "test"
-                    ]
-                }
-            },
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "Library to support working with REDCap",
-            "time": "2022-11-17T00:58:01+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
