@@ -68,7 +68,7 @@ abstract class WordPressPlugin
             $this->pluginVersion = $pluginData['Version'];
             $this->pluginSlug    = $pluginData['TextDomain'];
 
-            $this->mainPluginFilename = Utils::get_plugin_file($this->pluginName);
+            $this->mainPluginFilename = Utils::getPluginFile($this->pluginName);
             $this->basePluginUrl = plugin_dir_url($this->mainPluginFilename);
         }
     }
