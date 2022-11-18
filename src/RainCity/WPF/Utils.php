@@ -228,11 +228,8 @@ class Utils
     public static function getWPUser () {
         $wpUser = wp_get_current_user();
 
-        if (!$wpUser->exists()) {
-            if (isset($_POST['frm_user_id']))
-            {
-                $wpUser = new \WP_User($_POST['frm_user_id']);
-            }
+        if (!$wpUser->exists() && isset($_POST['frm_user_id'])) {
+            $wpUser = new \WP_User($_POST['frm_user_id']);
         }
 
         return $wpUser;
