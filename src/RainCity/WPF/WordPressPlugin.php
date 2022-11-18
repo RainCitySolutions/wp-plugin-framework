@@ -128,7 +128,7 @@ abstract class WordPressPlugin
                 public function registerShortCode(ShortCodeImplInf $shortCodeImpl) {
                     add_shortcode($shortCodeImpl->getTagName(), array($shortCodeImpl, 'renderShortCode'));
                     add_filter(DocumentationTab::DOCUMENTATION_FILTER, array($shortCodeImpl, 'getDocumentation'));
-                    add_filter('shortcode_atts_'.$shortCodeImpl->getTagName(), array($shortCodeImpl, 'filterAttributes'));
+                    add_filter('shortcode_atts_'.$shortCodeImpl->getTagName(), array($shortCodeImpl, 'filterAttributes'), 10, 4);
                 }
             }
             );
