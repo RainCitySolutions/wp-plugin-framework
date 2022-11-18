@@ -7,6 +7,8 @@ use RainCity\WPF\Documentation\ShortCodeDocumentation;
 class UsernameShortCode
     implements ShortCodeImplInf
 {
+    use ShortCodeImpl;
+
     /**
      *
      * {@inheritDoc}

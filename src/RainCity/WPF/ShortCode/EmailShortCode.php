@@ -6,6 +6,8 @@ use RainCity\WPF\Documentation\ShortCodeDocumentation;
 
 class EmailShortCode implements ShortCodeImplInf
 {
+    use ShortCodeImpl;
+
     /**
      *
      * {@inheritDoc}
