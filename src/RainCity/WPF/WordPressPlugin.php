@@ -59,7 +59,12 @@ abstract class WordPressPlugin
     private $databaseVersion;
 
 
-    protected function __construct($args) {
+    /**
+     *
+     * {@inheritDoc}
+     * @see \RainCity\Singleton::__construct()
+     */
+    protected function __construct(array $args) {
         parent::__construct();
 
         if (isset($args[0])) {
@@ -74,11 +79,25 @@ abstract class WordPressPlugin
     }
 
 
+    /**
+     *
+     * {@inheritDoc}
+     * @see \RainCity\Singleton::initializeInstance()
+     */
     protected function initializeInstance() {
         $this->setup_actions();
 
         // Hook to load plugin specific functions.php after them has been loaded
-        $this->loader->add_action('after_setup_theme', $this, 'loadPluginFunctionsPhp', 100);
+//        $this->loader->add_action('after_setup_theme', $this, 'loadPluginFunctionsPhp', 100);
+        $this->loader->add_action('after_setup_theme', null,
+            function () {
+                $functionsPhp = Utils::getPluginWriteDir() . '/functions.php';
+
+                if (file_exists($functionsPhp)) {
+                    require_once ($functionsPhp);
+                }
+            },
+            100);
 
         // delay running database upgrades until WordPress is initialized
         $this->loader->add_action( 'init', $this, 'privUpgradeDatabase', 0 );
@@ -218,25 +237,10 @@ abstract class WordPressPlugin
 
                 $upgradeActive = get_transient($transName);
 
-                if ($upgradeActive === false) {
+                if (false === $upgradeActive) {
                     set_transient($transName, true, MINUTE_IN_SECONDS * 2);
 
-                    $upgrades = $this->getDatabaseUpgrades();
-
-                    uksort($upgrades, 'version_compare');
-
-                    foreach ($upgrades as $version => $upgradeFunc) {
-                        if ($this->doDatabaseUpgrade($version)) {
-                            if (is_callable($upgradeFunc)) {
-                                call_user_func($upgradeFunc);
-                            }
-                            else {
-                                throw new \Exception("Unable to call upgrade function for version ${version}");
-                            }
-
-                            $this->setDatabaseVersion($version);
-                        }
-                    }
+                    $this->doDbUpgrades($this->getDatabaseUpgrades());
 
                     $dbVersions[$this->pluginSlug] = $this->pluginVersion;
                     update_option (WordPressPlugin::DATABASE_VERSIONS_OPTIONS_NAME, $dbVersions);
@@ -247,6 +251,23 @@ abstract class WordPressPlugin
         }
     }
 
+    private function doDbUpgrades(array $upgrades) {
+        uksort($upgrades, 'version_compare');
+
+        foreach ($upgrades as $version => $upgradeFunc) {
+            if ($this->doDatabaseUpgrade($version)) {
+                if (is_callable($upgradeFunc)) {
+                    call_user_func($upgradeFunc);
+                }
+                else {
+                    throw new \Exception("Unable to call upgrade function for version ${version}"); // NOSONAR
+                }
+
+                $this->log->debug("Upgraded database to $version");
+                $this->databaseVersion = $version;
+            }
+        }
+    }
 
     /**
      * Check if the database needs to be upgraded to the specified version.
@@ -257,27 +278,7 @@ abstract class WordPressPlugin
      *      Otherwise returns false.
      */
     private function doDatabaseUpgrade(string $version): bool {
-        $result = false;
-
-        if (version_compare($this->databaseVersion, $version) == -1) {
-            $result = true;
-        }
-
-        return $result;
-    }
-
-
-    /**
-     * Set the database version.
-     *
-     * Should be called when the database is being upgraded.
-     *
-     * @param string $version The version of the current database configuration.
-     */
-    private function setDatabaseVersion(string $version) {
-        $this->log->debug("Upgraded database to $version");
-
-        $this->databaseVersion = $version;
+        return version_compare($this->databaseVersion, $version) == -1;
     }
 
 
@@ -294,7 +295,9 @@ abstract class WordPressPlugin
         register_deactivation_hook( $this->mainPluginFilename, array($this, 'deactivate_plugin' ));
         register_uninstall_hook( $this->mainPluginFilename, array(get_class($this), 'uninstall_plugin' ));
 
-        $this->loader->add_action('init', $this, 'initPlugin');
+        $this->loader->add_action('init', null, function () {
+            new PluginUpdater($this->pluginName, $this->pluginSlug, $this->mainPluginFilename, $this->pluginVersion); // NOSONAR
+        });
 
         $this->loader->add_filter('plugin_action_links', $this, 'addPluginActionLinks', 10, 4);
     }
@@ -309,11 +312,6 @@ abstract class WordPressPlugin
     public final function privRegisterShortCodes(ShortCodeRegInf $regHandler) {
         $regHandler->registerShortCode(new UsernameShortCode());
         $regHandler->registerShortCode(new EmailShortCode());
-    }
-
-
-    public function initPlugin() {
-        new PluginUpdater($this->pluginName, $this->pluginSlug, $this->mainPluginFilename, $this->pluginVersion);
     }
 
 
@@ -346,11 +344,8 @@ abstract class WordPressPlugin
      *
      * @return NULL
      */
-    protected function getSettingsPageSlug() {
+    protected function getSettingsPageSlug(): ?string {
         return null;
-    }
-
-    public static function initStatics ($entryPointFile) {
     }
 
 
@@ -358,7 +353,7 @@ abstract class WordPressPlugin
      * The code that runs during plugin activation.
      */
     public function activate_plugin() {
-        Logger::getLogger(get_called_class (), $this->pluginSlug)->debug('Activating '.$this->pluginName.' plugin');
+        Logger::getLogger(get_called_class (), $this->pluginSlug)->debug('Activating '.$this->pluginName);
 
         $options = static::getOptions();
         if (isset($options) && is_array($options)) {
@@ -382,7 +377,7 @@ abstract class WordPressPlugin
      * The code that runs during plugin deactivation.
      */
     public function deactivate_plugin() {
-        Logger::getLogger(get_called_class ())->debug('Deactivating '.$this->pluginName.' plugin');
+        Logger::getLogger(get_called_class ())->debug('Deactivating '.$this->pluginName);
 
         do_action(self::ON_PLUGIN_DEACTIVATION_ACTION);
 
@@ -394,7 +389,7 @@ abstract class WordPressPlugin
      * The code that runs during plugin removal.
      */
     public static function uninstall_plugin() {
-        Logger::getLogger(get_called_class (), Utils::getPluginPackageName())->debug('Uninstalling '.Utils::getPluginName().' plugin');
+        Logger::getLogger(get_called_class (), Utils::getPluginPackageName())->debug('Uninstalling '.Utils::getPluginName());
 
         do_action(self::ON_PLUGIN_UNINSTALL_ACTION);
 
@@ -473,7 +468,6 @@ abstract class WordPressPlugin
                 if( $error !== NULL) {
                     $logger = Logger::getLogger(WordPressLogger::BASE_LOGGER, $pluginSlug);
 
-                    $level = \Psr\Log\LogLevel::INFO;
                     switch ($error['type']) {
                         case E_ERROR:
                             $level = \Psr\Log\LogLevel::CRITICAL;
@@ -489,6 +483,10 @@ abstract class WordPressPlugin
 
                         case E_DEPRECATED:
                             $level = \Psr\Log\LogLevel::DEBUG;
+                            break;
+
+                        default:
+                            $level = \Psr\Log\LogLevel::INFO;
                             break;
                     }
 

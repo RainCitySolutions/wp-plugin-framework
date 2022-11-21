@@ -52,13 +52,6 @@ abstract class WordpressTestCase
         \Brain\Monkey\Functions\when('update_user_meta')->alias(array($this, 'update_user_meta'));
     }
 
-    /**
-     * Runs after each test.
-     */
-    protected function tearDown(): void {
-        parent::tearDown();
-    }
-
     public function add_option (string $option, $value = '', string $deprecated = '', $autoload = 'yes' ) {
         $result = false;
 
@@ -115,10 +108,10 @@ abstract class WordpressTestCase
         $result = false;
 
         if (isset($this->userMeta[$user_id])) {
-            $userMeta = $this->userMeta[$user_id];
+            $userMetaRef = $this->userMeta[$user_id];
 
-            if (isset($userMeta[$key])) {
-                $result = $userMeta[$key];
+            if (isset($userMetaRef[$key])) {
+                $result = $userMetaRef[$key];
             }
         }
 
@@ -133,16 +126,16 @@ abstract class WordpressTestCase
             $this->userMeta[$user_id] = array();
         }
 
-        $userMeta = &$this->userMeta[$user_id];
+        $userMetaRef = &$this->userMeta[$user_id];
 
-        if (isset($userMeta[$meta_key])) {
-            if ($meta_value !== $userMeta[$meta_key]) {
-                $userMeta[$meta_key] = serialize($meta_value);
+        if (isset($userMetaRef[$meta_key])) {
+            if ($meta_value !== $userMetaRef[$meta_key]) {
+                $userMetaRef[$meta_key] = serialize($meta_value);
                 $result = true;
             }
         }
         else {
-            $userMeta[$meta_key] = serialize($meta_value);
+            $userMetaRef[$meta_key] = serialize($meta_value);
             $result = 1;
         }
 
@@ -150,7 +143,7 @@ abstract class WordpressTestCase
     }
 }
 
-class WP_REST_ServerStub
+class WordPressRestServerStub   // A test stub of WP_REST_Server
 {
     const READABLE = 'GET';
 }

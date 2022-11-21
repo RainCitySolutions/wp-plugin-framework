@@ -58,7 +58,7 @@ class PDFService
             $response = $httpClient->send($request, ['http_errors' => false]);
             if (200 === $response->getStatusCode()) {
                 $verbs = $response->getHeader('Allow');
-                if (is_array($verbs) && count($verbs) > 0 && 'POST,OPTIONS' === $verbs[0]) {
+                if (is_array($verbs) && !empty($verbs) && 'POST,OPTIONS' === $verbs[0]) {
                     $isValid = true;
                 }
             }
@@ -74,6 +74,8 @@ class PDFService
         return $this->isSvcActive;
     }
 
+
+    private const FILES_FIELD = 'files[]';
 
     /**
      * Sends the XML to the PDF Service and retrieves the PDF file.
@@ -96,7 +98,7 @@ class PDFService
         // Add the support files
         foreach ($this->supportFiles as $file) {
             array_push($multipartData, array(
-                'name' => 'files[]',
+                'name' => self::FILES_FIELD,
                 'filename' => $file,
                 'contents' => fopen($file, 'r')
             ));
@@ -104,14 +106,14 @@ class PDFService
 
         // add the xml file
         array_push($multipartData, array(
-            'name' => 'files[]',
+            'name' => self::FILES_FIELD,
             'filename' => $xmlFilename,
             'contents' => fopen($xmlFilename, 'r')
         ));
 
         // add the XSLT file
         array_push($multipartData, array(
-            'name' => 'files[]',
+            'name' => self::FILES_FIELD,
             'filename' => $this->xsltFilename,
             'contents' => fopen($this->xsltFilename, 'r')
         ));

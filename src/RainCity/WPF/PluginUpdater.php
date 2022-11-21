@@ -46,16 +46,13 @@ class PluginUpdater
      * @param $transient
      * @return object $ transient
      */
-    public function checkUpdate($value, $transientName = '')
+    public function checkUpdate($value, $transientName = '')        // NOSONAR
     {
-//        $this->log->debug('Running checkUpdate() for '.$this->pluginSlug);
 
         if (!empty( $value->checked ) ) {
             $entry = $this->getUpdateEntry();
 
             if(isset($entry)) {
-//                $this->log->debug('Need to set for update');
-
                 //     create filter for transitent injection
                 $obj = new \stdClass();
                 $obj->name = $this->pluginName;
@@ -81,8 +78,6 @@ class PluginUpdater
      */
     public function checkInfo($obj, $action, $arg)
     {
-//        $this->log->debug('Running checkInfo() for '.$this->pluginSlug);
-
         if (($action=='query_plugins' || $action=='plugin_information') &&
             isset($arg->slug) && $arg->slug === $this->pluginSlug)
         {
@@ -96,8 +91,6 @@ class PluginUpdater
                 $obj->new_version   = $entry->version;
                 $obj->sections      = array(
                     'description'   => 'The latest version of ' . $this->pluginName
-//                    ,
-//                    'changelog'       => 'Some new features'
                 );
                 $obj->download_link = $entry->url;
             }
@@ -131,43 +124,17 @@ class PluginUpdater
     private function getUpdateEntry () {
         // have we already looked this up once?
         if (false === $this->updateSearchDone) {
+            /** @var ZipEntry */
             $newestEntry = null;
 
             $ipm = new IgnorePostsManager($this->pluginSlug);
 
+            /** @var ZipEntry[] */
             $zipEntries = $this->findPluginUpdates($ipm->getPosts());
 
             if(!empty($zipEntries)) {
                 foreach ($zipEntries as $entry) {
-                    $entry->version = $this->getPluginVersion($entry->path);
-
-                    if (is_string($entry->version)) {
-                        $this->log->debug('getPluginVersion() returned: ' . $entry->version);
-
-                        // Is the entry found new that the installed version?
-                        if (version_compare($this->currentVersion, $entry->version) < 0) {
-                            if (isset($newestEntry)) {
-                                // Is the entry newer that the 'newest' entry?
-                                if (version_compare($newestEntry->version, $entry->version) < 0) {
-                                    $this->deleteUpdatePost ($newestEntry);
-                                    $newestEntry = $entry;
-                                }
-                                else {
-                                    $this->deleteUpdatePost ($entry);
-                                }
-                            }
-                            else {
-                                $newestEntry = $entry;
-                            }
-                        }
-                        else {
-                            $this->deleteUpdatePost ($entry);
-                        }
-                    }
-                    else {
-                        $this->log->info('Found a file that looked like a plugin update but couldn\'t determing the verison number: ' . $entry->path);
-                        $ipm->addPost($entry->id);
-                    }
+                    $this->inspectZipFile($newestEntry, $entry, $ipm);
                 }
                 $ipm->storePosts();
             }
@@ -179,11 +146,40 @@ class PluginUpdater
         return $this->updateEntry;
     }
 
+    private function inspectZipFile(ZipEntry &$newestEntry, ZipEntry $entry, IgnorePostsManager $ipm) {
+        $entry->version = $this->getPluginVersion($entry->path);
+
+        if (is_string($entry->version)) {
+            $this->log->debug('getPluginVersion() returned: ' . $entry->version);
+
+            // Is the entry found new that the installed version?
+            if (version_compare($this->currentVersion, $entry->version) < 0) {
+                if (isset($newestEntry)) {
+                    // Is the entry newer that the 'newest' entry?
+                    if (version_compare($newestEntry->version, $entry->version) < 0) {
+                        $this->deleteUpdatePost ($newestEntry);
+                        $newestEntry = $entry;
+                    }
+                    else {
+                        $this->deleteUpdatePost ($entry);
+                    }
+                }
+                else {
+                    $newestEntry = $entry;
+                }
+            }
+            else {
+                $this->deleteUpdatePost ($entry);
+            }
+        }
+        else {
+            $this->log->info('Found a file that looked like a plugin update but couldn\'t determing the verison number: ' . $entry->path);
+            $ipm->addPost($entry->id);
+        }
+    }
 
     private function findPluginUpdates($ignorePosts) {
         $zipEntries = array();
-
-//        $this->log->debug('Posts to ignore: ', $ignorePosts);
 
         $posts = get_posts(array('post_type' => 'attachment',
                                  'post_mime_type' => 'application/zip',
@@ -213,9 +209,9 @@ class PluginUpdater
                 // Unzip to temp folder
                 $result = unzip_file($zipFile, $tempDir);
                 if (!is_wp_error( $result ) || $result ) {
-                    $entryPointFile = $tempDir . DIRECTORY_SEPARATOR . $this->entryPointFile;
-                    if (file_exists($entryPointFile)) {
-                        $pluginData = get_plugin_data($tempDir . DIRECTORY_SEPARATOR . $this->entryPointFile, false, false);
+                    $fqEntryPointFile = $tempDir . DIRECTORY_SEPARATOR . $this->entryPointFile;
+                    if (file_exists($fqEntryPointFile)) {
+                        $pluginData = get_plugin_data($fqEntryPointFile, false, false);
 
                         $version = $pluginData['Version'];
                     }
@@ -226,17 +222,6 @@ class PluginUpdater
                         array('file' => $zipFile, 'error' => error_get_last()['message'])
                         );
                 }
-
-                // Clean out the temporary folder and remove it
-                $it = new RecursiveDirectoryIterator($tempDir, RecursiveDirectoryIterator::SKIP_DOTS);
-                $files = new RecursiveIteratorIterator($it, RecursiveIteratorIterator::CHILD_FIRST);
-                foreach($files as $file) {
-                    if ($file->isDir()){
-                        rmdir($file->getRealPath());
-                    } else {
-                        unlink($file->getRealPath());
-                    }
-                }
             }
             else {
                 $this->log->critical(
@@ -244,7 +229,8 @@ class PluginUpdater
                     array('err' => (error_get_last()['message']))
                     );
             }
-            rmdir($tempDir);
+
+            $this->deleteTempDir($tempDir);
         }
         else {
             $this->log->critical(
@@ -253,11 +239,24 @@ class PluginUpdater
                 );
         }
 
-        if (function_exists('error_clear_last')) {  // available in PHP >= 7
-            error_clear_last();
-        }
+        error_clear_last();
 
         return $version;
+    }
+
+    private function deleteTempDir(string $tempDir): void {
+        // Clean out the temporary folder and remove it
+        $it = new RecursiveDirectoryIterator($tempDir, RecursiveDirectoryIterator::SKIP_DOTS);
+        $files = new RecursiveIteratorIterator($it, RecursiveIteratorIterator::CHILD_FIRST);
+        foreach($files as $file) {
+            if ($file->isDir()){
+                rmdir($file->getRealPath());
+            } else {
+                unlink($file->getRealPath());
+            }
+        }
+
+        rmdir($tempDir);
     }
 }
 

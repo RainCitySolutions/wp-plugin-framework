@@ -9,7 +9,7 @@ use RainCity\Logging\Logger;
  * Helper class for clearing a data cache
  *
  */
-class wpDataCacheHelper
+class WordPressDataCacheHelper
 {
 	/** @var LoggerInterface */
 	private $log;
@@ -30,7 +30,6 @@ class wpDataCacheHelper
 	}
 
 	public function onRegisterActions() {
-//		add_action('admin_enqueue_scripts', array($this, 'onAdminEnqueueScripts'), 20);
 	    add_action('wp_ajax_'.self::AJAX_ACTION_CLEAR_DATA_CACHE, array($this, 'ajaxClearDataCache'));
 	    add_filter('admin_print_footer_scripts ', array($this, 'injectJavaScript'), 100);
 	}

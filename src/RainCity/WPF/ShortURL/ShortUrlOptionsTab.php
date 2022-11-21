@@ -47,11 +47,6 @@ class ShortUrlOptionsTab
                 	<?php print $this->renderMappingTable(); ?>
                 </div>
         		<br>
-        		<!--
-        		<label for="raincityWpfShortUrlCode">Short URL</label>
-        		<label for="raincityWpfShortUrlInput">Long URL</label>
-        		<br>
-        		 -->
         		<input type="text" id="raincityWpfShortUrlCode" maxlength="32"></input>
         		<input type="text" id="raincityWpfShortUrlInput" maxlength="255"></input>
         		<input type="button" id="raincityWpfShortUrlAddBtn" value="Add"
@@ -60,7 +55,7 @@ class ShortUrlOptionsTab
 					data-action="<?php echo self::AJAX_ADD_SHORT_URL; ?>"
         		></input>
         		<br>
-        		<i>The Short URL can be left blank to have a code generated.</i>
+        		<em>The Short URL can be left blank to have a code generated.</em>
         		<?php
     		},
     		$pageSlug
@@ -76,6 +71,7 @@ class ShortUrlOptionsTab
         ob_start();
         ?>
         <table>
+        	<caption>List of Short URL to Long URL mappings</caption>
         	<thead>
         		<tr>
         			<th>Short URL</th>
@@ -169,31 +165,32 @@ class ShortUrlOptionsTab
     {
         $this->log->debug('Ajax request to run add new Short URL');
 
-        if (1 === check_ajax_referer($this->tabId) && current_user_can('administrator') ) {
-            if (isset($_REQUEST['new_url']) ) {
-                $shortCode = $_REQUEST['short_code'] ?? '';
+        if (1 === check_ajax_referer($this->tabId) &&
+            current_user_can('administrator') &&
+            isset($_REQUEST['new_url']) )
+        {
+            $shortCode = $_REQUEST['short_code'] ?? '';
 
-                $resp = new \stdClass();
-                $resp->code = 200;
-                $url = $_REQUEST['new_url'];
+            $resp = new \stdClass();
+            $resp->code = 200;
+            $url = $_REQUEST['new_url'];
 
-                try {
-                    if (strlen($shortCode) > 0) {
-                        $this->handler->addShortUrl($shortCode, $url, true);
-                    }
-                    else {
-                        $this->handler->createShortUrl($url, true);
-                    }
-
-                    $resp->table = $this->renderMappingTable();
+            try {
+                if (strlen($shortCode) > 0) {
+                    $this->handler->addShortUrl($shortCode, $url, true);
                 }
-                catch (\InvalidArgumentException $iae) {
-                    $resp->code = $iae->getCode();
-                    $resp->error = $iae->getMessage();
+                else {
+                    $this->handler->createShortUrl($url, true);
                 }
 
-                echo json_encode($resp);
+                $resp->table = $this->renderMappingTable();
             }
+            catch (\InvalidArgumentException $iae) {
+                $resp->code = $iae->getCode();
+                $resp->error = $iae->getMessage();
+            }
+
+            echo json_encode($resp);
         }
 
         wp_die(); // All ajax handlers die when finished

@@ -27,15 +27,19 @@ class DocumentationTab
         add_settings_section(
             self::OPTIONS_SECTION_SHORTCODES_ID,
             self::OPTIONS_SECTION_SHORTCODES_TITLE,
-            function () {},
+            function () {}, // NOSONAR
             $pageSlug
             );
-
-
     }
 
+    /**
+     *
+     * {@inheritDoc}
+     * @see \RainCity\WPF\Settings\AdminSettingsTab::sanitize()
+     */
     public function sanitize(string $pageSlug, ?array $input): ?array
-    {}
-
+    {
+        // Presentation only page, with no inputs so nothing to sanitize
+    }
 }
 

@@ -36,7 +36,7 @@ class ShortUrlHandler
     public function __construct($args) {
         parent::__construct();
 
-        if (is_array($args) && count($args) >= 1) {
+        if (is_array($args) && !empty($args)) {
             $urlPrefix = $this->slashUrl($args[0]);
 
             if ($this->validatePrefix($urlPrefix)) {
@@ -87,7 +87,7 @@ KEY long_url (long_url)
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
-        $result = dbDelta($sql);
+        dbDelta($sql);
 
         return empty($wpdb->last_error);
     }
@@ -259,10 +259,10 @@ KEY long_url (long_url)
             }
         }
         else {
-            if (self::$verifyUrlReferences) {
-                if (false === $this->verifyUrlExists($fqUrl)) {
-                    throw new \InvalidArgumentException("URL does not appear to exist.", 404);
-                }
+            if (self::$verifyUrlReferences &&
+                false === $this->verifyUrlExists($fqUrl))
+            {
+                throw new \InvalidArgumentException("URL does not appear to exist.", 404);
             }
         }
 
@@ -398,7 +398,7 @@ KEY long_url (long_url)
                 '%d'
             ));
         if (false === $insertResult) {
-            throw new \Exception($wpdb->last_error);
+            throw new \Exception($wpdb->last_error);    // NOSONAR
         }
 
         return $shortCode;
@@ -414,7 +414,6 @@ KEY long_url (long_url)
         $urlArray = array();
 
         $tableName = self::getTableName($wpdb);
-        //        $stmt = $wpdb->prepare("SELECT short_code, long_url FROM {$tableName} WHERE front_end = 1");
 
         $urlRows = $wpdb->get_results("SELECT short_code, long_url FROM {$tableName} WHERE front_end = 1");
 
@@ -440,7 +439,7 @@ KEY long_url (long_url)
 
         if ($this->shortCodeExists($shortCode)) {
             $tableName = self::getTableName($wpdb);
-            $deleteResult = $wpdb->delete($tableName, array('short_code' => $shortCode) );
+            $wpdb->delete($tableName, array('short_code' => $shortCode) );
         }
     }
 

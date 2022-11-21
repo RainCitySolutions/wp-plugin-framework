@@ -59,8 +59,6 @@ class EnqueueScripts
     {
         wp_register_script(self::INLINE_SCRIPT_HANDLER, false, array(), $this->pluginVersion);
 
-//        wp_localize_script($this->pluginName, $objName, $objValue);
-
         $script = "var $objName = " . wp_json_encode( $objValue ) . ';';
         wp_add_inline_script(self::INLINE_SCRIPT_HANDLER, $script);
     }

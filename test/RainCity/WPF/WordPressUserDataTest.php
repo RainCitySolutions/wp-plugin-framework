@@ -38,7 +38,7 @@ class WordPressUserDataTest extends WordpressTestCase
     public function testMissingConst () {
         $this->expectException("Error");
 
-        new class(self::TEST_USER_ID) extends WordPressUserData {};
+        new class(self::TEST_USER_ID) extends WordPressUserData {}; // NOSONAR
     }
 
     public function testCtor () {
@@ -91,5 +91,5 @@ class WordPressUserDataTest extends WordpressTestCase
 
 class TestWordPressUserData extends WordPressUserData {
     const USER_META_KEY = 'AnonUserData';
-};
+}
 

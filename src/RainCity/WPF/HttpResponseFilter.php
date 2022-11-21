@@ -45,7 +45,7 @@ class HttpResponseFilter
         $this->respMsg = wp_remote_retrieve_response_message( $resp );
         $this->respBody = wp_remote_retrieve_body( $resp );
 
-        if (($this->respCode >= 400 && $this->respCode <= 499)) {
+        if ($this->respCode >= 400 && $this->respCode <= 499) {
             $respHeaders = wp_remote_retrieve_headers( $resp );
             if (is_object($respHeaders)) {
                 $respHeaders = $respHeaders->getAll();

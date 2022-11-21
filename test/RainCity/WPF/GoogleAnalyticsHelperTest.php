@@ -16,6 +16,8 @@ class GoogleAnalyticsHelperTest extends TestCase
     const TEST_ACTION = 'testAction';
     const TEST_LABEL = 'testLabel';
 
+    const CALL_METHOD = '__call';
+
     /**
      * {@inheritDoc}
      * @see \PHPUnit\Framework\TestCase::setUp()
@@ -28,13 +30,13 @@ class GoogleAnalyticsHelperTest extends TestCase
     public function testCtor_emptyTrackingId() {
         $this->expectException("InvalidArgumentException");
 
-        new GoogleAnalyticsHelper('');
+        new GoogleAnalyticsHelper('');    // NOSONAR
     }
 
     public function testCtor_blankTrackingId() {
         $this->expectException("InvalidArgumentException");
 
-        new GoogleAnalyticsHelper('  ');
+        new GoogleAnalyticsHelper('  ');    // NOSONAR
     }
 
     public function testCtor_defaults() {
@@ -172,7 +174,7 @@ class GoogleAnalyticsHelperTest extends TestCase
          */
         $mockAnalytics
             ->expects($this->exactly(4))
-            ->method('__call')
+            ->method(CALL_METHOD)
             ->withConsecutive(
                 array('setEventCategory', array(self::TEST_CATEGORY)),
                 array('setEventAction', array(self::TEST_ACTION)),
@@ -214,7 +216,7 @@ class GoogleAnalyticsHelperTest extends TestCase
          */
         $mockAnalytics
         ->expects($this->exactly(5))
-        ->method('__call')
+        ->method(CALL_METHOD)
         ->withConsecutive(
             array('setEventCategory', array(self::TEST_CATEGORY)),
             array('setEventAction', array(self::TEST_ACTION)),
@@ -257,7 +259,7 @@ class GoogleAnalyticsHelperTest extends TestCase
          */
         $mockAnalytics
         ->expects($this->exactly(5))
-        ->method('__call')
+        ->method(CALL_METHOD)
         ->withConsecutive(
             array('setEventCategory', array(self::TEST_CATEGORY)),
             array('setEventAction', array(self::TEST_ACTION)),
@@ -300,7 +302,7 @@ class GoogleAnalyticsHelperTest extends TestCase
          */
         $mockAnalytics
             ->expects($this->exactly(4))
-            ->method('__call')
+            ->method(CALL_METHOD)
             ->withConsecutive(
                 array('setEventCategory', array(self::TEST_CATEGORY)),
                 array('setEventAction', array(self::TEST_ACTION)),

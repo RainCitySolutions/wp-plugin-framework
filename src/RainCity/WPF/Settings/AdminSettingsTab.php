@@ -57,7 +57,10 @@ abstract class AdminSettingsTab
     public final function initSettings(string $pageSlug) {
         $this->pageSlug = $pageSlug;
 
-        register_setting($pageSlug, $this->getOptionName(), array( $this, 'sanitizeData' ));
+/**        register_setting($pageSlug, $this->getOptionName(), array( $this, 'sanitizeData' )); */
+        register_setting($pageSlug, $this->getOptionName(), function (?array $input): ?array {
+            return $this->sanitize($this->pageSlug, $input);
+        });
 
         $this->addSettings($pageSlug);
     }
@@ -72,9 +75,11 @@ abstract class AdminSettingsTab
      */
     public abstract function sanitize(string $pageSlug, ?array $input): ?array;
 
+/**
     public final function sanitizeData(?array $input): ?array {
         return $this->sanitize($this->pageSlug, $input);
     }
+*/
 
     /**
      * Register any scripts or styles needed by the tab.
@@ -230,7 +235,7 @@ abstract class AdminSettingsTab
         WordPressOptions $optionsObj,
         string $optionName,
         string $description = '',
-        array $matrixEntries,
+        array $matrixEntries = array(),
         array $attrs = array(),
         bool $showSelectAll = false)
     {

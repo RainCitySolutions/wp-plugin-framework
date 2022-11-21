@@ -40,13 +40,13 @@ abstract class WordPressUserData
     }
 
     public function getData(string $key) {
-        $data = null;
+        $result = null;
 
         if (isset($this->data[$key])) {
-            $data = unserialize($this->data[$key]);
+            $result = unserialize($this->data[$key]);
         }
 
-        return $data;
+        return $result;
     }
 
     /**

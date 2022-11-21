@@ -112,11 +112,9 @@ abstract class AdminSettings
             }
         }
 
-        $activeTab = $this->tabs[array_key_exists($activeTabId, $this->tabs) ?
+        return $this->tabs[array_key_exists($activeTabId, $this->tabs) ?
                         $activeTabId :
                         array_key_first($this->tabs)];
-
-        return $activeTab;
     }
 
     public function localSanitize($input) {

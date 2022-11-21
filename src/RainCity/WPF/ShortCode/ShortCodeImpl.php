@@ -20,7 +20,7 @@ trait ShortCodeImpl
     /**
      * @see \RainCity\WPF\ShortCode\ShortCodeImplInf::renderShortCode()
      */
-    public function renderShortCode(array $attrs = [], ?string $content = null): string
+    public function renderShortCode(array $attrs = [], ?string $content = null): string // NOSONAR
     {
         return '';
     }
@@ -28,7 +28,7 @@ trait ShortCodeImpl
     /**
      * @see \RainCity\WPF\ShortCode\ShortCodeImplInf::getDocumentation()
      */
-    public function getDocumentation(array $documentation): array
+    public function getDocumentation(array $documentation): array // NOSONAR
     {
         return array();
     }
@@ -36,7 +36,7 @@ trait ShortCodeImpl
     /**
      * @see \RainCity\WPF\ShortCode\ShortCodeImplInf::filterAttributes()
      */
-    public function filterAttributes(array $combinedAtts, array $defaultPairs, array $providedAtts, string $shortcode): array
+    public function filterAttributes(array $combinedAtts, array $defaultPairs, array $providedAtts, string $shortcode): array // NOSONAR
     {
         return $combinedAtts;
     }

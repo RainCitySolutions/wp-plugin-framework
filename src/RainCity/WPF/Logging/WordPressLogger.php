@@ -101,7 +101,7 @@ class WordPressLogger extends BaseLogger
         if (is_array($option)) {
             unset($option[$pluginName]);
 
-            if (count($option) === 0) {
+            if (empty($option)) {
                 delete_option(LOGGER_OPTION_NAME);
             }
             else {
@@ -116,7 +116,6 @@ class WordPressLogger extends BaseLogger
                 $filename = $handler->getLogFilename();
 
                 $pattern = $handler->getFilenameGlobPattern();
-//                $pattern = str_replace('.log', '-[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9].log', $filename);
 
                 // remove the log files
                 foreach (glob($pattern, GLOB_NOSORT) as $file) {

@@ -14,7 +14,9 @@ class Utils
         require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
         $plugins = get_plugins();
         foreach( $plugins as $plugin_file => $plugin_info ) {
-            if ( $plugin_info['Name'] == $plugin_name ) return $plugin_file;
+            if ( $plugin_info['Name'] == $plugin_name ) {
+                return $plugin_file;
+            }
         }
         return null;
     }
@@ -83,25 +85,31 @@ class Utils
          * file's path.
          */
         if (strcmp('unknown', $pluginInfo->pluginPackage) == 0) {
-            $path = wp_normalize_path(plugin_dir_path( __FILE__ ) ) ;
+            self::extractPluginInfoFromPath($pluginInfo, $pluginPathRegex, $stackTrace);
+        }
 
-            if (preg_match($pluginPathRegex, $path, $matches) ) {
+        return $pluginInfo;
+    }
+
+    private static function extractPluginInfoFromPath(\stdClass &$pluginInfo, string $pluginPathRegex, array $stackTrace) {
+        $matches = array();
+
+        $path = wp_normalize_path(plugin_dir_path( __FILE__ ) ) ;
+
+        if (preg_match($pluginPathRegex, $path, $matches) ) {
+            $pluginInfo->pluginPackage = $matches[2];
+            $pluginInfo->pluginPath = $matches[1];
+        }
+        else {
+            // Assume the plugin is immediately prior to the vendor folder
+            if (preg_match('/(.+\/(.*))\/vendor\/.*/', $path, $matches)) {
                 $pluginInfo->pluginPackage = $matches[2];
                 $pluginInfo->pluginPath = $matches[1];
             }
             else {
-                // Assume the plugin is immediately prior to the vendor folder
-                if (preg_match('/(.+\/(.*))\/vendor\/.*/', $path, $matches)) {
-                    $pluginInfo->pluginPackage = $matches[2];
-                    $pluginInfo->pluginPath = $matches[1];
-                }
-                else {
-                    Helper::log('Unable to determine plugin package name: ', array('regex' => $pluginPathRegex, 'stack' =>  $stackTrace));
-                }
+                Helper::log('Unable to determine plugin package name: ', array('regex' => $pluginPathRegex, 'stack' =>  $stackTrace));
             }
         }
-
-        return $pluginInfo;
     }
 
 
@@ -125,8 +133,9 @@ class Utils
 
         $plugins = get_plugins();
         foreach( $plugins as $plugin_info ) {
-            if ( $plugin_info['TextDomain'] == $pluginPackage )
+            if ( $plugin_info['TextDomain'] == $pluginPackage ) {
                 return $plugin_info['Name'];
+            }
         }
         return null;
     }
@@ -164,7 +173,7 @@ class Utils
          * Filter 'login_url' to account for Formidable User Registration plugin
          */
         add_filter('login_url',
-            function(string $login_url, string $redirect, bool $force_reauth) {
+            function(string $login_url, string $redirect, bool $force_reauth) { // NOSONAR
                 if (class_exists('FrmRegLoginController')) {
                     $login_url = \FrmRegLoginController::login_page_url('');
                 }
@@ -180,49 +189,74 @@ class Utils
          */
         add_action( 'template_redirect', function () {
             // Exceptions for AJAX, Cron, or WP-CLI requests
-            if (( defined( 'DOING_AJAX' ) && DOING_AJAX ) ||
-                ( defined( 'DOING_CRON' ) && DOING_CRON ) ||
-                ( defined( 'WP_CLI' ) && WP_CLI ) ) {
-                    return;
-                }
+            if (self::isIgnoredRequestType()) {
+                return;
+            }
 
-                // Redirect unauthorized visitors
-                if ( ! is_user_logged_in() ) {
-                    // Get visited URL
-                    $url  = isset( $_SERVER['HTTPS'] ) && 'on' === $_SERVER['HTTPS'] ? 'https' : 'http';
-                    $url .= '://' . $_SERVER['HTTP_HOST'];
-                    // port is prepopulated here sometimes
-                    if ( strpos( $_SERVER['HTTP_HOST'], ':' ) === FALSE ) {
-                        $url .= in_array( $_SERVER['SERVER_PORT'], array('80', '443') ) ? '' : ':' . $_SERVER['SERVER_PORT'];
+            // Redirect unauthorized visitors
+            if ( ! is_user_logged_in() ) {
+                $url = self::getVisitedUrl();
+
+                /**
+                 * Bypass filters.
+                 */
+                $bypass = apply_filters('raincity_wpf_requirelogin_bypass', false, $url);
+
+                if (preg_replace( '/\?.*/', '', $url ) !== preg_replace( '/\?.*/', '', wp_login_url() ) &&
+                    ! $bypass
+                //                    && ! in_array( $url, $whitelist )
+                    ) {
+                        // Determine redirect URL
+                        $redirect_url = apply_filters( 'raincity_wpf_requirelogin_redirect', $url );
+                        // Set the headers to prevent caching
+                        nocache_headers();
+                        // Redirect
+                        wp_safe_redirect( wp_login_url( $redirect_url ), 302 );
+                        exit;
                     }
-                    $url .= $_SERVER['REQUEST_URI'];
-
-                    /**
-                     * Bypass filters.
-                     */
-                    $bypass = apply_filters('raincity_wpf_requirelogin_bypass', false, $url);
-                    //                $whitelist = apply_filters( 'raincity_wpf_requirelogin_whitelist', array() );
-
-                    if (preg_replace( '/\?.*/', '', $url ) !== preg_replace( '/\?.*/', '', wp_login_url() ) &&
-                        ! $bypass
-                    //                    && ! in_array( $url, $whitelist )
-                        ) {
-                            // Determine redirect URL
-                            $redirect_url = apply_filters( 'raincity_wpf_requirelogin_redirect', $url );
-                            // Set the headers to prevent caching
-                            nocache_headers();
-                            // Redirect
-                            wp_safe_redirect( wp_login_url( $redirect_url ), 302 );
-                            exit;
-                        }
-                }
-                elseif ( function_exists('is_multisite') && is_multisite() ) {
-                    // Only allow Multisite users access to their assigned sites
-                    if ( ! is_user_member_of_blog() && ! current_user_can('setup_network') ) {
-                        wp_die( __( "You're not authorized to access this site.", 'wp-force-login' ), get_option('blogname') . ' &rsaquo; ' . __( "Error", 'wp-force-login' ) );
-                    }
-                }
+            }
+            else {
+                self::checkInvalidMultiSiteAccess();
+            }
         });
+    }
+
+    private static function isIgnoredRequestType(): bool {
+        $result = false;
+
+        if (( defined( 'DOING_AJAX' ) && DOING_AJAX ) ||
+            ( defined( 'DOING_CRON' ) && DOING_CRON ) ||
+            ( defined( 'WP_CLI' ) && WP_CLI ) )
+        {
+            $result = true;
+        }
+
+        return $result;
+    }
+
+    private static function checkInvalidMultiSiteAccess() {
+        // Only allow Multisite users access to their assigned sites
+        if (function_exists('is_multisite') &&
+            is_multisite() &&
+            !is_user_member_of_blog() &&
+            !current_user_can('setup_network') )
+        {
+            wp_die( __( "You're not authorized to access this site.", 'wp-force-login' ), get_option('blogname') . ' &rsaquo; ' . __( "Error", 'wp-force-login' ) );
+        }
+    }
+
+    private static function getVisitedUrl(): string {
+        $url  = isset( $_SERVER['HTTPS'] ) && 'on' === $_SERVER['HTTPS'] ? 'https' : 'http';
+        $url .= '://' . $_SERVER['HTTP_HOST'];
+
+        // port is prepopulated here sometimes
+        if ( strpos( $_SERVER['HTTP_HOST'], ':' ) === FALSE ) {
+            $url .= in_array( $_SERVER['SERVER_PORT'], array('80', '443') ) ? '' : ':' . $_SERVER['SERVER_PORT'];
+        }
+
+        $url .= $_SERVER['REQUEST_URI'];
+
+        return $url;
     }
 
     public static function getWPUser () {

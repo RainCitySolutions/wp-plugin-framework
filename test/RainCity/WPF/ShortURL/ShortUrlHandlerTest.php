@@ -101,9 +101,4 @@ class ShortUrlHandlerTest extends WordpressTestCase
 
 class TestShortUrlHandler extends ShortUrlHandler
 {
-/*
-    protected function initializeInstance() {
-        parent::initializeInstance();
-    }
-*/
 }

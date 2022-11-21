@@ -212,7 +212,7 @@ namespace {
                 self::$returnId = 0;
             }
 
-            public static function get_id_by_key(string $key): int {
+            public static function get_id_by_key(string $key): int {    // NOSONAR
                 self::$callCnt++;
 
                 return (int)self::$returnId;
@@ -230,7 +230,7 @@ namespace {
                 self::$returnId = 0;
             }
 
-            public static function get_id_by_key(string $key): int {
+            public static function get_id_by_key(string $key): int {    // NOSONAR
                 self::$callCnt++;
 
                 return (int)self::$returnId;
@@ -248,7 +248,7 @@ namespace {
                 self::$returnId = 0;
             }
 
-            public static function get_id_by_key(string $key): int {
+            public static function get_id_by_key(string $key): int {    // NOSONAR
                 self::$callCnt++;
 
                 return (int)self::$returnId;

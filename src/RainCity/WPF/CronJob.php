@@ -32,10 +32,10 @@ abstract class CronJob implements CronJobInf
 
         add_action($this->cronJobName, array($this, 'cronEntryPoint'));
 
-        if ($this->scheduleCron($this->cronJobName, $interval)) {
-            if (!in_array($jobName, static::$jobList) ) {
-                array_push(static::$jobList, $jobName);
-            }
+        if ($this->scheduleCron($this->cronJobName, $interval) &&
+            !in_array($jobName, static::$jobList) )
+        {
+            array_push(static::$jobList, $jobName);
         }
     }
 

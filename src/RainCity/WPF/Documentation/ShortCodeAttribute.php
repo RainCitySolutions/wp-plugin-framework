@@ -15,7 +15,7 @@ class ShortCodeAttribute
     /** @var string */
     private $description;
 
-    public function __construct(string $name, string $description, bool $required = false, ?string $default) {
+    public function __construct(string $name, string $description, bool $required = false, ?string $default = null) {
         if ($required && isset($default)) {
             throw new \InvalidArgumentException('Attribute cannot be required and have a default value');
         }
