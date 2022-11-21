@@ -87,14 +87,21 @@ abstract class WordPressPlugin
     protected function initializeInstance() {
         $this->setup_actions();
 
-        // Hook to load plugin specific functions.php after them has been loaded
-//        $this->loader->add_action('after_setup_theme', $this, 'loadPluginFunctionsPhp', 100);
+        /**
+         * Hook to load a plugin specific functions.php from the plugin's
+         * write folder, if it exists, after the theme has been loaded. The
+         * write folder is wp-content/uploads/<pluginSlug>
+         *
+         * Allows for customization without a change to theme or plugin code.
+         *
+         * <p><strong>Use With Care!</strong>
+         */
         $this->loader->add_action('after_setup_theme', null,
             function () {
                 $functionsPhp = Utils::getPluginWriteDir() . '/functions.php';
 
                 if (file_exists($functionsPhp)) {
-                    require_once ($functionsPhp);
+                    require_once $functionsPhp;
                 }
             },
             100);
@@ -111,22 +118,6 @@ abstract class WordPressPlugin
         $this->loader->add_action(self::ON_REGISTER_SHORTCODE_ACTION, $this, 'privRegisterShortCodes');
 
         $this->loader->run();
-    }
-
-
-    /**
-     * Loads functions.php from the plugin's root folder if it exists.
-     *
-     * Allows for customization without a change to theme or plugin code.
-     *
-     * <p><strong>Use With Care!</strong>
-     */
-    public function loadPluginFunctionsPhp() {
-        $functionsPhp = Utils::getPluginWriteDir() . '/functions.php';
-
-        if (file_exists($functionsPhp)) {
-            require_once ($functionsPhp);
-        }
     }
 
 
@@ -450,8 +441,8 @@ abstract class WordPressPlugin
      */
     public static function kickstart(string $pluginClass, string $entryPointFile)
     {
-        if (defined(ABSPATH)) { // Wrap in case we get invoked via unit testing
-            require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
+        if (defined('ABSPATH')) { // Wrap in case we get invoked via unit testing
+            require_once ABSPATH . '/wp-admin/includes/plugin.php';
         }
 
         Logger::setLogger(WordPressLogger::class);
