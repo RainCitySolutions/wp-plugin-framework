@@ -91,7 +91,7 @@ class Utils
         return $pluginInfo;
     }
 
-    private static function extractPluginInfoFromPath(\stdClass &$pluginInfo, string $pluginPathRegex, array $stackTrace) {
+    private static function extractPluginInfoFromPath(PluginInformation &$pluginInfo, string $pluginPathRegex, array $stackTrace) {
         $matches = array();
 
         $path = wp_normalize_path(plugin_dir_path( __FILE__ ) ) ;

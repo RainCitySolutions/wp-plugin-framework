@@ -174,7 +174,7 @@ class GoogleAnalyticsHelperTest extends TestCase
          */
         $mockAnalytics
             ->expects($this->exactly(4))
-            ->method(CALL_METHOD)
+            ->method(self::CALL_METHOD)
             ->withConsecutive(
                 array('setEventCategory', array(self::TEST_CATEGORY)),
                 array('setEventAction', array(self::TEST_ACTION)),
@@ -216,7 +216,7 @@ class GoogleAnalyticsHelperTest extends TestCase
          */
         $mockAnalytics
         ->expects($this->exactly(5))
-        ->method(CALL_METHOD)
+        ->method(self::CALL_METHOD)
         ->withConsecutive(
             array('setEventCategory', array(self::TEST_CATEGORY)),
             array('setEventAction', array(self::TEST_ACTION)),
@@ -259,7 +259,7 @@ class GoogleAnalyticsHelperTest extends TestCase
          */
         $mockAnalytics
         ->expects($this->exactly(5))
-        ->method(CALL_METHOD)
+        ->method(self::CALL_METHOD)
         ->withConsecutive(
             array('setEventCategory', array(self::TEST_CATEGORY)),
             array('setEventAction', array(self::TEST_ACTION)),
@@ -302,7 +302,7 @@ class GoogleAnalyticsHelperTest extends TestCase
          */
         $mockAnalytics
             ->expects($this->exactly(4))
-            ->method(CALL_METHOD)
+            ->method(self::CALL_METHOD)
             ->withConsecutive(
                 array('setEventCategory', array(self::TEST_CATEGORY)),
                 array('setEventAction', array(self::TEST_ACTION)),
