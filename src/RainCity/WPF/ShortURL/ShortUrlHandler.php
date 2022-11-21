@@ -85,8 +85,8 @@ UNIQUE KEY short_code (short_code),
 KEY long_url (long_url)
     ) {$charset_collate};";
 
-        if (defined(ABSPATH)) { // Wrap in case we get invoked via unit testing
-            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        if (defined('ABSPATH')) { // Wrap in case we get invoked via unit testing
+            require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         }
 
         dbDelta($sql);

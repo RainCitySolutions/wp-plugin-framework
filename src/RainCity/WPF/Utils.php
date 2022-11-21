@@ -11,8 +11,8 @@ use RainCity\Logging\Helper;
 class Utils
 {
     public static function getPluginFile( $plugin_name ) {
-        if (defined(ABSPATH)) { // Wrap in case we get invoked via unit testing
-            require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
+        if (defined('ABSPATH')) { // Wrap in case we get invoked via unit testing
+            require_once ABSPATH . '/wp-admin/includes/plugin.php';
         }
 
         $plugins = get_plugins();
@@ -162,7 +162,10 @@ class Utils
     }
 
     public static function isPluginActive($pluginFile) {
-        include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+        if (defined('ABSPATH')) { // Wrap in case we get invoked via unit testing
+            include_once ABSPATH . 'wp-admin/includes/plugin.php';
+        }
+
         return is_plugin_active($pluginFile);
     }
 
