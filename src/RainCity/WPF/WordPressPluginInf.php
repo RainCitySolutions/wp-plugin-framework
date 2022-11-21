@@ -10,7 +10,7 @@ interface WordPressPluginInf
      *                  Can also be an array of these arrays if there is more
      *                  than one option being used by the plugin.
      */
-    public static function getOptions();
+    public static function getOptions(): array;
 
     /**
      * Fetch array of database upgrades to perform.
