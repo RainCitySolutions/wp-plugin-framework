@@ -50,6 +50,10 @@ abstract class WordpressTestCase
 
         \Brain\Monkey\Functions\when('get_user_meta')->alias(array($this, 'get_user_meta'));
         \Brain\Monkey\Functions\when('update_user_meta')->alias(array($this, 'update_user_meta'));
+
+        \Brain\Monkey\Functions\when('register_activation_hook')->alias(function() {});
+        \Brain\Monkey\Functions\when('register_deactivation_hook')->alias(function() {});
+        \Brain\Monkey\Functions\when('register_uninstall_hook')->alias(function() {});
     }
 
     public function add_option (string $option, $value = '', string $deprecated = '', $autoload = 'yes' ) {
