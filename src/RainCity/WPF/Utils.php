@@ -11,7 +11,10 @@ use RainCity\Logging\Helper;
 class Utils
 {
     public static function getPluginFile( $plugin_name ) {
-        require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
+        if (defined(ABSPATH)) { // Wrap in case we get invoked via unit testing
+            require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
+        }
+
         $plugins = get_plugins();
         foreach( $plugins as $plugin_file => $plugin_info ) {
             if ( $plugin_info['Name'] == $plugin_name ) {

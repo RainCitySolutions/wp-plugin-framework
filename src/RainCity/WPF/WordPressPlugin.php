@@ -450,7 +450,9 @@ abstract class WordPressPlugin
      */
     public static function kickstart(string $pluginClass, string $entryPointFile)
     {
-        require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
+        if (defined(ABSPATH)) { // Wrap in case we get invoked via unit testing
+            require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
+        }
 
         Logger::setLogger(WordPressLogger::class);
 
