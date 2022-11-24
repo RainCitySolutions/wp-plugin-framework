@@ -1,6 +1,7 @@
 <?php
 namespace RainCity\WPF\Settings;
 
+use RainCity\MiscHelper;
 use RainCity\Singleton;
 use RainCity\Logging\Logger;
 use RainCity\WPF\AdminHelperInf;
@@ -183,7 +184,7 @@ abstract class AdminSettings
             </div>
             <?php
 
-            $html = Utils::minifyHtml(ob_get_contents());
+            $html = MiscHelper::minifyHtml(ob_get_contents());
             ob_end_clean();
 
             print $html;
