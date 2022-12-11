@@ -173,28 +173,29 @@ abstract class WordPressPlugin
      * Handler 'script_loader_tag' filter.
      *
      * Checks if the script tag contains 'async' or 'defer'. If so, modifies
-     * the <script> element to have the corresponding tag.
+     * the &lt;script&gt; element to have the corresponding tag.
      *
-     * @param string $tag The <script> tag.
+     * @param string $tag The &lt;script&gt; tag.
      * @param string $handle The handle for the script.
      *
      * @return string  A possibly modified script tag.
      */
     public function onScriptLoaderTag(string $tag, string $handle) {
+        $replacements = array('<script');
+
         // if the unique handle/name of the registered script has 'async' in it
         if (strpos($handle, 'async') !== false) {
-            // return the tag with the async attribute
-            return str_replace( '<script ', '<script async ', $tag );
+            // include the async attribute in the tag
+            array_push($replacements, 'async');
         }
+
         // if the unique handle/name of the registered script has 'defer' in it
-        else if (strpos($handle, 'defer') !== false) {
-            // return the tag with the defer attribute
-            return str_replace( '<script ', '<script defer ', $tag );
+        if (strpos($handle, 'defer') !== false) {
+            // include the defer attribute in the tag
+            array_push($replacements, 'defer');
         }
-        // otherwise skip
-        else {
-            return $tag;
-        }
+
+        return str_replace( '<script', join(' ', $replacements), $tag );
     }
 
 
