@@ -11,7 +11,7 @@ abstract class WordpressTestCase
 {
     const WP_DB_PREFIX = "test_wpdb_";
 
-    private $optionsTable, $siteOptionsTable, $userMeta;
+    private $optionsTable, $siteOptionsTable, $userMeta, $plugins;
 
     /**
      * Runs before each test.
@@ -28,6 +28,9 @@ abstract class WordpressTestCase
         // reset mock db tables
         $this->optionsTable = $this->siteOptionsTable = $this->userMeta = array();
 
+        // get_plugins() response
+        $this->plugins = array();
+
         \Brain\Monkey\Functions\when('_doing_it_wrong')->alias(function ( $function, $message, $version) {
             trigger_error(
                 sprintf('%1$s was called <strong>incorrectly</strong>. %2$s %3$s', $function, $message, $version),
@@ -39,6 +42,10 @@ abstract class WordpressTestCase
         \Brain\Monkey\Functions\when('plugin_dir_path')->alias(function ($file) {
             return '/var/www/wp-content/plugins/test-plugin/'.basename($file);
         });
+        \Brain\Monkey\Functions\when('plugin_dir_url')->alias(function (string $pluginFile) {   // NOSONAR - ignored param
+            return 'http://test.org/wp-content/plugins/test-plugin/';
+        });
+
 
         \Brain\Monkey\Functions\when('add_option')->alias(array($this, 'add_option'));
         \Brain\Monkey\Functions\when('update_option')->alias(array($this, 'update_option'));
@@ -54,6 +61,11 @@ abstract class WordpressTestCase
         \Brain\Monkey\Functions\when('register_activation_hook')->alias(function() { /* Do nothing */ });
         \Brain\Monkey\Functions\when('register_deactivation_hook')->alias(function() { /* Do nothing */ });
         \Brain\Monkey\Functions\when('register_uninstall_hook')->alias(function() { /* Do nothing */ });
+
+        \Brain\Monkey\Functions\when('get_plugins')->alias(function (): array {
+            return $this->plugins;
+        });
+
     }
 
     public function add_option (string $option, $value = '', string $deprecated = '', $autoload = 'yes' ) {
@@ -144,6 +156,17 @@ abstract class WordpressTestCase
         }
 
         return $result;
+    }
+
+    /**
+     * Add a plugin to the list of plugins that will be returned by the
+     * get_plugins() function.
+     *
+     * @param string $pluginFile The name of the main plugin file (need not be real)
+     * @param array $pluginInfo The array of plugin information
+     */
+    protected function addPlugin(string $pluginFile, array $pluginInfo): void {
+        $this->plugins[$pluginFile] = $pluginInfo;
     }
 }
 

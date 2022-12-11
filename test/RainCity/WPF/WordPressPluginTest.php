@@ -22,25 +22,15 @@ class WordPressPluginTest extends WordpressTestCase
     {
         parent::setUp();
 
-        \Brain\Monkey\Functions\when('get_plugins')->alias(function () {
-            $result = array();
-
-            $result['testPlugin.php'] = array (
-                'Name' => 'TestPlugin'
-                );
-
-            return $result;
-        });
-
-        \Brain\Monkey\Functions\when('plugin_dir_url')->alias(function (string $pluginFile) {   // NOSONAR - ignored param
-            return 'http://some.server.com/wp-content/plugins/testPlugin/';
-        });
-
-        $this->wordPressPlugin = TestPlugin::instance(array(
+        $pluginInfo =array(
             'Name' => 'TestPlugin',
             'Version' => '1.0.0',
             'TextDomain' => 'testPlugin'
-        ));
+            );
+
+        $this->addPlugin('testPlugin.php', $pluginInfo);
+
+        $this->wordPressPlugin = TestPlugin::instance($pluginInfo);
     }
 
     /**
