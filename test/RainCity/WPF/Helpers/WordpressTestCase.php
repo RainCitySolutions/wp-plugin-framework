@@ -36,6 +36,7 @@ abstract class WordpressTestCase
                 sprintf('%1$s was called <strong>incorrectly</strong>. %2$s %3$s', $function, $message, $version),
                 E_USER_NOTICE);
         });
+        \Brain\Monkey\Functions\when('is_admin')->alias(function () { return true; });
         \Brain\Monkey\Functions\when('wp_normalize_path')->alias(function ($path) {
             return $path;
         });
