@@ -175,6 +175,43 @@ abstract class AdminSettingsTab
 
 
     /**
+     * Render a Password field
+     *
+     * Defaults for attributes that can be overwritten:<br>
+     *   size: 64<br>
+     *   maxlength: 255
+     *
+     * @param WordPressOptions  $optionsObj Options object containing the field.
+     * @param string            $optionName Name of the option field being rendered.
+     * @param string            $description Optional: A description for the field.
+     * @param array             $attrs Optional: Additional attributes to be added to the input element.
+     */
+    protected function renderPasswordField(WordPressOptions $optionsObj, string $optionName, string $description = '', array $attrs = array())
+    {
+        $fieldInfo = $optionsObj->getFormFieldInfo($optionName);
+        $attrs = array_merge (
+            // these attributes can be overwritten
+            array(
+                'size'  => 64,
+                'maxlength' => 255
+            ),
+            $attrs,
+            // these attributes cannot be overwritten
+            array(
+                'type'  => 'password',
+                'class' => 'regular-text',
+                'id'    => $fieldInfo[0],
+                'name'  => $fieldInfo[1],
+                'value' => (null !== $fieldInfo[2] ? esc_attr( $fieldInfo[2] ) : '')
+            )
+            );
+
+        $this->renderInputField($attrs);
+        $this->renderDescription($optionName, $description);
+    }
+
+
+    /**
      * Render a Checkbox field
      *
      * @param WordPressOptions  $optionsObj Options object containing the field.
