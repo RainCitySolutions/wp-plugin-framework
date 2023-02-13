@@ -37,7 +37,7 @@ class WordPressDataCacheHelper
 	public function onAdminEnqueueScripts() {
 		wp_localize_script(
 			$this->pluginName,
-			'mycp_redcap_dataCacheObj',
+			'raincity_dataCacheObj',
 			array(
 				'ajax_url' => admin_url( 'admin-ajax.php' ),
 				'nonce'	=> wp_create_nonce($this->pluginName),
