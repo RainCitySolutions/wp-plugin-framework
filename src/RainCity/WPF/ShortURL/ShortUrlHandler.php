@@ -41,8 +41,7 @@ class ShortUrlHandler
 
             if ($this->validatePrefix($urlPrefix)) {
                 $this->urlPrefix = $urlPrefix;
-            }
-            else {
+            } else {
                 throw new \InvalidArgumentException('Invalid format for Short URL prefix');
             }
         }
@@ -59,7 +58,9 @@ class ShortUrlHandler
     public function loadActions(ActionFilterLoader $loader)
     {
         $loader->add_action('plugins_loaded', self::class, 'upgradeDbTable');
-        $loader->add_action('template_redirect', $this, 'templateRedirectAction');
+
+        // Priority 9 so we're called earlier than the default
+        $loader->add_action('template_redirect', $this, 'templateRedirectAction', 9);
     }
 
     /**
@@ -242,7 +243,8 @@ KEY long_url (long_url)
      *
      * @return string The URL that should be stored in the database.
      */
-    protected function validateUrl(string $inUrl): string {
+    protected function validateUrl(string $inUrl): string
+    {
         $outUrl = $inUrl;
 
         $fqUrl = $this->validateUrlFormat($inUrl);
@@ -256,14 +258,13 @@ KEY long_url (long_url)
 
             // Check if the URL refers to a site page
             $pagePath = get_page_by_path($outUrl, OBJECT, array('page', 'post', 'attachement'));
-            if (!$pagePath) {
-                throw new \InvalidArgumentException("Page does not appear to exist.", 404);
-            }
-        }
-        else {
-            if (self::$verifyUrlReferences &&
-                false === $this->verifyUrlExists($fqUrl))
-            {
+            if (!$pagePath &&
+                self::$verifyUrlReferences &&
+                false === $this->verifyUrlExists($fqUrl)) {
+                    throw new \InvalidArgumentException("Page or URL does not appear to exist.", 404);
+                }
+        } else {
+            if (self::$verifyUrlReferences && false === $this->verifyUrlExists($fqUrl)) {
                 throw new \InvalidArgumentException("URL does not appear to exist.", 404);
             }
         }
