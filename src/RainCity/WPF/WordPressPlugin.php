@@ -96,7 +96,9 @@ abstract class WordPressPlugin
          *
          * <p><strong>Use With Care!</strong>
          */
-        $this->loader->add_action('after_setup_theme', null,
+        $this->loader->add_action(
+            'after_setup_theme',
+            null,
             function () {
                 $functionsPhp = Utils::getPluginWriteDir() . '/functions.php';
 
@@ -104,7 +106,8 @@ abstract class WordPressPlugin
                     require_once $functionsPhp;
                 }
             },
-            100);
+            100
+        );
 
         // delay running database upgrades until WordPress is initialized
         $this->loader->add_action( 'init', $this, 'privUpgradeDatabase', 0 );
@@ -113,6 +116,16 @@ abstract class WordPressPlugin
         $this->loader->add_action('admin_enqueue_scripts', $this, 'onAdminEnqueueScripts');
         $this->loader->add_action('wp_enqueue_scripts', $this, 'onWpEnqueueScripts');
         $this->loader->add_filter('script_loader_tag', $this, 'onScriptLoaderTag', 10, 2);
+
+
+        // Enable application passwords for development environments
+        $this->loader->add_filter(
+            'wp_is_application_passwords_available',
+            null,
+            function ($isAvailable) {
+                return 'development' === wp_get_environment_type() || $isAvailable;
+            }
+        );
 
         // Add hook to register our short codes.
         $this->loader->add_action(self::ON_REGISTER_SHORTCODE_ACTION, $this, 'privRegisterShortCodes');
