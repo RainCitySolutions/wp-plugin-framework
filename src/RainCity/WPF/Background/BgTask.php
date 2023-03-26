@@ -9,8 +9,7 @@ use RainCity\Logging\Logger;
  * @author rainc
  *
  */
-abstract class BgTask
-    implements \Serializable
+abstract class BgTask implements \Serializable
 {
     /** @var LoggerInterface */
     protected $logger;
@@ -18,7 +17,8 @@ abstract class BgTask
     /**
      *
      */
-    public function __construct() {
+    public function __construct()
+    {
         $this->initLogger();
     }
 
@@ -27,7 +27,8 @@ abstract class BgTask
      *
      * Used both during construction and when unserializing an instance.
      */
-    private function initLogger() {
+    private function initLogger()
+    {
         $this->logger = Logger::getLogger(get_class($this));
     }
 
@@ -41,7 +42,7 @@ abstract class BgTask
      *
      * @return bool Returns true if the task is complete. Otherwise returns false.
      */
-    public abstract function run(BgProcess $bgProcess, ...$params) : bool;
+    abstract public function run(BgProcess $bgProcess, ...$params) : bool;
 
     public function serialize()
     {

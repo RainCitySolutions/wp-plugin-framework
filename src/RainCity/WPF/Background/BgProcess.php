@@ -16,8 +16,7 @@ use WP_Background_Process;
  * running of each task such as when the task makes calls to an API.
  */
 
-class BgProcess
-    extends \WP_Background_Process
+class BgProcess extends \WP_Background_Process
 {
     private const ACTION_NAME = 'BaseBgProcess';
 
@@ -47,11 +46,12 @@ class BgProcess
      * @param array $params A set of parameters that will be provided to each
      *      task when it is run.
      */
-    public function __construct(...$params) {
+    public function __construct(...$params)
+    {
         parent::__construct();
         $this->logger = Logger::getLogger(get_class($this));
 
-        $this->params = $params;
+        $this->taskParams = $params;
     }
 
     /**
@@ -61,7 +61,8 @@ class BgProcess
      *
      * @return $this
      */
-    public function addTask(BgTask $task ) {
+    public function addTask(BgTask $task)
+    {
         return parent::push_to_queue($task);
     }
 
@@ -71,7 +72,7 @@ class BgProcess
      */
     public function push_to_queue($data)
     {
-        _doing_it_wrong( __FUNCTION__, __( 'Don\'t call this function, call addTask() instead.', 'raincity' ), '1.0' );
+        _doing_it_wrong(__FUNCTION__, __('Don\'t call this function, call addTask() instead.', 'raincity'), '1.0');
     }
 
     /**
@@ -85,10 +86,11 @@ class BgProcess
      * @return boolean|BgTask Returns false if the task is complete, otherwise
      *      the task is returned.
      */
-    protected function runTask(BgTask $task) {
+    protected function runTask(BgTask $task)
+    {
         $result = $task;
 
-        if ($task->run($this, $this->params)) {
+        if ($task->run($this, ...$this->taskParams)) {
             $result = false;
         }
 
@@ -101,11 +103,11 @@ class BgProcess
      * {@inheritDoc}
      * @see WP_Background_Process::task()
      */
-    protected final function task($item) {
+    final protected function task($item)
+    {
         if ($item instanceof BgTask) {
             $result = $this->runTask($item);
-        }
-        else {
+        } else {
             $result = false;
         }
 
