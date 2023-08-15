@@ -472,7 +472,7 @@ abstract class WordPressPlugin
             register_shutdown_function(function () use ($pluginSlug) {
                 $error = error_get_last();
 
-                if( $error !== NULL) {
+                if (!is_null($error)) {
                     $logger = Logger::getLogger(WordPressLogger::BASE_LOGGER, $pluginSlug);
 
                     switch ($error['type']) {
@@ -485,7 +485,11 @@ abstract class WordPressPlugin
                             break;
 
                         case E_NOTICE:
-                            $level = \Psr\Log\LogLevel::NOTICE;
+                            if (preg_match('/^Constant .* already defined$/', $error['message'])) {
+                                $level = \Psr\Log\LogLevel::DEBUG;
+                            } else {
+                                $level = \Psr\Log\LogLevel::NOTICE;
+                            }
                             break;
 
                         case E_DEPRECATED:
