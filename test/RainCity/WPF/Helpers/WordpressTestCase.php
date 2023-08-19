@@ -6,22 +6,26 @@ use RainCity\TestHelper\RainCityTestCase;
 /**
  * WordpressTestCase base class.
  */
-abstract class WordpressTestCase
-    extends RainCityTestCase
+abstract class WordpressTestCase extends RainCityTestCase
 {
     const WP_DB_PREFIX = "test_wpdb_";
 
-    private $optionsTable, $siteOptionsTable, $userMeta, $plugins;
+    private $optionsTable;
+    private $siteOptionsTable;
+    private $userMeta;
+    private $plugins;
+    private $cronSchedules;
 
     /**
      * Runs before each test.
      */
-    protected function setUp(): void {
+    protected function setUp(): void
+    {
         parent::setUp();
 
         global $wpdb;
 
-        $wpdb = \Mockery::mock( '\wpdb' );
+        $wpdb = \Mockery::mock('\wpdb');
         $wpdb->makePartial();
         $wpdb->prefix = self::WP_DB_PREFIX;
 
@@ -31,22 +35,24 @@ abstract class WordpressTestCase
         // get_plugins() response
         $this->plugins = array();
 
-        \Brain\Monkey\Functions\when('_doing_it_wrong')->alias(function ( $function, $message, $version) {
+        // wp_get_schedules default response
+        $this->cronSchedules = ['hourly', 'twicedaily', 'daily', 'weekly'];
+
+        \Brain\Monkey\Functions\when('_doing_it_wrong')->alias(function ($function, $message, $version) {
             trigger_error(
                 sprintf('%1$s was called <strong>incorrectly</strong>. %2$s %3$s', $function, $message, $version),
-                E_USER_NOTICE);
+                E_USER_NOTICE
+                );
         });
-        \Brain\Monkey\Functions\when('is_admin')->alias(function () { return true; });
-        \Brain\Monkey\Functions\when('wp_normalize_path')->alias(function ($path) {
-            return $path;
-        });
-        \Brain\Monkey\Functions\when('plugin_dir_path')->alias(function ($file) {
-            return '/var/www/wp-content/plugins/test-plugin/'.basename($file);
-        });
-        \Brain\Monkey\Functions\when('plugin_dir_url')->alias(function (string $pluginFile) {   // NOSONAR - ignored param
-            return 'http://test.org/wp-content/plugins/test-plugin/';
-        });
-
+        \Brain\Monkey\Functions\when('is_admin')->alias(fn () => true);
+        \Brain\Monkey\Functions\when('wp_normalize_path')->alias(fn ($path) => $path);
+        \Brain\Monkey\Functions\when('plugin_dir_path')->alias(
+            fn ($file) => '/var/www/wp-content/plugins/test-plugin/'.basename($file)
+            );
+        \Brain\Monkey\Functions\when('plugin_dir_url')->alias(
+            fn ($pluginFile) => 'http://test.org/wp-content/plugins/test-plugin/'
+            );
+        \Brain\Monkey\Functions\when('get_site_url')->alias(fn() => 'http://test.org/');
 
         \Brain\Monkey\Functions\when('add_option')->alias(array($this, 'add_option'));
         \Brain\Monkey\Functions\when('update_option')->alias(array($this, 'update_option'));
@@ -59,17 +65,16 @@ abstract class WordpressTestCase
         \Brain\Monkey\Functions\when('get_user_meta')->alias(array($this, 'get_user_meta'));
         \Brain\Monkey\Functions\when('update_user_meta')->alias(array($this, 'update_user_meta'));
 
-        \Brain\Monkey\Functions\when('register_activation_hook')->alias(function() { /* Do nothing */ });
-        \Brain\Monkey\Functions\when('register_deactivation_hook')->alias(function() { /* Do nothing */ });
-        \Brain\Monkey\Functions\when('register_uninstall_hook')->alias(function() { /* Do nothing */ });
+        \Brain\Monkey\Functions\when('register_activation_hook')->alias(function () { /* Do nothing */ });
+        \Brain\Monkey\Functions\when('register_deactivation_hook')->alias(function () { /* Do nothing */ });
+        \Brain\Monkey\Functions\when('register_uninstall_hook')->alias(function () { /* Do nothing */ });
 
-        \Brain\Monkey\Functions\when('get_plugins')->alias(function (): array {
-            return $this->plugins;
-        });
-
+        \Brain\Monkey\Functions\when('get_plugins')->alias(fn () => $this->plugins);
+        \Brain\Monkey\Functions\when('wp_get_schedules')->alias(fn () => $this->cronSchedules);
     }
 
-    public function add_option (string $option, $value = '', string $deprecated = '', $autoload = 'yes' ) {
+    public function add_option(string $option, $value = '', string $deprecated = '', $autoload = 'yes')
+    {
         $result = false;
 
         if (!isset($this->optionsTable[$option])) {
@@ -80,12 +85,14 @@ abstract class WordpressTestCase
         return $result;
     }
 
-    public function update_option (string $option, $value, $autoload = null) {
+    public function update_option(string $option, $value, $autoload = null)
+    {
         $this->optionsTable[$option] = $value;
         return true;
     }
 
-    public function get_option (string $option, $default = false) {
+    public function get_option(string $option, $default = false)
+    {
         $result = $default;
 
         if (isset($this->optionsTable[$option])) {
@@ -95,7 +102,8 @@ abstract class WordpressTestCase
         return $result;
     }
 
-    public function delete_option (string $option) {
+    public function delete_option(string $option)
+    {
         $result = false;
 
         if (isset($this->optionsTable[$option])) {
@@ -106,12 +114,14 @@ abstract class WordpressTestCase
         return $result;
     }
 
-    public function update_site_option (string $option, $value) {
+    public function update_site_option(string $option, $value)
+    {
         $this->siteOptionsTable[$option] = $value;
         return true;
     }
 
-    public function get_site_option (string $option, $default = false, bool $deprecated = true) {
+    public function get_site_option(string $option, $default = false, bool $deprecated = true)
+    {
         $result = false;
 
         if (isset($this->siteOptionsTable[$option])) {
@@ -121,11 +131,12 @@ abstract class WordpressTestCase
         return $result;
     }
 
-    public function get_user_meta (int $user_id, string $key = '', bool $single = false) {
+    public function get_user_meta(int $userId, string $key = '', bool $single = false)
+    {
         $result = false;
 
-        if (isset($this->userMeta[$user_id])) {
-            $userMetaRef = $this->userMeta[$user_id];
+        if (isset($this->userMeta[$userId])) {
+            $userMetaRef = $this->userMeta[$userId];
 
             if (isset($userMetaRef[$key])) {
                 $result = $userMetaRef[$key];
@@ -135,24 +146,24 @@ abstract class WordpressTestCase
         return $result;
     }
 
-    public function update_user_meta (int $user_id, string $meta_key, $meta_value, $prev_value = '') {
+    public function update_user_meta(int $userId, string $metaKey, $metaValue, $prevValue = '')
+    {
         $result = false;
 
         // Ensure the user has an entry in the array
-        if (!isset($this->userMeta[$user_id])) {
-            $this->userMeta[$user_id] = array();
+        if (!isset($this->userMeta[$userId])) {
+            $this->userMeta[$userId] = array();
         }
 
-        $userMetaRef = &$this->userMeta[$user_id];
+        $userMetaRef = &$this->userMeta[$userId];
 
-        if (isset($userMetaRef[$meta_key])) {
-            if ($meta_value !== $userMetaRef[$meta_key]) {
-                $userMetaRef[$meta_key] = serialize($meta_value);
+        if (isset($userMetaRef[$metaKey])) {
+            if ($metaValue !== $userMetaRef[$metaKey]) {
+                $userMetaRef[$metaKey] = serialize($metaValue);
                 $result = true;
             }
-        }
-        else {
-            $userMetaRef[$meta_key] = serialize($meta_value);
+        } else {
+            $userMetaRef[$metaKey] = serialize($metaValue);
             $result = 1;
         }
 
@@ -166,7 +177,8 @@ abstract class WordpressTestCase
      * @param string $pluginFile The name of the main plugin file (need not be real)
      * @param array $pluginInfo The array of plugin information
      */
-    protected function addPlugin(string $pluginFile, array $pluginInfo): void {
+    protected function addPlugin(string $pluginFile, array $pluginInfo): void
+    {
         $this->plugins[$pluginFile] = $pluginInfo;
     }
 }
