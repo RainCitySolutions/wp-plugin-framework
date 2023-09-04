@@ -26,6 +26,9 @@ abstract class WordPressPlugin
     extends Singleton
     implements WordPressPluginInf
 {
+    private const DEFAULT_PLUGIN_VERSION = '1.0.0';
+    private const DB_UPGRADE_ACTIVE_FLAG = 'raincity_wpf_dbUpgradeActive';
+
     const DATABASE_VERSIONS_OPTIONS_NAME = 'raincity_wpf_database_versions';
 
     const ON_PLUGIN_ACTIVATION_ACTION = 'raincity_wpf_plugin_activation_action';
@@ -217,46 +220,58 @@ abstract class WordPressPlugin
      *
      * @throws \Exception
      */
-    public function privUpgradeDatabase() {
-        $dbVersions = get_option(WordPressPlugin::DATABASE_VERSIONS_OPTIONS_NAME, array ($this->pluginSlug => '1.0.0'));
+    public function privUpgradeDatabase(): bool
+    {
+        $dbUpgraded = false;
+        $dbVersions = get_option(
+            WordPressPlugin::DATABASE_VERSIONS_OPTIONS_NAME,
+            array ($this->pluginSlug => self::DEFAULT_PLUGIN_VERSION)
+            );
 
         /*
          * If the version is the default, assume this is the first time this
          * code has run since installation in which case the database would
          * be new and insync with the current plugin version.
          */
-        if (!isset($dbVersions[$this->pluginSlug]) || $dbVersions[$this->pluginSlug] === '1.0.0') {
+        if (self::DEFAULT_PLUGIN_VERSION === $dbVersions[$this->pluginSlug] ?? self::DEFAULT_PLUGIN_VERSION) {
             $dbVersions[$this->pluginSlug] = $this->pluginVersion;
             update_option (WordPressPlugin::DATABASE_VERSIONS_OPTIONS_NAME, $dbVersions);
         }
         else {
             $this->databaseVersion = $dbVersions[$this->pluginSlug];
 
+            // Check if the plugin version is later than the database version
+            // Note: Just because the plugin has been updated, it doesn't
+            //      mean there are upgrades to be performed.
             if ($this->doDatabaseUpgrade($this->pluginVersion)) {
-                /*
-                 * It's possible for the database upgrade process to trigger
-                 * additional requests (ajax) into WordPress. To ensure the upgrade
-                 * is only performed once we wrap it with a transient flag.
-                 */
-                $transName = 'raincity_wpf_UpgradeDatabaseActive';
+                try {
+                    /*
+                     * It's possible for the database upgrade process to trigger
+                     * additional requests (ajax) into WordPress. To ensure the upgrade
+                     * is only performed once we wrap it with a transient flag.
+                     */
+                    if (false === get_transient(self::DB_UPGRADE_ACTIVE_FLAG)) {
+                        set_transient(self::DB_UPGRADE_ACTIVE_FLAG, true, 5 * MINUTE_IN_SECONDS);
 
-                $upgradeActive = get_transient($transName);
+                        $dbUpgraded |= $this->doDbUpgrades($this->getDatabaseUpgrades(), $dbVersions);
 
-                if (false === $upgradeActive) {
-                    set_transient($transName, true, MINUTE_IN_SECONDS * 2);
-
-                    $this->doDbUpgrades($this->getDatabaseUpgrades());
-
-                    $dbVersions[$this->pluginSlug] = $this->pluginVersion;
-                    update_option (WordPressPlugin::DATABASE_VERSIONS_OPTIONS_NAME, $dbVersions);
-
-                    delete_transient($transName);
+                        // Save that the database is up to date with the current plugin version
+                        $dbVersions[$this->pluginSlug] = $this->pluginVersion;
+                        update_option (WordPressPlugin::DATABASE_VERSIONS_OPTIONS_NAME, $dbVersions);
+                    }
+                } finally {
+                    delete_transient(self::DB_UPGRADE_ACTIVE_FLAG);
                 }
             }
         }
+
+        return $dbUpgraded;
     }
 
-    private function doDbUpgrades(array $upgrades) {
+    private function doDbUpgrades(array $upgrades, array &$dbVersions): bool
+    {
+        $dbUpgraded = false;
+
         uksort($upgrades, 'version_compare');
 
         foreach ($upgrades as $version => $upgradeFunc) {
@@ -265,13 +280,21 @@ abstract class WordPressPlugin
                     call_user_func($upgradeFunc);
                 }
                 else {
-                    throw new \Exception("Unable to call upgrade function for version ${version}"); // NOSONAR
+                    throw new \Exception("Unable to call database upgrade function for version ${version}"); // NOSONAR
                 }
 
                 $this->log->debug("Upgraded database to $version");
+                // As we've done an upgrade, note it
+                $dbUpgraded = true;
                 $this->databaseVersion = $version;
+
+                // Save that update to this version is complete
+                $dbVersions[$this->pluginSlug] = $version;
+                update_option (WordPressPlugin::DATABASE_VERSIONS_OPTIONS_NAME, $dbVersions);
             }
         }
+
+        return $dbUpgraded;
     }
 
     /**
@@ -330,13 +353,25 @@ abstract class WordPressPlugin
      *
      * @return array    A potentially updated array of plugin action links.
      */
-    public function addPluginActionLinks(array $actions, string $pluginFile, array $pluginData, string $context): array {
+    public function addPluginActionLinks(
+        array $actions,
+        string $pluginFile,
+        array $pluginData,
+        string $context
+        ): array
+    {
         if ($pluginFile == $this->mainPluginFilename) {
             $settingsSlug = $this->getSettingsPageSlug();
 
             if (isset($settingsSlug)) {
-                $settings_link = '<a href="' . get_bloginfo('wpurl') . '/wp-admin/options-general.php?page=' . $settingsSlug . '">Settings</a>';
-                array_unshift($actions, $settings_link);
+                array_unshift(
+                    $actions,
+                    sprintf(
+                        '<a href="%s/wp-admin/options-general.php?page=%s">Settings</a>',
+                        get_bloginfo('wpurl'),
+                        $settingsSlug
+                        )
+                    );
             }
         }
 
@@ -358,7 +393,7 @@ abstract class WordPressPlugin
      * The code that runs during plugin activation.
      */
     public function activate_plugin() {
-        Logger::getLogger(get_called_class (), $this->pluginSlug)->debug('Activating '.$this->pluginName);
+        Logger::getLogger(get_called_class(), $this->pluginSlug)->debug('Activating '.$this->pluginName);
 
         $options = static::getOptions();
         if (isset($options) && is_array($options)) {
@@ -382,7 +417,8 @@ abstract class WordPressPlugin
      * The code that runs during plugin deactivation.
      */
     public function deactivate_plugin() {
-        Logger::getLogger(get_called_class ())->debug('Deactivating '.$this->pluginName);
+        Logger::getLogger(get_called_class ())
+            ->debug('Deactivating '.$this->pluginName);
 
         do_action(self::ON_PLUGIN_DEACTIVATION_ACTION);
 
@@ -394,7 +430,8 @@ abstract class WordPressPlugin
      * The code that runs during plugin removal.
      */
     public static function uninstall_plugin() {
-        Logger::getLogger(get_called_class (), Utils::getPluginPackageName())->debug('Uninstalling '.Utils::getPluginName());
+        Logger::getLogger(get_called_class (), Utils::getPluginPackageName())
+            ->debug('Uninstalling '.Utils::getPluginName());
 
         do_action(self::ON_PLUGIN_UNINSTALL_ACTION);
 
@@ -444,6 +481,15 @@ abstract class WordPressPlugin
         return $this->loader;
     }
 
+    /**
+     * Defer the dispatching of any jobs in a background process.
+     *
+     * @param \WP_Background_Process $bgProcess
+     */
+    public static function deferBgProcessDispatch(\WP_Background_Process $bgProcess): void
+    {
+        add_action('wp_footer', array($bgProcess, 'dispatch'), 100);
+    }
 
     /**
      * Kick start a plugin.
