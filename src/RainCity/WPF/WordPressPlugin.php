@@ -280,7 +280,7 @@ abstract class WordPressPlugin
                     call_user_func($upgradeFunc);
                 }
                 else {
-                    throw new \Exception("Unable to call database upgrade function for version ${version}"); // NOSONAR
+                    throw new \Exception("Unable to call database upgrade function for version {$version}"); // NOSONAR
                 }
 
                 $this->log->debug("Upgraded database to $version");
