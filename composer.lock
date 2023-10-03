@@ -1464,11 +1464,11 @@
         },
         {
             "name": "raincity/php-library",
-            "version": "2.0.26",
+            "version": "2.0.27",
             "source": {
                 "type": "git",
                 "url": "https://github.com/RainCitySolutions/php-library",
-                "reference": "4254814b360b131197a42956bb6db782948b2b50"
+                "reference": "cb2ef18530e6181561bd2b90c46f286f1aa7bd33"
             },
             "require": {
                 "apix/cache": "~1.3",
@@ -1501,7 +1501,7 @@
                 "BSD-3-Clause"
             ],
             "description": "Library to support implementations in PHP",
-            "time": "2023-09-06T23:16:11+00:00"
+            "time": "2023-10-03T23:26:00+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
@@ -4150,5 +4150,5 @@
         "php": ">=7.4"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
