@@ -99,7 +99,10 @@ class UtilsTest extends WordpressTestCase
 
     public function testGetPluginInfo_withSitewidePlugins() {
         update_option('active_plugins', array());
-        update_site_option('active_sitewide_plugins', array(self::TEST_OTHER_PLUGIN_ENTRYPOINT => 111111, self::TEST_PLUGIN_ENTRYPOINT => 222222));
+        update_site_option(
+            'active_sitewide_plugins',
+            array(self::TEST_OTHER_PLUGIN_ENTRYPOINT => 111111, self::TEST_PLUGIN_ENTRYPOINT => 222222)
+            );
 
         $info = Utils::getPluginInfo();
 

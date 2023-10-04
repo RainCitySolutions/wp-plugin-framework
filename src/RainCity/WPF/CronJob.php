@@ -80,14 +80,14 @@ abstract class CronJob implements CronJobInf
     public static function uninstall() {
     }
 
-    public static function add_custom_intervals_filter() {
+    public static function addCustomIntervalsFilter() {
         // Protect for case where running tests without WordPress
         if (function_exists('add_filter')) {
-            add_filter( 'cron_schedules', [get_class(), 'add_custom_intervals']);
+            add_filter( 'cron_schedules', [get_class(), 'addCustomIntervals']);
         }
     }
 
-    public static function add_custom_intervals( $schedules ) {
+    public static function addCustomIntervals( $schedules ) {
         $schedules[self::ONE_TIME_CRONJOB] = array(
             'interval' => 1 * MINUTE_IN_SECONDS,    // Set to 1 minute but will be cancelled after firing once
             'display'  => esc_html__( 'One Time' )
@@ -122,4 +122,4 @@ interface CronJobInf
     public static function uninstall();
 }
 
-CronJob::add_custom_intervals_filter();
+CronJob::addCustomIntervalsFilter();

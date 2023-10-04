@@ -57,10 +57,10 @@ class ShortUrlHandler
      */
     public function loadActions(ActionFilterLoader $loader)
     {
-        $loader->add_action('plugins_loaded', self::class, 'upgradeDbTable');
+        $loader->addAction('plugins_loaded', self::class, 'upgradeDbTable');
 
         // Priority 9 so we're called earlier than the default
-        $loader->add_action('template_redirect', $this, 'templateRedirectAction', 9);
+        $loader->addAction('template_redirect', $this, 'templateRedirectAction', 9);
     }
 
     /**
@@ -73,7 +73,7 @@ class ShortUrlHandler
         global $wpdb;
 
         $tableName = self::getTableName($wpdb);
-        $charset_collate = $wpdb->get_charset_collate();
+        $charsetCollate = $wpdb->get_charset_collate();
 
         $sql = "CREATE TABLE {$tableName} (
 id int(9) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -84,7 +84,7 @@ created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
 PRIMARY KEY (id),
 UNIQUE KEY short_code (short_code),
 KEY long_url (long_url)
-    ) {$charset_collate};";
+    ) {$charsetCollate};";
 
         if (defined('ABSPATH')) { // Wrap in case we get invoked via unit testing
             require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -111,7 +111,7 @@ KEY long_url (long_url)
      */
     protected function validatePrefix(string $prefix): bool {
         // check that the prefix matches the required pattern
-        return  (1 === preg_match('/^\/.{1,30}\/$/', $prefix) );
+        return 1 === preg_match('/^\/.{1,30}\/$/', $prefix);
     }
 
     /**
@@ -189,7 +189,10 @@ KEY long_url (long_url)
             }
             catch (\Exception $e) {
                 if (strstr($e->getMessage(), 'Duplicate')) {
-                    throw new \InvalidArgumentException("A URL has already been added with the short URL '${shortCode}'", 400);
+                    throw new \InvalidArgumentException(
+                        "A URL has already been added with the short URL '${shortCode}'",
+                        400
+                        );
                 }
             }
         }
@@ -314,7 +317,7 @@ KEY long_url (long_url)
         $response = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
-        return (!empty($response) && $response != 404);
+        return !empty($response) && $response != 404;
     }
 
     /**

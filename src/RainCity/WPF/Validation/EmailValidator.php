@@ -12,9 +12,9 @@ class EmailValidator extends BaseValidator {
      * @param   mixed   $input  A single address as a string or multiple addresses as an array of strings
      * @return  bool            True if the input is valid; otherwise, false
      */
-    public function is_valid( $input ) {
+    public function isValid( $input ) {
 
-        $is_valid = true;
+        $isValid = true;
 
         if (is_string($input) || is_array($input)) {
             $addrs = is_array($input) ? $input : array($input);
@@ -24,23 +24,23 @@ class EmailValidator extends BaseValidator {
 //                if (!preg_match (
 //                    '/^([a-zA-Z\-0-9\.]+@)([a-zA-Z\-0-9\.]+)$/',
 //                    trim($addr)) ) {
-                        $is_valid = false;
+                        $isValid = false;
                         break;
                 }
             }
         }
         else {
-            $is_valid = false;
+            $isValid = false;
         }
 
         // If the input is an empty string, add the error message and mark the validity as false
-        if ( ! $is_valid ) {
+        if ( ! $isValid ) {
 
-            $this->add_error('Invalid email address.' );
-            $is_valid = false;
+            $this->addError('Invalid email address.' );
+            $isValid = false;
         }
 
-        return $is_valid;
+        return $isValid;
 
     }
 }

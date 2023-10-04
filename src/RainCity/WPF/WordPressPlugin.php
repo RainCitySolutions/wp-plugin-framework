@@ -99,7 +99,7 @@ abstract class WordPressPlugin
          *
          * <p><strong>Use With Care!</strong>
          */
-        $this->loader->add_action(
+        $this->loader->addAction(
             'after_setup_theme',
             null,
             function () {
@@ -113,16 +113,16 @@ abstract class WordPressPlugin
         );
 
         // delay running database upgrades until WordPress is initialized
-        $this->loader->add_action( 'init', $this, 'privUpgradeDatabase', 0 );
-        $this->loader->add_action( 'init', $this, 'fireRegisterShortCodeAction');
+        $this->loader->addAction( 'init', $this, 'privUpgradeDatabase', 0 );
+        $this->loader->addAction( 'init', $this, 'fireRegisterShortCodeAction');
 
-        $this->loader->add_action('admin_enqueue_scripts', $this, 'onAdminEnqueueScripts');
-        $this->loader->add_action('wp_enqueue_scripts', $this, 'onWpEnqueueScripts');
-        $this->loader->add_filter('script_loader_tag', $this, 'onScriptLoaderTag', 10, 2);
+        $this->loader->addAction('admin_enqueue_scripts', $this, 'onAdminEnqueueScripts');
+        $this->loader->addAction('wp_enqueue_scripts', $this, 'onWpEnqueueScripts');
+        $this->loader->addFilter('script_loader_tag', $this, 'onScriptLoaderTag', 10, 2);
 
 
         // Enable application passwords for development environments
-        $this->loader->add_filter(
+        $this->loader->addFilter(
             'wp_is_application_passwords_available',
             null,
             function ($isAvailable) {
@@ -131,7 +131,7 @@ abstract class WordPressPlugin
         );
 
         // Add hook to register our short codes.
-        $this->loader->add_action(self::ON_REGISTER_SHORTCODE_ACTION, $this, 'privRegisterShortCodes');
+        $this->loader->addAction(self::ON_REGISTER_SHORTCODE_ACTION, $this, 'privRegisterShortCodes');
 
         $this->loader->run();
     }
@@ -154,7 +154,12 @@ abstract class WordPressPlugin
                 public function registerShortCode(ShortCodeImplInf $shortCodeImpl) {
                     add_shortcode($shortCodeImpl->getTagName(), array($shortCodeImpl, 'renderShortCode'));
                     add_filter(DocumentationTab::DOCUMENTATION_FILTER, array($shortCodeImpl, 'getDocumentation'));
-                    add_filter('shortcode_atts_'.$shortCodeImpl->getTagName(), array($shortCodeImpl, 'filterAttributes'), 10, 4);
+                    add_filter(
+                        'shortcode_atts_'.$shortCodeImpl->getTagName(),
+                        array($shortCodeImpl, 'filterAttributes'),
+                        10,
+                        4
+                        );
                 }
             }
             );
@@ -323,11 +328,11 @@ abstract class WordPressPlugin
         register_deactivation_hook( $this->mainPluginFilename, array($this, 'deactivate_plugin' ));
         register_uninstall_hook( $this->mainPluginFilename, array(get_class($this), 'uninstall_plugin' ));
 
-        $this->loader->add_action('init', null, function () {
+        $this->loader->addAction('init', null, function () {
             new PluginUpdater($this->pluginName, $this->pluginSlug, $this->mainPluginFilename, $this->pluginVersion); // NOSONAR
         });
 
-        $this->loader->add_filter('plugin_action_links', $this, 'addPluginActionLinks', 10, 4);
+        $this->loader->addFilter('plugin_action_links', $this, 'addPluginActionLinks', 10, 4);
     }
 
 
@@ -337,7 +342,7 @@ abstract class WordPressPlugin
      * @param ShortCodeRegInf $regHandler Interface to use in registering
      *          short code handlers.
      */
-    public final function privRegisterShortCodes(ShortCodeRegInf $regHandler) {
+    final public function privRegisterShortCodes(ShortCodeRegInf $regHandler) {
         $regHandler->registerShortCode(new UsernameShortCode());
         $regHandler->registerShortCode(new EmailShortCode());
     }
@@ -463,10 +468,10 @@ abstract class WordPressPlugin
     public function register_admin_helper(AdminHelperInf $adminInst) {
 
         if (is_admin() && isset($adminInst)) {
-            $this->loader->add_action( 'admin_enqueue_scripts', $adminInst, 'onAdminEnqueueScripts' );
+            $this->loader->addAction( 'admin_enqueue_scripts', $adminInst, 'onAdminEnqueueScripts' );
 
-            $this->loader->add_action( 'admin_init', $adminInst, 'addSettings' );
-            $this->loader->add_action( 'admin_menu', $adminInst, 'addSettingsMenu' );
+            $this->loader->addAction( 'admin_init', $adminInst, 'addSettings' );
+            $this->loader->addAction( 'admin_menu', $adminInst, 'addSettingsMenu' );
         }
     }
 
@@ -516,45 +521,50 @@ abstract class WordPressPlugin
             $pluginSlug = $pluginData['TextDomain'];
 
             register_shutdown_function(function () use ($pluginSlug) {
-                $error = error_get_last();
-
-                if (!is_null($error)) {
-                    $logger = Logger::getLogger(WordPressLogger::BASE_LOGGER, $pluginSlug);
-
-                    switch ($error['type']) {
-                        case E_ERROR:
-                            $level = \Psr\Log\LogLevel::CRITICAL;
-                            break;
-
-                        case E_WARNING:
-                            $level = \Psr\Log\LogLevel::WARNING;
-                            break;
-
-                        case E_NOTICE:
-                            if (preg_match('/^Constant .* already defined$/', $error['message'])) {
-                                $level = \Psr\Log\LogLevel::DEBUG;
-                            } else {
-                                $level = \Psr\Log\LogLevel::NOTICE;
-                            }
-                            break;
-
-                        case E_DEPRECATED:
-                            $level = \Psr\Log\LogLevel::DEBUG;
-                            break;
-
-                        default:
-                            $level = \Psr\Log\LogLevel::INFO;
-                            break;
-                    }
-
-                    // Don't log DEBUG messages
-                    if (\Psr\Log\LogLevel::DEBUG != $level) {
-                        $logger->log($level, 'PHP Error: ', $error);
-                    }
-                }
+                self::shutdownFunction($pluginSlug);
             });
         }
 
         return forward_static_call(array($pluginClass, 'instance'), $pluginData);
+    }
+    
+    private static function shutdownFunction($pluginSlug)
+    {
+        $error = error_get_last();
+        
+        if (!is_null($error)) {
+            $logger = Logger::getLogger(WordPressLogger::BASE_LOGGER, $pluginSlug);
+            
+            switch ($error['type']) {
+                case E_ERROR:
+                    $level = \Psr\Log\LogLevel::CRITICAL;
+                    break;
+                    
+                case E_WARNING:
+                    $level = \Psr\Log\LogLevel::WARNING;
+                    break;
+                    
+                case E_NOTICE:
+                    if (preg_match('/^Constant .* already defined$/', $error['message'])) {
+                        $level = \Psr\Log\LogLevel::DEBUG;
+                    } else {
+                        $level = \Psr\Log\LogLevel::NOTICE;
+                    }
+                    break;
+                    
+                case E_DEPRECATED:
+                    $level = \Psr\Log\LogLevel::DEBUG;
+                    break;
+                    
+                default:
+                    $level = \Psr\Log\LogLevel::INFO;
+                    break;
+            }
+            
+            // Don't log DEBUG messages
+            if (\Psr\Log\LogLevel::DEBUG != $level) {
+                $logger->log($level, 'PHP Error: ', $error);
+            }
+        }
     }
 }

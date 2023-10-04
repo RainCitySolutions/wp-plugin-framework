@@ -21,25 +21,25 @@ final class RedirectionManager
      * @param ActionFilterLoader $loader
      */
     public function loadActions(ActionFilterLoader $loader) {
-        $loader->add_filter('login_redirect', $this, 'loginRedirect', 10, 3);
-        $loader->add_filter('logout_redirect', $this, 'logoutRedirect', 10, 3);
+        $loader->addFilter('login_redirect', $this, 'loginRedirect', 10, 3);
+        $loader->addFilter('logout_redirect', $this, 'logoutRedirect', 10, 3);
     }
 
 
     /**
      * Handles login redirection
      *
-     * @param string $redirect_to Default redirect
+     * @param string $redirectTo Default redirect
      * @param string $request Requested redirect
      * @param WP_User|WP_Error WP_User if user logged in, WP_Error otherwise
      *
      * @return string New redirect
      */
-    public function loginRedirect( $redirect_to, $requested_redirect_to, $user ) {
-        $redirectUrl = $redirect_to;
+    public function loginRedirect( $redirectTo, $requestedRedirectTo, $user ) {
+        $redirectUrl = $redirectTo;
 
         if ($user instanceof \WP_User) {
-            $url = $this->helper->getLoginRedirectUrl($user, $requested_redirect_to);
+            $url = $this->helper->getLoginRedirectUrl($user, $requestedRedirectTo);
             if (isset($url)) {
                 $redirectUrl = $url;
             }
@@ -51,14 +51,14 @@ final class RedirectionManager
     /**
      * Handles logout redirection
      *
-     * @param string $redirect_to Default redirect
+     * @param string $redirectTo Default redirect
      * @param string $request Requested redirect
      * @param WP_User|WP_Error WP_User if user logged in, WP_Error otherwise
      *
      * @return string New redirect
      */
-    public function logoutRedirect( $redirect_to, $request, $user ) {
-        $redirectUrl = $redirect_to;
+    public function logoutRedirect($redirectTo, $request, $user) {
+        $redirectUrl = $redirectTo;
 
         if ($user instanceof \WP_User) {
             $helperUrl = $this->helper->getLogoutRedirectUrl($user);

@@ -32,9 +32,9 @@ class ShortUrlOptionsTab
             self::OPTIONS_SECTION_MAPPINGS_TITLE,
             function () {
                 ?>
-        		<style>
+                <style>
                     #raincityWpfShortUrlTable table { width: 100%;}
-                    #raincityWpfShortUrlTable th:first-child {	width: 20%; text-align: left; }
+                    #raincityWpfShortUrlTable th:first-child {    width: 20%; text-align: left; }
                     #raincityWpfShortUrlTable th:nth-child(2) { width: 70%; text-align: left; }
                     #raincityWpfShortUrlTable th:nth-child(3) { width: 10%; text-align: center; }
                     #raincityWpfShortUrlTable td:nth-child(3) { text-align: center; }
@@ -43,22 +43,22 @@ class ShortUrlOptionsTab
                     #raincityWpfShortUrlInput { width: 69% }
                     #raincityWpfShortUrlAddBtn { width: 9% }
                 </style>
-        		<div id="raincityWpfShortUrlTable">
-                	<?php print $this->renderMappingTable(); ?>
+                <div id="raincityWpfShortUrlTable">
+                    <?php print $this->renderMappingTable(); ?>
                 </div>
-        		<br>
-        		<input type="text" id="raincityWpfShortUrlCode" maxlength="32"></input>
-        		<input type="text" id="raincityWpfShortUrlInput" maxlength="255"></input>
-        		<input type="button" id="raincityWpfShortUrlAddBtn" value="Add"
-        			data-url="<?php echo admin_url('admin-ajax.php'); ?>"
-					data-nonce="<?php echo wp_create_nonce($this->tabId); ?>"
-					data-action="<?php echo self::AJAX_ADD_SHORT_URL; ?>"
-        		></input>
-        		<br>
-        		<em>The Short URL can be left blank to have a code generated.</em>
-        		<?php
-    		},
-    		$pageSlug
+                <br>
+                <input type="text" id="raincityWpfShortUrlCode" maxlength="32"></input>
+                <input type="text" id="raincityWpfShortUrlInput" maxlength="255"></input>
+                <input type="button" id="raincityWpfShortUrlAddBtn" value="Add"
+                    data-url="<?php echo admin_url('admin-ajax.php'); ?>"
+                    data-nonce="<?php echo wp_create_nonce($this->tabId); ?>"
+                    data-action="<?php echo self::AJAX_ADD_SHORT_URL; ?>"
+                ></input>
+                <br>
+                <em>The Short URL can be left blank to have a code generated.</em>
+                <?php
+            },
+            $pageSlug
         );
     }
 
@@ -71,44 +71,44 @@ class ShortUrlOptionsTab
         ob_start();
         ?>
         <table>
-        	<caption>List of Short URL to Long URL mappings</caption>
-        	<thead>
-        		<tr>
-        			<th>Short URL</th>
-        			<th>Long URL</th>
-        			<th>Delete</th>
-        		</tr>
-        	</thead>
-        	<tbody>
-        	<?php foreach ($urlMappings as $urlMapping) { ?>
-            	<tr>
-        			<td><?php echo $urlMapping->shortUrl; ?></td>
-        			<td><?php echo $urlMapping->longUrl; ?></td>
-        			<td>
-        				<span
-        					class="raincityWpfShortUrlDeleteBtn"
-        					data-raincity-wpf-shorturlcode="<?php echo $urlMapping->shortCode; ?>"
-							data-url="<?php echo $ajaxUrl; ?>"
-							data-nonce="<?php echo $ajaxNonce; ?>"
-							data-action="<?php echo self::AJAX_DELETE_SHORT_URL; ?>"
-        					>
+            <caption>List of Short URL to Long URL mappings</caption>
+            <thead>
+                <tr>
+                    <th>Short URL</th>
+                    <th>Long URL</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($urlMappings as $urlMapping) { ?>
+                <tr>
+                    <td><?php echo $urlMapping->shortUrl; ?></td>
+                    <td><?php echo $urlMapping->longUrl; ?></td>
+                    <td>
+                        <span
+                            class="raincityWpfShortUrlDeleteBtn"
+                            data-raincity-wpf-shorturlcode="<?php echo $urlMapping->shortCode; ?>"
+                            data-url="<?php echo $ajaxUrl; ?>"
+                            data-nonce="<?php echo $ajaxNonce; ?>"
+                            data-action="<?php echo self::AJAX_DELETE_SHORT_URL; ?>"
+                            >
 
-        					<svg
-        						aria-hidden="true" focusable="false" data-prefix="fas"
-        						data-icon="trash-alt" class="svg-inline--fa fa-trash-alt fa-w-14"
-        						role="img" xmlns="http://www.w3.org/2000/svg"
-        						viewBox="0 0 448 512">
-        						<path fill="currentColor"
-        							d="M32 464a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48V128H32zm272-256a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zM432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16z">
-    							</path>
-							</svg>
-        				</span>
-    				</td>
-				</tr>
-    		<?php } ?>
-			</tbody>
-		</table>
-		<?php
+                            <svg
+                                aria-hidden="true" focusable="false" data-prefix="fas"
+                                data-icon="trash-alt" class="svg-inline--fa fa-trash-alt fa-w-14"
+                                role="img" xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 448 512">
+                                <path fill="currentColor"
+                                    d="M32 464a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48V128H32zm272-256a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zM432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16z">
+                                </path>
+                            </svg>
+                        </span>
+                    </td>
+                </tr>
+            <?php } ?>
+            </tbody>
+        </table>
+        <?php
         $html = MiscHelper::minifyHtml(ob_get_contents());
         ob_end_clean();
 

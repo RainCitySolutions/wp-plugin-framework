@@ -14,7 +14,7 @@ abstract class AdminSettings
     /**
      * @var string  $plugin_name    The ID of this plugin.
      */
-    protected $plugin_name;
+    protected $pluginName;
 
     /**
      * @var string  $version    The current version of this plugin.
@@ -32,11 +32,18 @@ abstract class AdminSettings
     /**
      * Initialize the class and set its properties.
      *
-     * @param      string    $plugin_name       The name of this plugin.
+     * @param      string    $pluginName       The name of this plugin.
      * @param      string    $version    The version of this plugin.
      */
-    protected function __construct(string $plugin_name, string $version, string $pageTitle, string $pageSlug, string $menuTitle) {
-        $this->plugin_name = $plugin_name;
+    protected function __construct(
+        string $pluginName,
+        string $version,
+        string $pageTitle,
+        string $pageSlug,
+        string $menuTitle
+        )
+    {
+        $this->pluginName = $pluginName;
         $this->version = $version;
 
         $this->optionsPageTitle = $pageTitle;
@@ -52,7 +59,7 @@ abstract class AdminSettings
      *
      * Hooked into the 'admin_menu' event.
      */
-    public final function addSettingsMenu() {
+    final public function addSettingsMenu() {
         if (isset($this->optionsPageTitle) &&
             isset($this->optionsPageSlug) &&
             isset($this->optionsMenuTitle))
@@ -76,7 +83,7 @@ abstract class AdminSettings
      * Hooked into the 'admin_init' event and called as a result of the child
      * class being registered with the plugin as the admin helper.
      */
-    public final function addSettings() {
+    final public function addSettings() {
         foreach ($this->tabs as $tab) {
             $tab->registerActions();
         }
@@ -90,10 +97,10 @@ abstract class AdminSettings
      *
      * Hooked into the 'admin_enqueue_scripts' event.
      */
-    public final function onAdminEnqueueScripts () {
+    final public function onAdminEnqueueScripts () {
         $activeTab = $this->getActiveTab();
 
-        $activeTab->onEnqueueScripts($this->plugin_name, Utils::getPluginUrl(), $this->version);
+        $activeTab->onEnqueueScripts($this->pluginName, Utils::getPluginUrl(), $this->version);
     }
 
     private function getActiveTab(): AdminSettingsTab {
@@ -123,7 +130,7 @@ abstract class AdminSettings
         $activeTab->sanitize($input);
     }
 
-    public final function registerTab(AdminSettingsTab $tab) {
+    final public function registerTab(AdminSettingsTab $tab) {
         $newTab = true;
 
         foreach ($this->tabs as $existingTab) {
@@ -142,7 +149,7 @@ abstract class AdminSettings
     /**
      * Render the settings page
      */
-    public final function renderSettingsPage () {
+    final public function renderSettingsPage () {
         // check user capabilities
         if ( current_user_can( 'manage_options' ) && count($this->tabs) != 0)
         {
@@ -160,7 +167,8 @@ abstract class AdminSettings
 
                         // Generate a link for each registered tab
                         foreach ($this->tabs as $tab) {
-                            // when tab buttons are clicked we jump back to the same page but with a new parameter that represents the clicked tab. accordingly we make it active
+                            // When tab buttons are clicked we jump back to the same page but with a new parameter
+                            // that represents the clicked tab. accordingly we make it active
                             printf('<a href="?page=%s&tab=%s" class="nav-tab %s">%s</a>',
                                 $this->optionsPageSlug,
                                 $tab->getId(),
@@ -178,7 +186,7 @@ abstract class AdminSettings
                     ?>
                 </form>
 
-            	<?php
+                <?php
                     $activeTab->renderPostFormData();
                 ?>
             </div>

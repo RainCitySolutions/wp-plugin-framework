@@ -17,17 +17,17 @@ class UrlValidator extends StringValidator {
      * @param   mixed   $input  A single address as a string or multiple addresses as an array of strings
      * @return  bool            True if the input is valid; otherwise, false
      */
-    public function is_valid( $input ) {
-        $is_valid = parent::is_valid($input);
+    public function isValid( $input ) {
+        $isValid = parent::isValid($input);
 
-        if ($is_valid &&
+        if ($isValid &&
             !filter_var($input, FILTER_VALIDATE_URL) && // full URL
             !filter_var('http://'.$input, FILTER_VALIDATE_URL) && // host name only
             !strpos($input, '/') == 0)
         {
-                $is_valid = false;
+                $isValid = false;
         }
 
-        return $is_valid;
+        return $isValid;
     }
 }

@@ -48,7 +48,7 @@ abstract class BaseValidator {
      *
      * @param    string    $message    The message to display in the dashboard
      */
-    public function add_error( $message ) {
+    public function addError( $message ) {
         if (!empty($this->fieldName)) {
             $message = $this->fieldName . ': ' . $message;
         }

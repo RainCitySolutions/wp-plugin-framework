@@ -71,7 +71,12 @@ class WordPressUserDataTest extends WordpressTestCase
     public function testGetData_hasData() {
         $obj = new TestWordPressUserData(self::TEST_USER_ID);
 
-        ReflectionHelper::setObjectProperty(WordPressUserData::class, 'data', array(self::TEST_KEY => serialize(self::TEST_DATA)), $obj);
+        ReflectionHelper::setObjectProperty(
+            WordPressUserData::class,
+            'data',
+            array(self::TEST_KEY => serialize(self::TEST_DATA)),
+            $obj
+            );
 
         $data = $obj->getData(self::TEST_KEY);
 

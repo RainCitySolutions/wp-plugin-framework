@@ -10,15 +10,15 @@ use RainCity\Logging\Helper;
  */
 class Utils
 {
-    public static function getPluginFile( $plugin_name ) {
+    public static function getPluginFile( $pluginName ) {
         if (defined('ABSPATH')) { // Wrap in case we get invoked via unit testing
             require_once ABSPATH . '/wp-admin/includes/plugin.php';
         }
 
         $plugins = get_plugins();
-        foreach( $plugins as $plugin_file => $plugin_info ) {
-            if ( $plugin_info['Name'] == $plugin_name ) {
-                return $plugin_file;
+        foreach( $plugins as $pluginFile => $pluginInfo ) {
+            if ( $pluginInfo['Name'] == $pluginName ) {
+                return $pluginFile;
             }
         }
         return null;
@@ -94,7 +94,12 @@ class Utils
         return $pluginInfo;
     }
 
-    private static function extractPluginInfoFromPath(PluginInformation &$pluginInfo, string $pluginPathRegex, array $stackTrace) {
+    private static function extractPluginInfoFromPath(
+        PluginInformation &$pluginInfo,
+        string $pluginPathRegex,
+        array $stackTrace
+        )
+    {
         $matches = array();
 
         $path = wp_normalize_path(plugin_dir_path( __FILE__ ) ) ;
@@ -110,7 +115,10 @@ class Utils
                 $pluginInfo->pluginPath = $matches[1];
             }
             else {
-                Helper::log('Unable to determine plugin package name: ', array('regex' => $pluginPathRegex, 'stack' =>  $stackTrace));
+                Helper::log(
+                    'Unable to determine plugin package name: ',
+                    array('regex' => $pluginPathRegex, 'stack' =>  $stackTrace)
+                    );
             }
         }
     }
@@ -213,11 +221,11 @@ class Utils
                 //                    && ! in_array( $url, $whitelist )
                     ) {
                         // Determine redirect URL
-                        $redirect_url = apply_filters( 'raincity_wpf_requirelogin_redirect', $url );
+                        $redirectUrl = apply_filters( 'raincity_wpf_requirelogin_redirect', $url );
                         // Set the headers to prevent caching
                         nocache_headers();
                         // Redirect
-                        wp_safe_redirect( wp_login_url( $redirect_url ), 302 );
+                        wp_safe_redirect( wp_login_url( $redirectUrl ), 302 );
                         exit;
                     }
             }
@@ -247,7 +255,10 @@ class Utils
             !is_user_member_of_blog() &&
             !current_user_can('setup_network') )
         {
-            wp_die( __( "You're not authorized to access this site.", 'wp-force-login' ), get_option('blogname') . ' &rsaquo; ' . __( "Error", 'wp-force-login' ) );
+            wp_die(
+                __( "You're not authorized to access this site.", 'wp-force-login' ),
+                get_option('blogname') . ' &rsaquo; ' . __( "Error", 'wp-force-login' )
+                );
         }
     }
 
@@ -256,7 +267,7 @@ class Utils
         $url .= '://' . $_SERVER['HTTP_HOST'];
 
         // port is prepopulated here sometimes
-        if ( strpos( $_SERVER['HTTP_HOST'], ':' ) === FALSE ) {
+        if ( strpos( $_SERVER['HTTP_HOST'], ':' ) === false ) {
             $url .= in_array( $_SERVER['SERVER_PORT'], array('80', '443') ) ? '' : ':' . $_SERVER['SERVER_PORT'];
         }
 

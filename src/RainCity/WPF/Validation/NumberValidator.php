@@ -23,32 +23,32 @@ class NumberValidator extends BaseValidator
      * @param    string    $input    The string
      * @return   bool                True if the input is valid; otherwise, false
      */
-    public function is_valid( $input ) {
-        $is_valid = true;
+    public function isValid( $input ) {
+        $isValid = true;
 
         // If the input is an empty string, add the error message and mark the validity as false
         if ( '' == trim( $input ) ) {
 
-            $this->add_error('You must provide a value.' );
-            $is_valid = false;
+            $this->addError('You must provide a value.' );
+            $isValid = false;
         }
         else {
             if (is_numeric($input)) {
                 $value = intval($input);
                 if ($value >= $this->min && $value <= $this->max) {
-                    $is_valid = true;
+                    $isValid = true;
                 }
                 else {
-                    $this->add_error('Value not within range ('.$this->min.'-'.$this->max.').' );
-                    $is_valid = false;
+                    $this->addError('Value not within range ('.$this->min.'-'.$this->max.').' );
+                    $isValid = false;
                 }
             }
             else {
-                $this->add_error('Not a number.' );
-                $is_valid = false;
+                $this->addError('Not a number.' );
+                $isValid = false;
             }
         }
 
-        return $is_valid;
+        return $isValid;
     }
 }

@@ -54,5 +54,10 @@ interface ShortCodeImplInf
      *
      * @return array The filtered attributes.
      */
-    public function filterAttributes(array $combinedAtts, array $defaultPairs, array $providedAtts, string $shortcode): array;
+    public function filterAttributes(
+        array $combinedAtts,
+        array $defaultPairs,
+        array $providedAtts,
+        string $shortcode
+        ): array;
 }

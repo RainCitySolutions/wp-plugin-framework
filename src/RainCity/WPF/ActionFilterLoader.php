@@ -67,7 +67,7 @@ class ActionFilterLoader {
      * @param    int                  $priority     Optional. The priority at which the function should be fired. Default is 10.
      * @param    int                  $args         Optional. The number of arguments that should be passed to the $callback. Default is 1.
      */
-    public function add_action( $hook, $component, $callback, $priority = 10, $args = 1 ) {
+    public function addAction( $hook, $component, $callback, $priority = 10, $args = 1 ) {
         $this->add( $this->actions, $hook, $component, $callback, $priority, $args );
     }
 
@@ -80,7 +80,7 @@ class ActionFilterLoader {
      * @param    int                  $priority     Optional. The priority at which the function should be fired. Default is 10.
      * @param    int                  $args         Optional. The number of arguments that should be passed to the $callback. Default is 1.
      */
-    public function add_filter( $hook, $component, $callback, $priority = 10, $args = 1 ) {
+    public function addFilter( $hook, $component, $callback, $priority = 10, $args = 1 ) {
         $this->add( $this->filters, $hook, $component, $callback, $priority, $args );
     }
 
@@ -91,7 +91,7 @@ class ActionFilterLoader {
      * @param    string|object|null   $component    A reference to a class for static methods, an object for instance methods or null.
      * @param    string|callable      $callback     The name of the method on the class or object on the $component, the name of a function or a function.
      */
-    public function add_shortcode( $hook, $component, $callback) {
+    public function addShortcode( $hook, $component, $callback) {
         $this->add( $this->shortcodes, $hook, $component, $callback);
     }
 
@@ -107,7 +107,14 @@ class ActionFilterLoader {
      * @param string|callable       $callback   The name of a method on the class or object on the $component, the name of a function or a function.
      * @param array                 $args       The arguments to be provided to register_rest_route.
      */
-    public function add_endpoint(int $version, string $route, $component, $callback, array $args = array('methods' => \WP_REST_Server::READABLE)) {
+    public function addEndpoint(
+        int $version,
+        string $route,
+        $component,
+        $callback,
+        array $args = array('methods' => \WP_REST_Server::READABLE)
+        )
+    {
         $args['callback'] = $this->getCallback($component, $callback);
 
         if (!isset($args['permission_callback'])) {
@@ -135,14 +142,22 @@ class ActionFilterLoader {
      * @param    string|object|null   $component        A reference to the instance of the object on which the filter is defined.
      * @param    string|callable      $callback         The name of the function definition on the $component.
      * @param    int                  $priority         The priority at which the function should be fired.
-     * @param    int                  $accepted_args    The number of arguments that should be passed to the $callback.
+     * @param    int                  $acceptedArgs    The number of arguments that should be passed to the $callback.
      */
-    private function add(array &$hooks, string $hook, $component, $callback, int $priority = 10, int $accepted_args = 1 ) {
+    private function add(
+        array &$hooks,
+        string $hook,
+        $component,
+        $callback,
+        int $priority = 10,
+        int $acceptedArgs = 1
+        )
+    {
         $hookObj = new \stdClass();
         $hookObj->hook = $hook;
         $hookObj->callback = $this->getCallback($component, $callback);
         $hookObj->priority = $priority;
-        $hookObj->accepted_args = $accepted_args;
+        $hookObj->accepted_args = $acceptedArgs;
 
         $hooks[] = $hookObj;
     }
@@ -166,7 +181,7 @@ class ActionFilterLoader {
             if (is_object($component)) {
                 $callbackFunc = array($component, $callback);
             }
-            else if (is_string($component)) {
+            elseif (is_string($component)) {
                 $callbackFunc = array($component, $callback);
             }
             else {

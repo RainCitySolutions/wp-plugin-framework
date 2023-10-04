@@ -75,7 +75,9 @@ class ShortUrlHandlerTest extends WordpressTestCase
 
         $testUrlCode = 'testUrlCode';
 
-        $GLOBALS['_SERVER']['REQUEST_URI'] = self::getShortCodeUrl($testUrlCode) . '?fbclid=IwAR21Rwxa7gk49D8Bg1UOBmr-FdOujmtmEj_eCVvLa6MwGJo_x42f_eiEhhE';
+        $GLOBALS['_SERVER']['REQUEST_URI'] =
+            self::getShortCodeUrl($testUrlCode) .
+            '?fbclid=IwAR21Rwxa7gk49D8Bg1UOBmr-FdOujmtmEj_eCVvLa6MwGJo_x42f_eiEhhE';
 
         global $wpdb;
 

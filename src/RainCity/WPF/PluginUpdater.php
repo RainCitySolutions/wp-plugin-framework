@@ -173,7 +173,10 @@ class PluginUpdater
             }
         }
         else {
-            $this->log->info('Found a file that looked like a plugin update but couldn\'t determing the verison number: ' . $entry->path);
+            $this->log->info(
+                'Found a file that looked like a plugin update but couldn\'t determing the verison number: ' .
+                $entry->path
+                );
             $ipm->addPost($entry->id);
         }
     }

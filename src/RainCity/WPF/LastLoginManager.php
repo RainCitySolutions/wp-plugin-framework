@@ -19,19 +19,19 @@ final class LastLoginManager
      * @param ActionFilterLoader $loader
      */
     public function loadActions(ActionFilterLoader $loader) {
-        $loader->add_action('wp_login', $this, 'wpLoginAction', 10, 2);
-        $loader->add_action('user_register', $this, 'userRegisterAction');
+        $loader->addAction('wp_login', $this, 'wpLoginAction', 10, 2);
+        $loader->addAction('user_register', $this, 'userRegisterAction');
 
         if ( is_admin() ) {
-            $loader->add_filter('manage_users_columns', $this, 'addLastLoginColumn');
-            $loader->add_filter('wpmu_users_columns', $this, 'addLastLoginColumn');
-            $loader->add_filter('manage_users_custom_column', $this, 'manageUsersCustomColumn', 10, 3);
-            $loader->add_filter('manage_users_sortable_columns', $this, 'markColumnSortable');
-            $loader->add_filter('manage_users-network_sortable_columns', $this, 'markColumnSortable');
+            $loader->addFilter('manage_users_columns', $this, 'addLastLoginColumn');
+            $loader->addFilter('wpmu_users_columns', $this, 'addLastLoginColumn');
+            $loader->addFilter('manage_users_custom_column', $this, 'manageUsersCustomColumn', 10, 3);
+            $loader->addFilter('manage_users_sortable_columns', $this, 'markColumnSortable');
+            $loader->addFilter('manage_users-network_sortable_columns', $this, 'markColumnSortable');
 
-            $loader->add_action('admin_print_styles-users.php', $this, 'formatLastLoginColumn');
-            $loader->add_action('admin_print_styles-site-users.php', $this, 'formatLastLoginColumn');
-            $loader->add_action('pre_get_users', $this, 'preGetUsersAction');
+            $loader->addAction('admin_print_styles-users.php', $this, 'formatLastLoginColumn');
+            $loader->addAction('admin_print_styles-site-users.php', $this, 'formatLastLoginColumn');
+            $loader->addAction('pre_get_users', $this, 'preGetUsersAction');
         }
     }
 
@@ -77,35 +77,35 @@ final class LastLoginManager
      */
     public function formatLastLoginColumn() {
         ?>
-		<style type="text/css">
-			.column-<?php echo self::COLUMN_NAME; ?> { width: 15%; }
-		</style>
-		<?php
-	}
+        <style type="text/css">
+            .column-<?php echo self::COLUMN_NAME; ?> { width: 15%; }
+        </style>
+        <?php
+    }
 
-	/**
-	 * manage_users_custom_column filter hook
-	 *
-	 * Displays the last login value
-	 *
+    /**
+     * manage_users_custom_column filter hook
+     *
+     * Displays the last login value
+     *
      * @param string $output The value to be output by default.
-     * @param string $column_name The name of the column.
+     * @param string $columnName The name of the column.
      * @param int    $user_id The user's id.
      *
      * @return string The last login date if available otherwise 'Never'.
-	 */
-	public function manageUsersCustomColumn(string $output, string $column_name, int $user_id) {
-	    if ( self::COLUMN_NAME === $column_name ) {
-	        $output = __( 'Never', $this->textDomain );
-	        $last_login = (int) get_user_meta( $user_id, self::LAST_LOGIN_META_TAG, true );
+     */
+    public function manageUsersCustomColumn(string $output, string $columnName, int $userId) {
+        if ( self::COLUMN_NAME === $columnName ) {
+            $output = __( 'Never', $this->textDomain );
+            $lastLogin = (int) get_user_meta( $userId, self::LAST_LOGIN_META_TAG, true );
 
-	        if ( $last_login ) {
-	            $output  = date_i18n( get_option( 'date_format' ), $last_login );
-	        }
-	    }
+            if ( $lastLogin ) {
+                $output  = date_i18n( get_option( 'date_format' ), $lastLogin );
+            }
+        }
 
-	    return $output;
-	}
+        return $output;
+    }
 
     /**
      * manage_*_sortable_columns filter hook
@@ -116,7 +116,7 @@ final class LastLoginManager
      *
      * @return array
      */
-	public function markColumnSortable(array $columns) {
+    public function markColumnSortable(array $columns) {
         $columns[self::COLUMN_NAME] = self::COLUMN_NAME;
 
         return $columns;

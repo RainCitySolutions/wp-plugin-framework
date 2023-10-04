@@ -9,16 +9,16 @@ class StringValidator extends BaseValidator
      * @param    string    $input    The string
      * @return   bool                True if the input is valid; otherwise, false
      */
-    public function is_valid( $input ) {
-        $is_valid = true;
+    public function isValid( $input ) {
+        $isValid = true;
 
         // If the input is an empty string, add the error message and mark the validity as false
         if ( '' == trim( $input ) ) {
 
-            $this->add_error('You must provide a value.' );
-            $is_valid = false;
+            $this->addError('You must provide a value.' );
+            $isValid = false;
         }
 
-        return $is_valid;
+        return $isValid;
     }
 }

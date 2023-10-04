@@ -32,7 +32,7 @@ class HttpResponseFilter
         add_filter('http_response', array($this, 'capture'), 10, 3);
     }
 
-    function __destruct()
+    public function __destruct()
     {
         remove_filter('http_response', array($this, 'capture'), 10);
     }
