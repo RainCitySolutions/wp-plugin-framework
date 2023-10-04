@@ -9,7 +9,7 @@ use RainCity\Logging\Logger;
  * @author rainc
  *
  */
-abstract class BgTask implements \Serializable
+abstract class BgTask
 {
     /** @var LoggerInterface */
     protected $logger;
@@ -44,16 +44,16 @@ abstract class BgTask implements \Serializable
      */
     abstract public function run(BgProcess $bgProcess, ...$params) : bool;
 
-    public function serialize()
+    public function __serialize(): array
     {
         $vars = get_object_vars($this);
         unset($vars['logger']); // don't serialize the logger
-        return serialize($vars);
+
+        return $vars;
     }
 
-    public function unserialize($data)
+    public function __unserialize(array $vars): void
     {
-        $vars = unserialize($data);
         foreach ($vars as $var => $value) {
             $this->$var = $value;
         }

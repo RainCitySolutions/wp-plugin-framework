@@ -190,14 +190,14 @@ KEY long_url (long_url)
             catch (\Exception $e) {
                 if (strstr($e->getMessage(), 'Duplicate')) {
                     throw new \InvalidArgumentException(
-                        "A URL has already been added with the short URL '${shortCode}'",
+                        "A URL has already been added with the short URL '{$shortCode}'",
                         400
                         );
                 }
             }
         }
         else {
-            throw new \InvalidArgumentException("The URL already has a short URL '${existingShortCode}'", 400);
+            throw new \InvalidArgumentException("The URL already has a short URL '{$existingShortCode}'", 400);
         }
 
         return home_url($this->urlPrefix . $shortCode);

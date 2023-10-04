@@ -1,14 +1,12 @@
 <?php
 namespace RainCity\WPF;
 
-use Serializable;
 
 /**
  *
  *
  */
 abstract class WordPressUserData
-    implements Serializable
 {
     /** @var string Key for data stored per user in the WordPress usermeta table */
     const USER_META_KEY = self::USER_META_KEY;
@@ -56,27 +54,13 @@ abstract class WordPressUserData
         update_user_meta($this->wpUserId, static::USER_META_KEY, $this);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see Serializable::serialize()
-     */
-    public function serialize()
+    public function __serialize(): array
     {
-        $vars = get_object_vars($this);
-
-        return serialize($vars);
+        return get_object_vars($this);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see Serializable::unserialize()
-     */
-    public function unserialize($data)
+    public function __unserialize(array $vars): void
     {
-        $vars = unserialize($data);
-
         foreach ($vars as $var => $value) {
             /**
              * Only set values for properties of the object.
@@ -91,5 +75,4 @@ abstract class WordPressUserData
             }
         }
     }
-
 }
