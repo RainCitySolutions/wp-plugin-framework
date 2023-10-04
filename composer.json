@@ -14,11 +14,11 @@
 	"require" : {
 		"php" : ">=8.2",
 		"composer/installers" : "~2.2",
-		"raincity/php-library" : "~2.0",
-		"psr/log" : "~1.1",
+		"raincity/php-library" : "~2.1",
+		"psr/log" : "~3.0",
 		"theiconic/php-ga-measurement-protocol" : "~2.9",
 		"soundasleep/html2text" : "~2.1",
-		"deliciousbrains/wp-background-processing" : "~1.0.0"
+		"deliciousbrains/wp-background-processing" : "~1.1"
 	},
 	"autoload" : {
 		"classmap" : [
