@@ -88,7 +88,7 @@ abstract class WordPressPlugin
      * @see \RainCity\Singleton::initializeInstance()
      */
     protected function initializeInstance() {
-        $this->setup_actions();
+        $this->setupActions();
 
         /**
          * Hook to load a plugin specific functions.php from the plugin's
@@ -320,7 +320,7 @@ abstract class WordPressPlugin
      *
      * @access protected
      */
-    protected function setup_actions() {
+    protected function setupActions() {
         $this->loader = new ActionFilterLoader($this->pluginSlug);
 
         // Add actions to plugin activation and deactivation hooks
