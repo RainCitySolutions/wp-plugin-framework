@@ -12,9 +12,12 @@ if (class_exists('FrmForm')) {
  */
 class Formidable
 {
+    private const FRM_CACHE_FLAG = 'prevent_caching';
+
     private static $formIdCache = array();
     private static $fieldIdCache = array();
     private static $viewIdCache = array();
+    private static $dbCacheState = array();
 
     /**
      * Returns the ID for a Formidable form given its key.
@@ -89,6 +92,28 @@ class Formidable
         }
 
         return $id;
+    }
+
+    /**
+     * Restore Formidable caching state to the previous value.
+     *
+     * Calls to restoreDbCache() should be paired with calls to
+     * disableDbCache().
+     */
+    public static function restoreDbCache()
+    {
+        global $frm_vars;
+
+        if (!empty(self::$dbCacheState)) {
+            $prevValue = array_pop(self::$dbCacheState);
+
+            if (-1 === $prevValue) {
+                unset($frm_vars[self::FRM_CACHE_FLAG]);
+            }
+            else {
+                $frm_vars[self::FRM_CACHE_FLAG] = $prevValue;
+            }
+        }
     }
 }
 
