@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "21143321dad410ba9a190fd3406c6917",
+    "content-hash": "e2fbdc708993adacc826e0b5b4d6101d",
     "packages": [
         {
             "name": "composer/installers",
@@ -681,16 +681,16 @@
         },
         {
             "name": "json-mapper/json-mapper",
-            "version": "2.19.0",
+            "version": "2.20.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JsonMapper/JsonMapper.git",
-                "reference": "10003c2e8821925906d7e35e732d0ad10ded2d78"
+                "reference": "d8c4faf90642e08ab9f3314e0a6b2d9385e3d5a3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JsonMapper/JsonMapper/zipball/10003c2e8821925906d7e35e732d0ad10ded2d78",
-                "reference": "10003c2e8821925906d7e35e732d0ad10ded2d78",
+                "url": "https://api.github.com/repos/JsonMapper/JsonMapper/zipball/d8c4faf90642e08ab9f3314e0a6b2d9385e3d5a3",
+                "reference": "d8c4faf90642e08ab9f3314e0a6b2d9385e3d5a3",
                 "shasum": ""
             },
             "require": {
@@ -746,20 +746,20 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-06-06T19:32:28+00:00"
+            "time": "2023-10-09T11:33:40+00:00"
         },
         {
             "name": "monolog/monolog",
-            "version": "3.4.0",
+            "version": "3.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "e2392369686d420ca32df3803de28b5d6f76867d"
+                "reference": "c915e2634718dbc8a4a15c61b0e62e7a44e14448"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/e2392369686d420ca32df3803de28b5d6f76867d",
-                "reference": "e2392369686d420ca32df3803de28b5d6f76867d",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/c915e2634718dbc8a4a15c61b0e62e7a44e14448",
+                "reference": "c915e2634718dbc8a4a15c61b0e62e7a44e14448",
                 "shasum": ""
             },
             "require": {
@@ -835,7 +835,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Seldaek/monolog/issues",
-                "source": "https://github.com/Seldaek/monolog/tree/3.4.0"
+                "source": "https://github.com/Seldaek/monolog/tree/3.5.0"
             },
             "funding": [
                 {
@@ -847,7 +847,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-06-21T08:46:11+00:00"
+            "time": "2023-10-27T15:32:31+00:00"
         },
         {
             "name": "myclabs/php-enum",
@@ -1333,26 +1333,26 @@
         },
         {
             "name": "raincity/php-library",
-            "version": "2.1.5",
+            "version": "2.1.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/RainCitySolutions/php-library",
-                "reference": "96cef586bf994ac3d4bac3c7c04c8d546e304a57"
+                "reference": "260ec8932ecb7c167b05a8bd236296282dafd6ca"
             },
             "require": {
                 "composer/installers": "~2.2",
                 "doctrine/annotations": "~2.0",
                 "guzzlehttp/guzzle": "~7.8",
-                "json-mapper/json-mapper": "~2.19",
+                "json-mapper/json-mapper": "~2.20",
                 "monolog/monolog": "~3.4",
-                "php": ">=8.2",
+                "php": ">=8.1",
                 "psr/log": "~3.0",
                 "psr/simple-cache": "~3.0",
                 "symfony/cache": "~6.3"
             },
             "require-dev": {
                 "brain/monkey": "~2.6",
-                "phpunit/phpunit": "~9.5"
+                "phpunit/phpunit": "~9.6"
             },
             "type": "library",
             "autoload": {
@@ -1370,7 +1370,7 @@
                 "BSD-3-Clause"
             ],
             "description": "Library to support implementations in PHP",
-            "time": "2023-10-06T21:59:49+00:00"
+            "time": "2023-11-08T16:02:11+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
@@ -1473,16 +1473,16 @@
         },
         {
             "name": "symfony/cache",
-            "version": "v6.3.5",
+            "version": "v6.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/cache.git",
-                "reference": "6c1a3ea078c4d88ee892530945df63a87981b2da"
+                "reference": "84aff8d948d6292d2b5a01ac622760be44dddc72"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/cache/zipball/6c1a3ea078c4d88ee892530945df63a87981b2da",
-                "reference": "6c1a3ea078c4d88ee892530945df63a87981b2da",
+                "url": "https://api.github.com/repos/symfony/cache/zipball/84aff8d948d6292d2b5a01ac622760be44dddc72",
+                "reference": "84aff8d948d6292d2b5a01ac622760be44dddc72",
                 "shasum": ""
             },
             "require": {
@@ -1491,7 +1491,7 @@
                 "psr/log": "^1.1|^2|^3",
                 "symfony/cache-contracts": "^2.5|^3",
                 "symfony/service-contracts": "^2.5|^3",
-                "symfony/var-exporter": "^6.2.10"
+                "symfony/var-exporter": "^6.3.6"
             },
             "conflict": {
                 "doctrine/dbal": "<2.13.1",
@@ -1506,7 +1506,7 @@
             },
             "require-dev": {
                 "cache/integration-tests": "dev-master",
-                "doctrine/dbal": "^2.13.1|^3.0",
+                "doctrine/dbal": "^2.13.1|^3|^4",
                 "predis/predis": "^1.1|^2.0",
                 "psr/simple-cache": "^1.0|^2.0|^3.0",
                 "symfony/config": "^5.4|^6.0",
@@ -1549,7 +1549,7 @@
                 "psr6"
             ],
             "support": {
-                "source": "https://github.com/symfony/cache/tree/v6.3.5"
+                "source": "https://github.com/symfony/cache/tree/v6.3.6"
             },
             "funding": [
                 {
@@ -1565,7 +1565,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-09-26T15:48:55+00:00"
+            "time": "2023-10-17T14:44:58+00:00"
         },
         {
             "name": "symfony/cache-contracts",
@@ -1873,16 +1873,16 @@
         },
         {
             "name": "symfony/var-exporter",
-            "version": "v6.3.4",
+            "version": "v6.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-exporter.git",
-                "reference": "df1f8aac5751871b83d30bf3e2c355770f8f0691"
+                "reference": "374d289c13cb989027274c86206ddc63b16a2441"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-exporter/zipball/df1f8aac5751871b83d30bf3e2c355770f8f0691",
-                "reference": "df1f8aac5751871b83d30bf3e2c355770f8f0691",
+                "url": "https://api.github.com/repos/symfony/var-exporter/zipball/374d289c13cb989027274c86206ddc63b16a2441",
+                "reference": "374d289c13cb989027274c86206ddc63b16a2441",
                 "shasum": ""
             },
             "require": {
@@ -1927,7 +1927,7 @@
                 "serialize"
             ],
             "support": {
-                "source": "https://github.com/symfony/var-exporter/tree/v6.3.4"
+                "source": "https://github.com/symfony/var-exporter/tree/v6.3.6"
             },
             "funding": [
                 {
@@ -1943,7 +1943,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-08-16T18:14:47+00:00"
+            "time": "2023-10-13T09:16:49+00:00"
         },
         {
             "name": "theiconic/php-ga-measurement-protocol",
@@ -3929,7 +3929,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=8.2"
+        "php": ">=8.1"
     },
     "platform-dev": [],
     "plugin-api-version": "2.6.0"
