@@ -108,7 +108,7 @@ class PluginUpdater
      */
     public function autoUpdatePlugin($update, $item) {
 
-        if ( $item->slug == $this->pluginSlug ) {
+        if ( isset($item->slug) && $item->slug == $this->pluginSlug ) {
             return true; // Always update our plugin
         } else {
             return $update; // Else, use the normal API response to decide whether to update or not
