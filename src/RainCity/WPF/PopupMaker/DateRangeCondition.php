@@ -16,7 +16,7 @@ final class DateRangeCondition implements ActionHandlerInf
     private const TEMPUS_DOMINUS_VERSION = '6.9.4';
 
     private const FONTAWESOME_HANDLE = 'font-awesome-official-css';
-    private const FONTAWESOME_VERSION = '5.15.4';    // '6.5.1';
+    private const FONTAWESOME_VERSION = '5.15.4';
 
     /**
      * Add hooks for the PopupMaker condition.
@@ -24,7 +24,7 @@ final class DateRangeCondition implements ActionHandlerInf
      * @param ActionFilterLoader $loader
      */
     public function loadActions(ActionFilterLoader $loader) {
-        if (class_exists('Popup_Maker')) {
+        if (in_array( 'popup-maker/popup-maker.php', apply_filters('active_plugins', get_option('active_plugins')))) {
             $loader->add_action('admin_enqueue_scripts', $this, 'adminEnqueueScripts');
             $loader->add_action('admin_print_footer_scripts', $this, 'adminPrintFooterScripts', -1);
             $loader->add_filter('wp_script_attributes', $this, 'wpScriptAttributes', 10, 1 );
@@ -52,14 +52,14 @@ final class DateRangeCondition implements ActionHandlerInf
                     'name'     => 'Date Range',
                     'fields'   => [
                         'start_date' => [
-                            'label'   => 'Start Date/Time',
-                            'type'          => 'datetimepicker',
-                            'priority'      => 1,
+                            'label'     => 'Start Date/Time',
+                            'type'      => 'raincity_datetimepicker',
+                            'priority'  => 1,
                         ],
                         'end_date' => [
-                            'label'   => 'End Date/Time',
-                            'type'          => 'datetimepicker',
-                            'priority'      => 1,
+                            'label'     => 'End Date/Time',
+                            'type'      => 'raincity_datetimepicker',
+                            'priority'  => 1,
                         ],
                     ],
                     'callback' => array ($this,'isInDateRange')
@@ -104,7 +104,7 @@ final class DateRangeCondition implements ActionHandlerInf
             (did_action('admin_footer') || doing_action('admin_footer')) )
         {
             ?>
-            <script type="text/html" id="tmpl-pum-field-datetimepicker">
+            <script type="text/html" id="tmpl-pum-field-raincity_datetimepicker">
     			<#
                     data.value = _.extend({
                         tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
@@ -193,7 +193,7 @@ final class DateRangeCondition implements ActionHandlerInf
 
         wp_enqueue_script(
             self::TEMPUS_DOMINUS_HANDLE,
-            'https://cdn.jsdelivr.net/npm/@eonasdan/tempus-dominus@'.self::TEMPUS_DOMINUS_VERSION.'/dist/js/tempus-dominus.js',
+            'https://cdn.jsdelivr.net/npm/@eonasdan/tempus-dominus@'.self::TEMPUS_DOMINUS_VERSION.'/dist/js/tempus-dominus.min.js',
             ['jquery', self::POPPER_HANDLE],
             self::TEMPUS_DOMINUS_VERSION,
             true
@@ -205,13 +205,6 @@ final class DateRangeCondition implements ActionHandlerInf
             [],
             self::FONTAWESOME_VERSION
             );
-
-        //         wp_enqueue_style(
-        //             self::BOOTSTRAP_HANDLE,
-        //             'https://cdn.jsdelivr.net/npm/bootstrap@'.self::BOOTSTRAP_VERSION.'/dist/css/bootstrap.min.css',
-        //             [],
-        //             self::BOOTSTRAP_VERSION
-        //             );
 
         wp_enqueue_style(
             self::TEMPUS_DOMINUS_HANDLE,
