@@ -51,13 +51,7 @@ final class DateRangeCondition implements ActionHandlerInf
                     'group'    => 'General',
                     'name'     => 'Date Range',
                     'fields'   => [
-                        'start_date' => [
-                            'label'     => 'Start Date/Time',
-                            'type'      => 'raincity_datetimepicker',
-                            'priority'  => 1,
-                        ],
-                        'end_date' => [
-                            'label'     => 'End Date/Time',
+                        'selected' => [
                             'type'      => 'raincity_datetimepicker',
                             'priority'  => 1,
                         ],
@@ -77,13 +71,13 @@ final class DateRangeCondition implements ActionHandlerInf
         
         $startDate = \DateTime::createFromFormat(
             'm/d/Y g:i A',
-            $condition['start_date']['datetime'],
-            new \DateTimeZone($condition['start_date']['tz'])
+            $condition['selected']['start'],
+            new \DateTimeZone($condition['selected']['tz'])
             );
         $endDate = \DateTime::createFromFormat(
             'm/d/Y g:i A',
-            $condition['end_date']['datetime'],
-            new \DateTimeZone($condition['end_date']['tz'])
+            $condition['selected']['end'],
+            new \DateTimeZone($condition['selected']['tz'])
             );
         
         // if startDate is before now invert will be set to 0, otherwise it will be 1
@@ -106,70 +100,140 @@ final class DateRangeCondition implements ActionHandlerInf
             ?>
             <script type="text/html" id="tmpl-pum-field-raincity_datetimepicker">
     			<#
+                    let nowStr = new Date()
+                            .toLocaleString(
+                                'en-US',
+                                {month: '2-digit', day: '2-digit', year: 'numeric', hour: 'numeric', minute: 'numeric'}
+                                )
+                            .replace(',','');
+
                     data.value = _.extend({
                         tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                        datetime: 0,
+                        start: nowStr,
+                        end: nowStr,
                     }, data.value);
                 #>
 
                 <div id="{{data.id}}-container">
                     <div
                         class="input-group"
-                        id="{{data.id}}-wrapper"
+                        id="{{data.id}}-start_wrapper"
                         data-td-target-input="nearest"
                         data-td-target-toggle="nearest"
                     >
+                        <label for="{{data.id}}_start">Start Date/Time:</label>
                         <input
-                            id="{{data.id}}_datetime"
+                            id="{{data.id}}_start"
                             type="text"
                             class="form-control {{data.size}}-text"
-                            name="{{data.name}}[datetime]"
-                            data-td-target="#{{data.id}}-wrapper"
-                            value="{{data.value.datetime}}"
+                            name="{{data.name}}[start]"
+                            data-td-target="#{{data.id}}-start_wrapper"
+                            value="{{data.value.start}}"
                             {{{data.meta}}}
+                            readonly
                             />
                         <span
                             class="input-group-text"
                             title="Select Date/Time"
-                            data-td-target="#{{data.id}}-wrapper"
+                            data-td-target="#{{data.id}}-start_wrapper"
                             data-td-toggle="datetimepicker"
                             >
                             <i class="fas fa-calendar-alt"></i>
                         </span>
+                    </div>
+                    <div
+                        class="input-group"
+                        id="{{data.id}}-end_wrapper"
+                        data-td-target-input="nearest"
+                        data-td-target-toggle="nearest"
+                    >
+                        <label for="{{data.id}}_end">End Date/Time:</label>
                         <input
-                            id="{{data.id}}_tz"
-                            type="hidden"
-                            name="{{data.name}}[tz]"
-                            value="{{data.value.tz}}"
+                            id="{{data.id}}_end"
+                            type="text"
+                            class="form-control {{data.size}}-text"
+                            name="{{data.name}}[end]"
+                            data-td-target="#{{data.id}}-end_wrapper"
+                            value="{{data.value.end}}"
+                            {{{data.meta}}}
+                            readonly
                             />
+                        <span
+                            class="input-group-text"
+                            title="Select Date/Time"
+                            data-td-target="#{{data.id}}-end_wrapper"
+                            data-td-toggle="datetimepicker"
+                            >
+                            <i class="fas fa-calendar-alt"></i>
+                        </span>
                     </div>
                 </div>
+                <input
+                    id="{{data.id}}_tz"
+                    type="hidden"
+                    name="{{data.name}}[tz]"
+                    value="{{data.value.tz}}"
+                    />
+
                 <#
                     if (data.id !== '') {
+                        // Use a Promise to delay accessing the pickers which won't be complete yet.
                         new Promise(resolve => setTimeout(resolve, 1000)).then(() => {
-                            let wrapperId = data.id + "-wrapper";
-                            let wrapper = document.getElementById(wrapperId);
+                            let startWrapper = document.getElementById(data.id + "-start_wrapper");
+                            let endWrapper = document.getElementById(data.id + "-end_wrapper")
 
-                            if (wrapper !== null) {
-                                new tempusDominus.TempusDominus(wrapper, {
-                                    container: document.getElementById(data.id + "-container"),
-                                    display: {
-                                        icons: {
-                                          type: 'icons',
-                                          time: 'fas fa-clock',
-                                          date: 'fas fa-calendar-alt',
-                                          up: 'fas fa-arrow-up',
-                                          down: 'fas fa-arrow-down',
-                                          previous: 'fas fa-chevron-left',
-                                          next: 'fas fa-chevron-right',
-                                          today: 'fas fa-calendar-check',
-                                          clear: 'fas fa-trash',
-                                          close: 'fas fa-xmark'
+                            let pickerOptions = {
+                                container: document.getElementById(data.id + "-container"),
+                                display: {
+                                    icons: {
+                                        type: 'icons',
+                                        time: 'fas fa-clock',
+                                        date: 'fas fa-calendar-alt',
+                                        up: 'fas fa-arrow-up',
+                                        down: 'fas fa-arrow-down',
+                                        previous: 'fas fa-chevron-left',
+                                        next: 'fas fa-chevron-right',
+                                        today: 'fas fa-calendar-check',
+                                        clear: 'fas fa-trash',
+                                        close: 'fas fa-xmark'
                                         },
-                                        buttons: {
-                                            today: true
+                                    buttons: {
+                                        today: true,
+                                        clear: true
                                         }
+                                    }
+                                };
+
+                            if (startWrapper !== null && endWrapper !== null) {
+                                let startPicker = new tempusDominus.TempusDominus(startWrapper, pickerOptions);
+                                let endPicker = new tempusDominus.TempusDominus(endWrapper, pickerOptions);
+
+                                // Set initial limits
+                                startPicker.updateOptions({
+                                    restrictions: {
+                                        maxDate: endPicker.dates.lastPicked,
                                     },
+                                });
+                                endPicker.updateOptions({
+                                    restrictions: {
+                                        minDate: startPicker.dates.lastPicked,
+                                    },
+                                });
+
+                                // Update the limits as the selection changes
+                                startPicker.subscribe(tempusDominus.Namespace.events.change, (e) => {
+                                    endPicker.updateOptions({
+                                        restrictions: {
+                                            minDate: e.date,
+                                        },
+                                    });
+                                });
+                                endPicker.subscribe(tempusDominus.Namespace.events.change, (e) => {
+                                    startPicker.updateOptions({
+                                        restrictions: {
+                                            maxDate: e.date,
+                                        },
+                                    });
                                 });
                             }
                         });
