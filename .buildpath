@@ -331,11 +331,6 @@
 			<attribute name="composer" value="vendor"/>
 		</attributes>
 	</buildpathentry>
-	<buildpathentry kind="src" path="vendor/theiconic/php-ga-measurement-protocol/src">
-		<attributes>
-			<attribute name="composer" value="vendor"/>
-		</attributes>
-	</buildpathentry>
 	<buildpathentry kind="src" path="vendor/theseer/tokenizer/src">
 		<attributes>
 			<attribute name="composer" value="vendor"/>
