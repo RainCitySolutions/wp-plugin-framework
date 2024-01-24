@@ -16,7 +16,6 @@
 		"composer/installers" : "~2.2",
 		"raincity/php-library" : "~2.1",
 		"psr/log" : "~3.0",
-		"theiconic/php-ga-measurement-protocol" : "~2.9",
 		"soundasleep/html2text" : "~2.1",
 		"deliciousbrains/wp-background-processing" : "~1.1"
 	},
