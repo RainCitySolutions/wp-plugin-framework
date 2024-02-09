@@ -2,7 +2,7 @@
 	"name" : "raincity/wp-plugin-framework",
 	"description" : "Library to support implementing WordPress plugins",
 	"type" : "library",
-	"version" : "2.1.9",
+	"version" : "2.1.10",
 	"license" : "BSD-3-Clause",
 	"minimum-stability" : "stable",
 	"repositories" : [{
