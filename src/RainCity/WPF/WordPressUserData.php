@@ -2,12 +2,16 @@
 namespace RainCity\WPF;
 
 
+use RainCity\SerializeAsArrayTrait;
+
 /**
  *
  *
  */
 abstract class WordPressUserData
 {
+    use SerializeAsArrayTrait;
+
     /** @var string Key for data stored per user in the WordPress usermeta table */
     const USER_META_KEY = self::USER_META_KEY;
 
@@ -52,27 +56,5 @@ abstract class WordPressUserData
      */
     private function save() {
         update_user_meta($this->wpUserId, static::USER_META_KEY, $this);
-    }
-
-    public function __serialize(): array
-    {
-        return get_object_vars($this);
-    }
-
-    public function __unserialize(array $vars): void
-    {
-        foreach ($vars as $var => $value) {
-            /**
-             * Only set values for properties of the object.
-             *
-             * Generally this will be the case but this accounts for the
-             * possiblity that a field may be removed from the class in the
-             * future.
-             */
-            if(property_exists(__CLASS__,$var))
-            {
-                $this->$var = $value;
-            }
-        }
     }
 }
