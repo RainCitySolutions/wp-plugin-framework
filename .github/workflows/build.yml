@@ -16,7 +16,7 @@ jobs:
            
       # Checkout our code 
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -32,7 +32,7 @@ jobs:
       # Fetch the vendor folder from the cache, keyed off the composer.lock file 
       - name: Cache Composer packages
         id: composer-cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: vendor
           key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
@@ -62,7 +62,7 @@ jobs:
           echo "version-commit-ref=$(git show-ref --heads -s)" >>build.properties
 
       - name: Save Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-properties
           path: build.properties
@@ -75,7 +75,7 @@ jobs:
 
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: build-properties
 
@@ -95,7 +95,7 @@ jobs:
           unset IFS
     
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ env.version-commit-ref }}
 
@@ -132,12 +132,5 @@ jobs:
           commit: ${{ env.version-commit-ref }}
           omitBody: true
           token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload Release Asset
-        id: upload-release-asset
-        run: |
-          gh release upload --clobber ${{ env.VERSION }} ${{ env.FILES }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VERSION: ${{ steps.build-vars.outputs.version }}
-          FILES: build/${{ steps.build-vars.outputs.project-name }}_${{ steps.build-vars.outputs.version }}.zip
+          artifacts:
+            build/${{ steps.build-vars.outputs.project-name }}_${{ steps.build-vars.outputs.version }}.zip
