@@ -26,6 +26,8 @@ abstract class WordPressPlugin
     extends Singleton
     implements WordPressPluginInf
 {
+    public const REQUEST_ID = 'RainCityRequestId';
+
     private const DEFAULT_PLUGIN_VERSION = '1.0.0';
     private const DB_UPGRADE_ACTIVE_FLAG = 'raincity_wpf_dbUpgradeActive';
 
@@ -115,6 +117,16 @@ abstract class WordPressPlugin
         // delay running database upgrades until WordPress is initialized
         $this->loader->addAction( 'init', $this, 'privUpgradeDatabase', 0 );
         $this->loader->addAction( 'init', $this, 'fireRegisterShortCodeAction');
+
+        // Action to generate a unique requestID for each request, used in logging
+        $this->loader->addAction(
+            'init',
+            null,
+            function() {
+                putenv(self::REQUEST_ID . '=' . uniqid('reqId', true));
+            },
+            5
+        );
 
         $this->loader->addAction('admin_enqueue_scripts', $this, 'onAdminEnqueueScripts');
         $this->loader->addAction('wp_enqueue_scripts', $this, 'onWpEnqueueScripts');

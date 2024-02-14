@@ -6,6 +6,7 @@ use RainCity\Logging\BaseLogger;
 use RainCity\Logging\Logger;
 use RainCity\Logging\RotatingFileHandler;
 use RainCity\WPF\Utils;
+use RainCity\WPF\WordPressPlugin;
 
 const LOGGER_OPTION_NAME = 'raincity_wpf_logger_options';
 
@@ -31,7 +32,31 @@ class WordPressLogger extends BaseLogger
     {
         parent::setupLogger($logger);
 
+        $dateformat = 'M d H:i:s';
+        $format =
+            join(' ', [
+                '%datetime%',
+                '%level_name%',
+                '%channel%',
+                '[%extra.reqId%]',
+                '(%extra.userId%/%extra.userName%):',
+                ' %message% %context% %extra%'
+            ])
+            .PHP_EOL;
+
+        $formatter = new \Monolog\Formatter\LineFormatter ($format, $dateformat, false, true);
+
+        foreach ($logger->getHandlers() as $handler) {
+            $handler->setFormatter($formatter);
+        }
+
         $logger->pushProcessor(function ($record) {
+            $reqId = getenv(WordPressPlugin::REQUEST_ID);
+
+            if ($reqId) {
+                $record['extra']['reqId'] = $reqId;
+            }
+
             if (function_exists( 'wp_get_current_user' ) ) {
                 $wpUser = wp_get_current_user();
 
