@@ -32,24 +32,6 @@ class WordPressLogger extends BaseLogger
     {
         parent::setupLogger($logger);
 
-        $dateformat = 'M d H:i:s';
-        $format =
-            join(' ', [
-                '%datetime%',
-                '%level_name%',
-                '%channel%',
-                '[%extra.reqId%]',
-                '(%extra.userId%/%extra.userName%):',
-                ' %message% %context% %extra%'
-            ])
-            .PHP_EOL;
-
-        $formatter = new \Monolog\Formatter\LineFormatter ($format, $dateformat, false, true);
-
-        foreach ($logger->getHandlers() as $handler) {
-            $handler->setFormatter($formatter);
-        }
-
         $logger->pushProcessor(function ($record) {
             $reqId = getenv(WordPressPlugin::REQUEST_ID);
 
@@ -70,6 +52,22 @@ class WordPressLogger extends BaseLogger
         });
     }
 
+    /**
+     * {@inheritDoc}
+     * @see \RainCity\Logging\BaseLogger::getLogMsgFormat()
+     */
+    protected function getLogMsgFormat(): string
+    {
+        return join(' ', [
+            '%datetime%',
+            '%level_name%',
+            '%channel%',
+            '[%extra.reqId%]',
+            '(%extra.userId%/%extra.userName%):',
+            ' %message% %context% %extra%'
+        ])
+        .PHP_EOL;
+    }
 
     /**
      *
