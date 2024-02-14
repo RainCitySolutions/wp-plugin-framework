@@ -3,6 +3,9 @@ name: Build library
 on:
   push:
 
+  repository_dispatch:
+    types: [new_php_lib_event]
+
 jobs:
   build:
     runs-on: ubuntu-latest
