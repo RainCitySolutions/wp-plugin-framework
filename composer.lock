@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f22e02845c17dd4802c82ac5a9703870",
+    "content-hash": "1f82ab78ab2102d0279e14c55fbc0219",
     "packages": [
         {
             "name": "composer/installers",
@@ -681,16 +681,16 @@
         },
         {
             "name": "json-mapper/json-mapper",
-            "version": "2.21.0",
+            "version": "2.22.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JsonMapper/JsonMapper.git",
-                "reference": "df180e75e45f2d4224064eac948f6c9521262b49"
+                "reference": "6ad28693169ccd7b09ac9c282b562a90f428a7ea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JsonMapper/JsonMapper/zipball/df180e75e45f2d4224064eac948f6c9521262b49",
-                "reference": "df180e75e45f2d4224064eac948f6c9521262b49",
+                "url": "https://api.github.com/repos/JsonMapper/JsonMapper/zipball/6ad28693169ccd7b09ac9c282b562a90f428a7ea",
+                "reference": "6ad28693169ccd7b09ac9c282b562a90f428a7ea",
                 "shasum": ""
             },
             "require": {
@@ -746,7 +746,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-12-12T11:57:53+00:00"
+            "time": "2024-03-05T08:44:51+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -1333,11 +1333,11 @@
         },
         {
             "name": "raincity/php-library",
-            "version": "2.1.25",
+            "version": "2.1.26",
             "source": {
                 "type": "git",
                 "url": "https://github.com/RainCitySolutions/php-library",
-                "reference": "97174e7ef6f4ee93b97268f123f68dd6b05b8a98"
+                "reference": "33c5b87f23133ee134c5e9e843ce51896ae0d12f"
             },
             "require": {
                 "composer/installers": "~2.2",
@@ -1370,7 +1370,7 @@
                 "BSD-3-Clause"
             ],
             "description": "Library to support implementations in PHP",
-            "time": "2024-03-04T18:42:58+00:00"
+            "time": "2024-03-07T03:42:18+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
