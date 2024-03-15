@@ -123,7 +123,7 @@ abstract class WordPressPlugin
             'init',
             null,
             function() {
-                putenv(self::REQUEST_ID . '=' . uniqid('reqId', true));
+                putenv(self::REQUEST_ID . '=' . uniqid('req'));
             },
             5
         );
