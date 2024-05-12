@@ -78,7 +78,7 @@ abstract class WordPressPlugin
             $this->pluginVersion = $pluginData['Version'];
             $this->pluginSlug    = $pluginData['TextDomain'];
 
-            $this->mainPluginFilename = Utils::getPluginFile($this->pluginName);
+            $this->mainPluginFilename = PluginInformation::getPluginFile($this->pluginName);
             $this->basePluginUrl = plugin_dir_url($this->mainPluginFilename);
         }
     }
@@ -105,7 +105,7 @@ abstract class WordPressPlugin
             'after_setup_theme',
             null,
             function () {
-                $functionsPhp = Utils::getPluginWriteDir() . '/functions.php';
+                $functionsPhp = PluginInformation::getPluginWriteDir() . '/functions.php';
 
                 if (file_exists($functionsPhp)) {
                     require_once $functionsPhp;
@@ -447,8 +447,8 @@ abstract class WordPressPlugin
      * The code that runs during plugin removal.
      */
     public static function uninstall_plugin() {
-        Logger::getLogger(get_called_class (), Utils::getPluginPackageName())
-            ->debug('Uninstalling '.Utils::getPluginName());
+        Logger::getLogger(get_called_class (), PluginInformation::getPluginPackageName())
+            ->debug('Uninstalling '.PluginInformation::getPluginName());
 
         do_action(self::ON_PLUGIN_UNINSTALL_ACTION);
 
@@ -539,23 +539,23 @@ abstract class WordPressPlugin
 
         return forward_static_call(array($pluginClass, 'instance'), $pluginData);
     }
-    
+
     private static function shutdownFunction($pluginSlug)
     {
         $error = error_get_last();
-        
+
         if (!is_null($error)) {
             $logger = Logger::getLogger(WordPressLogger::BASE_LOGGER, $pluginSlug);
-            
+
             switch ($error['type']) {
                 case E_ERROR:
                     $level = \Psr\Log\LogLevel::CRITICAL;
                     break;
-                    
+
                 case E_WARNING:
                     $level = \Psr\Log\LogLevel::WARNING;
                     break;
-                    
+
                 case E_NOTICE:
                     if (preg_match('/^Constant .* already defined$/', $error['message'])) {
                         $level = \Psr\Log\LogLevel::DEBUG;
@@ -563,16 +563,16 @@ abstract class WordPressPlugin
                         $level = \Psr\Log\LogLevel::NOTICE;
                     }
                     break;
-                    
+
                 case E_DEPRECATED:
                     $level = \Psr\Log\LogLevel::DEBUG;
                     break;
-                    
+
                 default:
                     $level = \Psr\Log\LogLevel::INFO;
                     break;
             }
-            
+
             // Don't log DEBUG messages
             if (\Psr\Log\LogLevel::DEBUG != $level) {
                 $logger->log($level, 'PHP Error: ', $error);

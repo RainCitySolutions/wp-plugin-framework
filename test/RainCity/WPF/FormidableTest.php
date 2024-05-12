@@ -1,12 +1,13 @@
 <?php
-namespace RainCity\WPF {
+namespace RainCity\WPF;
 
 use PHPUnit\Framework\TestCase;
-    use ReflectionException;
+use ReflectionException;
+use RainCity\TestHelper\ReflectionHelper;
 
 /**
  *
- * @covers \RainCity\WPF\Formidable
+ * @covers RainCity\WPF\Formidable
  *
  */
 class FormidableTest extends TestCase
@@ -14,6 +15,22 @@ class FormidableTest extends TestCase
     const FORM_KEY = 'formKey';
     const FIELD_KEY = 'fieldKey';
     const VIEW_KEY = 'viewKey';
+
+    private static $mockFrmForm;
+    private static $mockFrmField;
+    private static $mockFrmViewsDisplay;
+
+    private static int $testId = 0;
+
+    /**
+     * Set the identifier to be returned by the mock object
+     *
+     * @param int $id An identifier
+     */
+    private function setTestId(int $id): void
+    {
+        self::$testId = $id;
+    }
 
     /**
      * {@inheritDoc}
@@ -25,12 +42,22 @@ class FormidableTest extends TestCase
          * can't use our test classes.
          */
         try {
-            $class = new \ReflectionClass('\FrmField');
-            $class->getProperty('callCnt');
+            new \ReflectionClass(\FrmField::class); // NOSONAR
+
+            self::markTestSkipped('Real Formidable classes are available, unable to test');
         }
         catch (ReflectionException $re) {
-            self::markTestSkipped('Real Formidable classes are not available, unable to test');
+            // We expect the exception to be throw if the Formidable classes are not loaded
         }
+
+        self::$mockFrmForm = \Mockery::mock('overload:\FrmForm');
+        self::$mockFrmForm->shouldReceive('get_id_by_key')->andReturnUsing(fn() => self::$testId);
+
+        self::$mockFrmField = \Mockery::mock('overload:\FrmField');
+        self::$mockFrmField->shouldReceive('get_id_by_key')->andReturnUsing(fn() => self::$testId);
+
+        self::$mockFrmViewsDisplay = \Mockery::mock('overload:\FrmViewsDisplay');
+        self::$mockFrmViewsDisplay->shouldReceive('get_id_by_key')->andReturnUsing(fn() => self::$testId);
     }
 
     /**
@@ -39,220 +66,163 @@ class FormidableTest extends TestCase
      */
     protected function setUp(): void
     {
-        \FrmField::reset();
-        \FrmForm::reset();
-        \FrmViewsDisplay::reset();
-
         $this->resetFormidableCache('formIdCache');
         $this->resetFormidableCache('fieldIdCache');
         $this->resetFormidableCache('viewIdCache');
     }
 
     private function resetFormidableCache(string $cacheField) {
-        $class = new \ReflectionClass(__NAMESPACE__.'\Formidable');
-        $property = $class->getProperty($cacheField);
-        $property->setAccessible(true);
-        $property->setValue(array());
-        $property->setAccessible(false);
+        ReflectionHelper::setClassProperty(__NAMESPACE__.'\Formidable', $cacheField, []);
     }
 
     private function assertCacheEmpty(string $cacheField) {
-        $class = new \ReflectionClass(__NAMESPACE__.'\Formidable');
-        $property = $class->getProperty($cacheField);
-        $property->setAccessible(true);
-        $this->assertEmpty($property->getValue());
-        $property->setAccessible(false);
+        $this->assertEmpty(
+            ReflectionHelper::getClassProperty(__NAMESPACE__.'\Formidable', $cacheField)
+            );
     }
 
+    /************************************************************************
+     * FrmForm Tests
+     ************************************************************************/
     public function testGetFormId_missingId () {
+        $this->setTestId(0);
+
         $id = Formidable::getFormId(self::FORM_KEY);
 
-        $this->assertEquals(1, \FrmForm::$callCnt);
         $this->assertNull($id);
     }
 
     public function testGetFormId_notCached () {
-        \FrmForm::$returnId = 27;
+        $testId = 27;
+        $this->setTestId($testId);
 
         $this->assertCacheEmpty('formIdCache');
+
         $id = Formidable::getFormId(self::FORM_KEY);
 
-        $this->assertEquals(1, \FrmForm::$callCnt);
-        $this->assertEquals(\FrmForm::$returnId, $id);
+        $this->assertEquals($testId, $id);
     }
 
     public function testGetFormId_cached () {
-        \FrmForm::$returnId = 99;
+        $testId = 97;
+        $this->setTestId($testId);
 
         $this->assertCacheEmpty('formIdCache');
         $id = Formidable::getFormId(self::FORM_KEY);
 
-        $this->assertEquals(1, \FrmForm::$callCnt);
-        $this->assertEquals(\FrmForm::$returnId, $id);
+        $this->assertEquals(self::$testId, $id);
 
+        $this->setTestId(-1);   // Cached id should be returned
         $id = Formidable::getFormId(self::FORM_KEY);
 
-        $this->assertEquals(1, \FrmForm::$callCnt);
-        $this->assertEquals(\FrmForm::$returnId, $id);
+        $this->assertEquals($testId, $id);
     }
 
+    /************************************************************************
+     * FrmField Tests
+     ************************************************************************/
     public function testGetFieldId_missingId () {
+        $this->setTestId(0);
+
         $id = Formidable::getFieldId(self::FIELD_KEY);
 
-        $this->assertEquals(1, \FrmField::$callCnt);
         $this->assertNull($id);
     }
 
     public function testGetFieldId_notCached () {
-        \FrmField::$returnId = 39;
+        $testId = 39;
+        $this->setTestId($testId);
 
         $this->assertCacheEmpty('fieldIdCache');
         $id = Formidable::getFieldId(self::FIELD_KEY);
 
-        $this->assertEquals(1, \FrmField::$callCnt);
-        $this->assertEquals(\FrmField::$returnId, $id);
+        $this->assertEquals($testId, $id);
     }
 
     public function testGetFieldId_cached () {
-        \FrmField::$returnId = 77;
+        $testId = 79;
+        $this->setTestId($testId);
 
         $this->assertCacheEmpty('fieldIdCache');
         $id = Formidable::getFieldId(self::FIELD_KEY);
 
-        $this->assertEquals(1, \FrmField::$callCnt);
-        $this->assertEquals(\FrmField::$returnId, $id);
+        $this->assertEquals($testId, $id);
 
+        $this->setTestId(-1);   // Cached id should be returned
         $id = Formidable::getFieldId(self::FIELD_KEY);
 
-        $this->assertEquals(1, \FrmField::$callCnt);
-        $this->assertEquals(\FrmField::$returnId, $id);
+        $this->assertEquals($testId, $id);
     }
 
+    /************************************************************************
+     * FrmView Tests
+     ************************************************************************/
     public function testGetViewId_missingId () {
+        $this->setTestId(0);
+
         $id = Formidable::getViewId(self::VIEW_KEY);
 
-        $this->assertEquals(1, \FrmViewsDisplay::$callCnt);
         $this->assertNull($id);
     }
 
     public function testGetViewId_notCached () {
-        \FrmViewsDisplay::$returnId = 72;
+        $testId = 72;
+        $this->setTestId($testId);
 
         $this->assertCacheEmpty('viewIdCache');
         $id = Formidable::getViewId(self::VIEW_KEY);
 
-        $this->assertEquals(1, \FrmViewsDisplay::$callCnt);
-        $this->assertEquals(\FrmViewsDisplay::$returnId, $id);
+        $this->assertEquals(self::$testId, $id);
     }
 
     public function testGetViewId_cached () {
-        \FrmViewsDisplay::$returnId = 88;
+        $testId = 82;
+        $this->setTestId($testId);
 
         $this->assertCacheEmpty('viewIdCache');
         $id = Formidable::getViewId(self::VIEW_KEY);
 
-        $this->assertEquals(1, \FrmViewsDisplay::$callCnt);
-        $this->assertEquals(\FrmViewsDisplay::$returnId, $id);
+        $this->assertEquals($testId, $id);
 
+        $this->setTestId(-1);   // Cached id should be returned
         $id = Formidable::getViewId(self::VIEW_KEY);
 
-        $this->assertEquals(1, \FrmViewsDisplay::$callCnt);
-        $this->assertEquals(\FrmViewsDisplay::$returnId, $id);
+        $this->assertEquals($testId, $id);
     }
 
     public function testGetAllId_unique () {
         $key = 'SameKey';
 
-        \FrmForm::$returnId = 77;
-        \FrmField::$returnId = 88;
-        \FrmViewsDisplay::$returnId = 99;
+        $testFormId = 77;
+        $testFieldId = 88;
+        $testViewId = 99;
 
         $this->assertCacheEmpty('formIdCache');
         $this->assertCacheEmpty('fieldIdCache');
         $this->assertCacheEmpty('viewIdCache');
 
+        $this->setTestId($testFormId);
         $formId = Formidable::getFormId($key);
+
+        $this->setTestId($testFieldId);
         $fieldId = Formidable::getFieldId($key);
+
+        $this->setTestId($testViewId);
         $viewId = Formidable::getViewId($key);
 
-        $this->assertEquals(1, \FrmForm::$callCnt);
-        $this->assertEquals(1, \FrmField::$callCnt);
-        $this->assertEquals(1, \FrmViewsDisplay::$callCnt);
+        $this->assertEquals($testFormId, $formId);
+        $this->assertEquals($testFieldId, $fieldId);
+        $this->assertEquals($testViewId, $viewId);
 
-        $this->assertEquals(\FrmForm::$returnId, $formId);
-        $this->assertEquals(\FrmField::$returnId, $fieldId);
-        $this->assertEquals(\FrmViewsDisplay::$returnId, $viewId);
+        $this->setTestId(-1);
 
         // And again to hit the cached values
         $formId = Formidable::getFormId($key);
         $fieldId = Formidable::getFieldId($key);
         $viewId = Formidable::getViewId($key);
 
-        $this->assertEquals(1, \FrmForm::$callCnt);
-        $this->assertEquals(1, \FrmField::$callCnt);
-        $this->assertEquals(1, \FrmViewsDisplay::$callCnt);
-
-        $this->assertEquals(\FrmForm::$returnId, $formId);
-        $this->assertEquals(\FrmField::$returnId, $fieldId);
-        $this->assertEquals(\FrmViewsDisplay::$returnId, $viewId);
-    }
-}
-}
-
-
-// Global namespace
-namespace {
-    if (!class_exists('FrmForm')) {
-        class FrmForm {
-            public static $callCnt = 0;
-            public static $returnId = 0;
-
-            public static function reset() {
-                self::$callCnt = 0;
-                self::$returnId = 0;
-            }
-
-            public static function get_id_by_key(string $key): int {    // NOSONAR
-                self::$callCnt++;
-
-                return (int)self::$returnId;
-            }
-        }
-    }
-
-    if (!class_exists('FrmField')) {
-        class FrmField {
-            public static $callCnt = 0;
-            public static $returnId = 0;
-
-            public static function reset() {
-                self::$callCnt = 0;
-                self::$returnId = 0;
-            }
-
-            public static function get_id_by_key(string $key): int {    // NOSONAR
-                self::$callCnt++;
-
-                return (int)self::$returnId;
-            }
-        }
-    }
-
-    if (!class_exists('FrmViewsDisplay')) {
-        class FrmViewsDisplay {
-            public static $callCnt = 0;
-            public static $returnId = 0;
-
-            public static function reset() {
-                self::$callCnt = 0;
-                self::$returnId = 0;
-            }
-
-            public static function get_id_by_key(string $key): int {    // NOSONAR
-                self::$callCnt++;
-
-                return (int)self::$returnId;
-            }
-        }
+        $this->assertEquals($testFormId, $formId);
+        $this->assertEquals($testFieldId, $fieldId);
+        $this->assertEquals($testViewId, $viewId);
     }
 }

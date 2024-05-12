@@ -5,7 +5,7 @@ use Psr\Log\LoggerInterface;
 use RainCity\Logging\BaseLogger;
 use RainCity\Logging\Logger;
 use RainCity\Logging\RotatingFileHandler;
-use RainCity\WPF\Utils;
+use RainCity\WPF\PluginInformation;
 use RainCity\WPF\WordPressPlugin;
 
 const LOGGER_OPTION_NAME = 'raincity_wpf_logger_options';
@@ -21,7 +21,7 @@ class WordPressLogger extends BaseLogger
      * @see \RainCity\Logging\Logger
      */
     public static function getLogger(string $loggerName, ?string $loggerKey = null): LoggerInterface {
-        return parent::getLogger($loggerName, Utils::getPluginPackageName());
+        return parent::getLogger($loggerName, PluginInformation::getPluginPackageName());
     }
 
     /**
@@ -75,7 +75,7 @@ class WordPressLogger extends BaseLogger
      * @see \RainCity\Logging\BaseLogger::getLogFile()
      */
     protected function getLogFile (): string {
-        return Utils::getPluginWriteDir() . '/logs/application.log';
+        return PluginInformation::getPluginWriteDir() . '/logs/application.log';
     }
 
 
@@ -85,7 +85,7 @@ class WordPressLogger extends BaseLogger
      * @see \RainCity\Logging\BaseLogger::getLogLevel()
      */
     protected function getLogLevel() {
-        $pluginName = Utils::getPluginName();
+        $pluginName = PluginInformation::getPluginName();
         $option = get_option(LOGGER_OPTION_NAME, array());
 
         if (!isset($option[$pluginName])) {
@@ -103,7 +103,7 @@ class WordPressLogger extends BaseLogger
      * @see \RainCity\Logging\BaseLogger::setLogLevel()
      */
     protected function setLogLevel($level) {
-        $pluginName = Utils::getPluginPackageName();
+        $pluginName = PluginInformation::getPluginPackageName();
 
         $option = get_option(LOGGER_OPTION_NAME);
 
@@ -119,7 +119,7 @@ class WordPressLogger extends BaseLogger
         Logger::getLogger(static::BASE_LOGGER)->info('Logger::uninstall() called');
 
         $option = get_option(LOGGER_OPTION_NAME);
-        $pluginName = Utils::getPluginPackageName();
+        $pluginName = PluginInformation::getPluginPackageName();
 
         if (is_array($option)) {
             unset($option[$pluginName]);

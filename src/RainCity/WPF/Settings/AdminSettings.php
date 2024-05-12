@@ -5,7 +5,7 @@ use RainCity\MiscHelper;
 use RainCity\Singleton;
 use RainCity\Logging\Logger;
 use RainCity\WPF\AdminHelperInf;
-use RainCity\WPF\Utils;
+use RainCity\WPF\PluginInformation;
 
 abstract class AdminSettings
     extends Singleton
@@ -100,7 +100,7 @@ abstract class AdminSettings
     final public function onAdminEnqueueScripts () {
         $activeTab = $this->getActiveTab();
 
-        $activeTab->onEnqueueScripts($this->pluginName, Utils::getPluginUrl(), $this->version);
+        $activeTab->onEnqueueScripts($this->pluginName, PluginInformation::getPluginUrl(), $this->version);
     }
 
     private function getActiveTab(): AdminSettingsTab {

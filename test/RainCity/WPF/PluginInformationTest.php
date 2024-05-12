@@ -11,10 +11,10 @@ function debug_backtrace() {
 }
 
 /**
- * @covers \RainCity\WPF\Utils
+ * @covers \RainCity\WPF\PluginInformation
  *
  */
-class UtilsTest extends WordpressTestCase
+class PluginInformationTest extends WordpressTestCase
 {
     private $orgBackTrace;
     private const TEST_PLUGIN_DIRECTOR = '/var/www/wp-content/plugins/test-plugin';
@@ -31,7 +31,7 @@ class UtilsTest extends WordpressTestCase
         $this->orgBackTrace = TestStackTrace::$testBacktrace;
 
         TestStackTrace::$testBacktrace = array(
-            array ('file' => '/var/www/wp-content/plugins/test-plugin/vendor/raincity/wp-plugin-framework/src/RainCity/WPF/Utils.php'),
+            array ('file' => '/var/www/wp-content/plugins/test-plugin/vendor/raincity/wp-plugin-framework/src/RainCity/WPF/PluginInformation.php'),
             array ('file' => '/var/www/wp-content/plugins/test-plugin/vendor/raincity/wp-plugin-framework/src/RainCity/WPF/Logging/WordPressLogger.php'),
             array ('file' => '/var/www/wp-content/plugins/test-plugin/vendor/raincity/wp-plugin-framework/src/RainCity/WPF/Logging/Logger.php'),
             array ('file' => '/var/www/wp-content/plugins/test-plugin/vendor/raincity/wp-plugin-framework/src/RainCity/WPF/Singleton.php'),
@@ -49,7 +49,7 @@ class UtilsTest extends WordpressTestCase
         );
 
         \Brain\Monkey\Functions\when('plugin_dir_path')->alias(function ($file) {   // NOSONAR
-            return '/var/www/wp-content/plugins/test-plugin/vendor/raincity/wp-plugin-framework/src/RainCity/WPF/Utils.php';
+            return '/var/www/wp-content/plugins/test-plugin/vendor/raincity/wp-plugin-framework/src/RainCity/WPF/PluginInformation.php';
         });
     }
 
@@ -68,33 +68,33 @@ class UtilsTest extends WordpressTestCase
         update_site_option('active_sitewide_plugins', array());
 
         \Brain\Monkey\Functions\when('plugin_dir_path')->alias(function ($file) {   // NOSONAR
-            return '/var/www/wp-content/plugins/test-plugin/src/RainCity/WPF/Utils.php';
+            return '/var/www/wp-content/plugins/test-plugin/src/RainCity/WPF/PluginInformation.php';
         });
 
-        $info = Utils::getPluginInfo();
+        $info = PluginInformation::getPluginInfo();
 
-        $this->assertEquals('unknown', $info->pluginPackage);
-        $this->assertEmpty($info->pluginPath);
+        $this->assertEquals('unknown', $info->getPackage());
+        $this->assertEmpty($info->getPath());
     }
 
     public function testGetPluginInfo_withNoPlugins() {
         update_option('active_plugins', array());
         update_site_option('active_sitewide_plugins', array());
 
-        $info = Utils::getPluginInfo();
+        $info = PluginInformation::getPluginInfo();
 
-        $this->assertEquals('test-plugin', $info->pluginPackage);
-        $this->assertEquals(self::TEST_PLUGIN_DIRECTOR, $info->pluginPath);
+        $this->assertEquals('test-plugin', $info->getPackage());
+        $this->assertEquals(self::TEST_PLUGIN_DIRECTOR, $info->getPath());
     }
 
     public function testGetPluginInfo_withActivePlugins() {
         update_option('active_plugins', array(self::TEST_OTHER_PLUGIN_ENTRYPOINT, self::TEST_PLUGIN_ENTRYPOINT));
         update_site_option('active_sitewide_plugins', array());
 
-        $info = Utils::getPluginInfo();
+        $info = PluginInformation::getPluginInfo();
 
-        $this->assertEquals('test-plugin', $info->pluginPackage);
-        $this->assertEquals(self::TEST_PLUGIN_DIRECTOR, $info->pluginPath);
+        $this->assertEquals('test-plugin', $info->getPackage());
+        $this->assertEquals(self::TEST_PLUGIN_DIRECTOR, $info->getPath());
     }
 
     public function testGetPluginInfo_withSitewidePlugins() {
@@ -104,19 +104,19 @@ class UtilsTest extends WordpressTestCase
             array(self::TEST_OTHER_PLUGIN_ENTRYPOINT => 111111, self::TEST_PLUGIN_ENTRYPOINT => 222222)
             );
 
-        $info = Utils::getPluginInfo();
+        $info = PluginInformation::getPluginInfo();
 
-        $this->assertEquals('test-plugin', $info->pluginPackage);
-        $this->assertEquals(self::TEST_PLUGIN_DIRECTOR, $info->pluginPath);
+        $this->assertEquals('test-plugin', $info->getPackage());
+        $this->assertEquals(self::TEST_PLUGIN_DIRECTOR, $info->getPath());
     }
 
     public function testGetPluginInfo_withBothPlugins() {
         update_option('active_plugins', array(self::TEST_OTHER_PLUGIN_ENTRYPOINT));
         update_site_option('active_sitewide_plugins', array(self::TEST_PLUGIN_ENTRYPOINT => 222222));
 
-        $info = Utils::getPluginInfo();
+        $info = PluginInformation::getPluginInfo();
 
-        $this->assertEquals('test-plugin', $info->pluginPackage);
-        $this->assertEquals(self::TEST_PLUGIN_DIRECTOR, $info->pluginPath);
+        $this->assertEquals('test-plugin', $info->getPackage());
+        $this->assertEquals(self::TEST_PLUGIN_DIRECTOR, $info->getPath());
     }
 }

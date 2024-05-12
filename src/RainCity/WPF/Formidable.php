@@ -1,9 +1,6 @@
 <?php
 namespace RainCity\WPF;
 
-
-if (class_exists('FrmForm')) {
-
 /**
  * This class provides methods for accessing the Formidable Forms tables
  *
@@ -145,5 +142,3 @@ class Formidable
     }
 
 }
-
-}   // if class_exists()

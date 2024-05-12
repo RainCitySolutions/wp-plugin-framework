@@ -5,6 +5,8 @@ use RainCity\WPF\Helpers\WordpressTestCase;
 
 /**
  * @covers \RainCity\WPF\WordPressPlugin
+ *
+ * @covers RainCity\WPF\PluginInformation::getPluginFile
  */
 class WordPressPluginTest extends WordpressTestCase
 {
