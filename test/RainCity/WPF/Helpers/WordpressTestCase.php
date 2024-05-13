@@ -71,6 +71,8 @@ abstract class WordpressTestCase extends RainCityTestCase
 
         \Brain\Monkey\Functions\when('get_plugins')->alias(fn () => $this->plugins);
         \Brain\Monkey\Functions\when('wp_get_schedules')->alias(fn () => $this->cronSchedules);
+
+        \Brain\Monkey\Functions\when('add_theme_support')->justReturn();
     }
 
     public function add_option(string $option, $value = '', string $deprecated = '', $autoload = 'yes')
