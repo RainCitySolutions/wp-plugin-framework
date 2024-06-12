@@ -373,7 +373,7 @@ abstract class WordPressPlugin
     public function addPluginActionLinks(
         array $actions,
         string $pluginFile,
-        array $pluginData,
+        ?array $pluginData,
         string $context
         ): array
     {
