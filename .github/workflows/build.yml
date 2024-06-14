@@ -145,7 +145,7 @@ jobs:
 
     strategy:
       matrix:
-        repo: ['BlairCooper/wscl-plugin']
+        repo: ['BlairCooper/wscl-plugin', 'BlairCooper/cvht-plugin']
 
     steps:
       - name: Dispatch to workflows
