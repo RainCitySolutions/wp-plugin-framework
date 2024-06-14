@@ -146,7 +146,7 @@ class PluginUpdater
         return $this->updateEntry;
     }
 
-    private function inspectZipFile(ZipEntry &$newestEntry, ZipEntry $entry, IgnorePostsManager $ipm) {
+    private function inspectZipFile(?ZipEntry &$newestEntry, ZipEntry $entry, IgnorePostsManager $ipm) {
         $entry->version = $this->getPluginVersion($entry->path);
 
         if (is_string($entry->version)) {
