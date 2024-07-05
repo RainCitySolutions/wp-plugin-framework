@@ -109,6 +109,24 @@ class Utils
         return $url;
     }
 
+    /**
+     * Fetch a WP_User object for a user by their id
+     *
+     * If an identifier is not provided, the current user is returned. This
+     * may be a non existent user if a user is not currently logged in.
+     * <p>
+     * If there is no user with the identifier provided a not existent user
+     * object is returned.
+     * <p>
+     * If the user cannot be determined from the identifer, or currently
+     * logged in user, the method will use the $_POST['frm_user_id']
+     * paramenter, if present, to fetch the user object.
+     *
+     * @param int $userId (optional) The identifier for a user.
+     *
+     * @return \WP_User An object representing a WordPress user which may be
+     *      a non-existent user.
+     */
     public static function getWPUser (int $userId = null): \WP_User {
         if (is_null($userId)) {
             $wpUser = wp_get_current_user();
@@ -124,5 +142,31 @@ class Utils
         }
 
         return $wpUser;
+    }
+
+    /**
+     * Fetch the WP_Post object for a post/page with the specified page name.
+     *
+     * @param string $postName The post_name of a post
+     * @param string $postType The post_type of the post, defaults to 'page'
+     * @param string $postStatus The post_status of the post, defaults to 'publish'
+     *
+     * @return \WP_Post|NULL The object representing the post or null if the
+     *      post does not exist.
+     */
+    public static function getWPPostByName(
+        string $postName,
+        string $postType = 'page',
+        string $postStatus = 'publish'
+        ): ?\WP_Post
+    {
+        $query = new \WP_Query(
+            [
+                'post_type' => $postType,
+                'post_status' => $postStatus,
+                'name' => $postName
+            ]);
+        
+        return $query->have_posts() ? reset($query->posts) : null;
     }
 }
