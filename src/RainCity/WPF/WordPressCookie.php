@@ -3,6 +3,7 @@ namespace RainCity\WPF;
 
 use RainCity\Logging\Logger;
 use RuntimeException;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class used to manage cookies with an WordPress environment.
@@ -14,10 +15,10 @@ use RuntimeException;
  */
 class WordPressCookie
 {
-    private $logger;
-    private $cookieName;
-    private $lifetime;
-    private $hashValue;
+    private LoggerInterface $logger;
+    private string $cookieName;
+    private int $lifetime;
+    private string $hashValue;
 
     /**
      * Constructs an instance of WordPressCookie.
@@ -39,7 +40,8 @@ class WordPressCookie
      *     browser. This would generally indicate that the object was
      *     instantiated at the wrong place in the code.
      */
-    public function __construct(string $cookieName, string $hashKey, int $lifetime = 86400, string $path = '/') {
+    public function __construct(string $cookieName, string $hashKey, int $lifetime = 86400, string $path = '/')
+    {
         $this->cookieName = $cookieName;
         $this->lifetime = $lifetime;
 
@@ -75,7 +77,8 @@ class WordPressCookie
      *
      * @return NULL|mixed Returns the value or false if the value does not exist.
      */
-    public function getCookieValue() {
+    public function getCookieValue(): mixed
+    {
         $value = null;
 
         if (isset($this->hashValue)) {
@@ -101,7 +104,8 @@ class WordPressCookie
      *
      * @return boolean Returns true if the value is saved, otherwise returns false.
      */
-    public function setCookieValue($value) {
+    public function setCookieValue(mixed $value): bool
+    {
         $result = false;
 
         if (isset($this->hashValue)) {
@@ -116,7 +120,8 @@ class WordPressCookie
      *
      * Removes the value associated with the cookie.
      */
-    public function deleteCookieValue() {
+    public function deleteCookieValue(): void
+    {
         if (isset($this->hashValue)) {
             delete_transient($this->hashValue);
         }

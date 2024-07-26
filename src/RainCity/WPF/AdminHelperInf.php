@@ -10,8 +10,8 @@ namespace RainCity\WPF;
  */
 interface AdminHelperInf
 {
-    public function addSettingsMenu();
-    public function addSettings();
+    public function addSettingsMenu(): void;
+    public function addSettings(): void;
 
-    public function onAdminEnqueueScripts();
+    public function onAdminEnqueueScripts(): void;
 }

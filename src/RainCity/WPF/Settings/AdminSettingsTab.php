@@ -3,13 +3,14 @@ namespace RainCity\WPF\Settings;
 
 use RainCity\Logging\Logger;
 use RainCity\WPF\WordPressOptions;
+use Psr\Log\LoggerInterface;
 
 abstract class AdminSettingsTab
 {
-    protected $log;
-    protected $tabName;
-    protected $tabId;
-    protected $options;
+    protected LoggerInterface $log;
+    protected string $tabName;
+    protected string $tabId;
+    protected WordPressOptions $options;
 
     protected $pageSlug;
 

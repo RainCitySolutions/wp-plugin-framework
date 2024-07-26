@@ -11,10 +11,10 @@ class Formidable
 {
     private const FRM_CACHE_FLAG = 'prevent_caching';
 
-    private static $formIdCache = array();
-    private static $fieldIdCache = array();
-    private static $viewIdCache = array();
-    private static $dbCacheState = array();
+    private static array $formIdCache = array();
+    private static array $fieldIdCache = array();
+    private static array $viewIdCache = array();
+    private static array $dbCacheState = array();
 
     /**
      * Returns the ID for a Formidable form given its key.
@@ -140,5 +140,4 @@ class Formidable
 
         return $result;
     }
-
 }

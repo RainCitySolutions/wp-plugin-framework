@@ -6,8 +6,8 @@ class EnqueueScripts
 {
     const INLINE_SCRIPT_HANDLER = 'raincity_wpf_InlineScripts';
 
-    private $pluginUrlBase;
-    private $pluginVersion;
+    private string $pluginUrlBase;
+    private string $pluginVersion;
 
     public function __construct(string $pluginUrlBase, string $pluginVersion) {
         $this->pluginUrlBase = $pluginUrlBase;
@@ -19,7 +19,7 @@ class EnqueueScripts
      * {@inheritDoc}
      * @see \RainCity\WPF\EnqueueScriptsInf::enqueueScript()
      */
-    public function enqueueScript(string $scriptPath, array $dependencies = array())
+    public function enqueueScript(string $scriptPath, array $dependencies = array()): void
     {
         $handle = basename($scriptPath,'.'.pathinfo($scriptPath)['extension']);
 
@@ -37,7 +37,7 @@ class EnqueueScripts
      * {@inheritDoc}
      * @see \RainCity\WPF\EnqueueScriptsInf::enqueueStyle()
      */
-    public function enqueueStyle(string $stylePath, array $dependencies)
+    public function enqueueStyle(string $stylePath, array $dependencies): void
     {
         $handle = basename($stylePath,'.'.pathinfo($stylePath)['extension']);
 
@@ -55,7 +55,7 @@ class EnqueueScripts
      * {@inheritDoc}
      * @see \RainCity\WPF\EnqueueScriptsInf::injectJavaScriptObject()
      */
-    public function injectJavaScriptObject(string $objName, array $objValue)
+    public function injectJavaScriptObject(string $objName, array $objValue): void
     {
         wp_register_script(self::INLINE_SCRIPT_HANDLER, false, array(), $this->pluginVersion);
 
@@ -63,4 +63,3 @@ class EnqueueScripts
         wp_add_inline_script(self::INLINE_SCRIPT_HANDLER, $script);
     }
 }
-

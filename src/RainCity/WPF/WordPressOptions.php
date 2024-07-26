@@ -12,13 +12,13 @@ use RainCity\Singleton;
 abstract class WordPressOptions extends Singleton
 {
     /* @var string */
-    private $optionName;
+    private string $optionName;
+
+    /* @var string[] */
+    private array $validKeys = array();
 
     /* @var array */
-    private $validKeys = array();
-
-    /* @var array */
-    private $values = array();
+    private array $values = array();
 
 
     /**
@@ -26,17 +26,20 @@ abstract class WordPressOptions extends Singleton
      *
      * @since    1.0.0
      */
-    protected function initializeOptions(string $name, array $validKeys): void {
+    protected function initializeOptions(string $name, array $validKeys): void
+    {
         $this->optionName = $name;
         $this->validKeys = $validKeys;
-        $this->values = get_option($name);
+        $dbValue = get_option($name);
 
-        if (!isset($this->values) || !is_array($this->values)) {
+        if (!isset($dbValue) || !is_array($dbValue)) {
             $this->values = array();
             foreach ($this->validKeys as $key) {
                 $this->values[$key] = '';
             }
             add_option($name, $this->values);
+        } else {
+            $this->values = $dbValue;
         }
 
         foreach ($this->validKeys as $key) {
@@ -55,21 +58,25 @@ abstract class WordPressOptions extends Singleton
         update_option($name, $this->values);
     }
 
-    public function getOptionName(): string {
+    public function getOptionName(): string
+    {
         return $this->optionName;
     }
 
-    public function getValues(): array {
+    public function getValues(): array
+    {
         return $this->values;
     }
 
-    public function setValue(string $key, string $value): void {
+    public function setValue(string $key, string $value): void
+    {
         if ($this->isValidKey($key)) {
             $this->values[$key] = $value;
         }
     }
 
-    public function getValue(string $key): ?string {
+    public function getValue(string $key): ?string
+    {
         return $this->isValidKey($key) ? $this->values[$key] : null;
     }
 
@@ -84,7 +91,8 @@ abstract class WordPressOptions extends Singleton
      *
      * @return array|NULL The array of values or null if the key is invalid.
      */
-    public function getFormFieldInfo(string $key): ?array {
+    public function getFormFieldInfo(string $key): ?array
+    {
         $result = null;
 
         if ($this->isValidKey($key)) {
@@ -98,11 +106,13 @@ abstract class WordPressOptions extends Singleton
         return $result;
     }
 
-    public function save(): void {
+    public function save(): void
+    {
         update_option($this->optionName, $this->values);
     }
 
-    private function isValidKey(string $key): bool {
+    private function isValidKey(string $key): bool
+    {
         return in_array($key, $this->validKeys);
     }
 }

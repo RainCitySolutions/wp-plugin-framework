@@ -9,15 +9,16 @@ namespace RainCity\WPF\Validation;
  * @implements    Input_Validator
  * @package       Acme/classes
  */
-class UrlValidator extends StringValidator {
-
+class UrlValidator extends StringValidator
+{
     /**
      * Determines if the specified input is valid.
      *
      * @param   mixed   $input  A single address as a string or multiple addresses as an array of strings
      * @return  bool            True if the input is valid; otherwise, false
      */
-    public function isValid( $input ) {
+    public function isValid(string $input): bool
+    {
         $isValid = parent::isValid($input);
 
         if ($isValid &&

@@ -4,35 +4,40 @@ namespace RainCity\WPF;
 use Soundasleep\Html2Text;
 
 class MessageWrapper {
-    private $fromAddress;
-    private $fromName;
+    private string $fromAddress;
+    private string $fromName;
 
-    public function __construct($fromName, $fromAddress) {
+    public function __construct(string $fromName, string $fromAddress)
+    {
         $this->fromName = $fromName;
         $this->fromAddress = $fromAddress;
     }
 
-    public function createMsgBody ($htmlBody) {
+    public function createMsgBody (string $htmlBody): string
+    {
         $textBody = Html2Text::convert($htmlBody);
 
         return
-        'Content-Type: text/plain;'.PHP_EOL
-        .PHP_EOL
-        .$textBody.PHP_EOL
-        .'Content-Type: text/html;'.PHP_EOL
-        .PHP_EOL
-        .$htmlBody.PHP_EOL;
+            'Content-Type: text/plain;'.PHP_EOL
+            .PHP_EOL
+            .$textBody.PHP_EOL
+            .'Content-Type: text/html;'.PHP_EOL
+            .PHP_EOL
+            .$htmlBody.PHP_EOL;
     }
 
-    public function getContentType() {
+    public function getContentType(): string
+    {
         return 'multipart/alternative';
     }
 
-    public function getFromName() {
+    public function getFromName(): string
+    {
         return $this->fromName;
     }
 
-    public function getFromAddress() {
+    public function getFromAddress(): string
+    {
         return $this->fromAddress;
     }
 }

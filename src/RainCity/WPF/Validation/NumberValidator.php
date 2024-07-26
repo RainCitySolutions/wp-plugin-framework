@@ -12,7 +12,8 @@ class NumberValidator extends BaseValidator
      * @param   int $min    The minimum value allowed
      * @param   int $max    The maximum value allowed
      */
-    public function setRange($min, $max) {
+    public function setRange($min, $max): void
+    {
         $this->min = $min;
         $this->max = $max;
     }
@@ -23,7 +24,8 @@ class NumberValidator extends BaseValidator
      * @param    string    $input    The string
      * @return   bool                True if the input is valid; otherwise, false
      */
-    public function isValid( $input ) {
+    public function isValid(string $input): bool
+    {
         $isValid = true;
 
         // If the input is an empty string, add the error message and mark the validity as false

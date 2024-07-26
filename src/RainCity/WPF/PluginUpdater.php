@@ -4,6 +4,7 @@ namespace RainCity\WPF;
 use RainCity\Logging\Logger;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use Psr\Log\LoggerInterface;
 
 
 /**
@@ -13,17 +14,17 @@ use RecursiveIteratorIterator;
 */
 class PluginUpdater
 {
-    private $log;
+    private LoggerInterface $log;
 
-    private $pluginName;
-    private $pluginSlug;
-    private $entryPointFile;
-    private $currentVersion;
+    private string $pluginName;
+    private string $pluginSlug;
+    private string $entryPointFile;
+    private string $currentVersion;
 
     private $updateSearchDone = false;  // avoid looking for updates more than once per HTTP request
     private $updateEntry = null;        // cache the result of finding the update entry
 
-    public function __construct($pluginName, $pluginSlug, $entryPointFile, $currentVersion) {
+    public function __construct(string $pluginName, string $pluginSlug, string $entryPointFile, string $currentVersion) {
         $this->pluginName = $pluginName;
         $this->pluginSlug = $pluginSlug;
         $this->entryPointFile = $entryPointFile;

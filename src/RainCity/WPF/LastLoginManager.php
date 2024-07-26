@@ -7,9 +7,9 @@ final class LastLoginManager
     const COLUMN_NAME = 'raincity_wpf-last-login';
     const LAST_LOGIN_META_TAG = 'last_login';
 
-    private $textDomain;
+    private string $textDomain;
 
-    public function __construct($textDomain) {
+    public function __construct(string $textDomain) {
         $this->textDomain = $textDomain;
     }
 
@@ -18,7 +18,8 @@ final class LastLoginManager
      *
      * @param ActionFilterLoader $loader
      */
-    public function loadActions(ActionFilterLoader $loader) {
+    public function loadActions(ActionFilterLoader $loader): void
+    {
         $loader->addAction('wp_login', $this, 'wpLoginAction', 10, 2);
         $loader->addAction('user_register', $this, 'userRegisterAction');
 
@@ -41,7 +42,8 @@ final class LastLoginManager
      * @param string $userLogin The user's login name.
      * @param \WP_User $wpUser WordPress User object
      */
-    public function wpLoginAction(string $userLogin, \WP_User $wpUser) {
+    public function wpLoginAction(string $userLogin, \WP_User $wpUser): void
+    {
         update_user_meta( $wpUser->ID, self::LAST_LOGIN_META_TAG, time() );
     }
 
@@ -50,7 +52,8 @@ final class LastLoginManager
      *
      * @param int $userId The user ID.
      */
-    public function userRegisterAction( $userId ) {
+    public function userRegisterAction(int $userId): void
+    {
         update_user_meta( $userId, self::LAST_LOGIN_META_TAG, 0 );
     }
 
@@ -63,7 +66,8 @@ final class LastLoginManager
      *
      * @return array
      */
-    public function addLastLoginColumn(array $columns) {
+    public function addLastLoginColumn(array $columns): array
+    {
         $columns[self::COLUMN_NAME] = __( 'Last Login', $this->textDomain );
 
         return $columns;
@@ -75,7 +79,8 @@ final class LastLoginManager
      *
      * Defines the width of the last login column
      */
-    public function formatLastLoginColumn() {
+    public function formatLastLoginColumn(): void
+    {
         ?>
         <style type="text/css">
             .column-<?php echo self::COLUMN_NAME; ?> { width: 15%; }
@@ -94,7 +99,8 @@ final class LastLoginManager
      *
      * @return string The last login date if available otherwise 'Never'.
      */
-    public function manageUsersCustomColumn(string $output, string $columnName, int $userId) {
+    public function manageUsersCustomColumn(string $output, string $columnName, int $userId): string
+    {
         if ( self::COLUMN_NAME === $columnName ) {
             $output = __( 'Never', $this->textDomain );
             $lastLogin = (int) get_user_meta( $userId, self::LAST_LOGIN_META_TAG, true );
@@ -116,7 +122,8 @@ final class LastLoginManager
      *
      * @return array
      */
-    public function markColumnSortable(array $columns) {
+    public function markColumnSortable(array $columns): array
+    {
         $columns[self::COLUMN_NAME] = self::COLUMN_NAME;
 
         return $columns;
@@ -131,7 +138,8 @@ final class LastLoginManager
      *
      * @return \WP_User_Query
      */
-    public function preGetUsersAction(\WP_User_Query $userQuery ) {
+    public function preGetUsersAction(\WP_User_Query $userQuery): \WP_USER_QUERY
+    {
         if ( isset( $userQuery->query_vars['orderby'] ) && self::COLUMN_NAME === $userQuery->query_vars['orderby'] ) {
             $userQuery->query_vars = array_merge(
                 $userQuery->query_vars,

@@ -2,15 +2,17 @@
 namespace RainCity\WPF;
 
 use RainCity\Logging\Logger;
+use Psr\Log\LoggerInterface;
 
 
 final class RedirectionManager
     implements ActionHandlerInf
 {
-    private $logger;
-    private $helper;
+    private LoggerInterface $logger;
+    private RedirectionHelperInf $helper;
 
-    public function __construct(RedirectionHelperInf $helper) {
+    public function __construct(RedirectionHelperInf $helper)
+    {
         $this->logger = Logger::getLogger(get_class($this));
         $this->helper = $helper;
     }
@@ -20,7 +22,8 @@ final class RedirectionManager
      *
      * @param ActionFilterLoader $loader
      */
-    public function loadActions(ActionFilterLoader $loader) {
+    public function loadActions(ActionFilterLoader $loader): void
+    {
         $loader->addFilter('login_redirect', $this, 'loginRedirect', 10, 3);
         $loader->addFilter('logout_redirect', $this, 'logoutRedirect', 10, 3);
     }
@@ -35,7 +38,8 @@ final class RedirectionManager
      *
      * @return string New redirect
      */
-    public function loginRedirect( $redirectTo, $requestedRedirectTo, $user ) {
+    public function loginRedirect(string $redirectTo, string $requestedRedirectTo, \WP_User|\WP_Error $user): string
+    {
         $redirectUrl = $redirectTo;
 
         if ($user instanceof \WP_User) {
@@ -57,7 +61,8 @@ final class RedirectionManager
      *
      * @return string New redirect
      */
-    public function logoutRedirect($redirectTo, $request, $user) {
+    public function logoutRedirect(string $redirectTo, string $request, \WP_User|\WP_Error $user): string
+    {
         $redirectUrl = $redirectTo;
 
         if ($user instanceof \WP_User) {

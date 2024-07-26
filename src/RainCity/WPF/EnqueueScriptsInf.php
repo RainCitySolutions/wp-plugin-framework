@@ -11,7 +11,7 @@ interface EnqueueScriptsInf
      * @param array     $dependencies   An array of script slugs this script
      *      id dependent on.
      */
-    public function enqueueScript(string $scriptPath, array $dependencies);
+    public function enqueueScript(string $scriptPath, array $dependencies): void;
 
     /**
      * Enqueue a script to be included in the web page
@@ -21,7 +21,7 @@ interface EnqueueScriptsInf
      * @param array     $dependencies   An array of script slugs this script
      *      id dependent on.
      */
-    public function enqueueStyle(string $stylePath, array $dependencies);
+    public function enqueueStyle(string $stylePath, array $dependencies): void;
 
     /**
      * Inject a JavaScript object to the page.
@@ -29,5 +29,5 @@ interface EnqueueScriptsInf
      * @param string $objName   A name for the JavaScript object.
      * @param array  $objValue  An array to be assocated with the object.
      */
-    public function injectJavaScriptObject(string $objName, array $objValue);
+    public function injectJavaScriptObject(string $objName, array $objValue): void;
 }

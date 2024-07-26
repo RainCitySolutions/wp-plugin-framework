@@ -22,7 +22,8 @@ class PluginInformation {
         return $this->pluginPath;
     }
 
-    public static function getPluginFile( $pluginName ) {
+    public static function getPluginFile(string $pluginName): ?string
+    {
         if (defined('ABSPATH')) { // Wrap in case we get invoked via unit testing
             require_once ABSPATH . '/wp-admin/includes/plugin.php';
         }
@@ -55,7 +56,8 @@ class PluginInformation {
      * @access private
      * @return PluginInformation An instance of a PluginInformation class
      */
-    public static function getPluginInfo(): PluginInformation {
+    public static function getPluginInfo(): PluginInformation
+    {
         $pluginInfo = new PluginInformation();
 
         // Get the names of the currently active plugins
@@ -110,7 +112,7 @@ class PluginInformation {
         PluginInformation &$pluginInfo,
         string $pluginPathRegex,
         array $stackTrace
-        )
+        ): void
     {
         $matches = array();
 
@@ -144,14 +146,16 @@ class PluginInformation {
      *
      * @return string Name of the current plugin
      */
-    public static function getPluginPackageName () {
+    public static function getPluginPackageName (): string
+    {
         $pluginInfo = self::getPluginInfo();
 
         return $pluginInfo->pluginPackage;
     }
 
 
-    public static function getPluginName () {
+    public static function getPluginName(): ?string
+    {
         $pluginPackage = self::getPluginPackageName();
 
         $plugins = get_plugins();
@@ -164,12 +168,14 @@ class PluginInformation {
     }
 
 
-    public static function getPluginUrl () {
+    public static function getPluginUrl(): string
+    {
         return plugins_url() .'/'. self::getPluginPackageName() .'/';
     }
 
 
-    public static function getPluginWriteDir () {
+    public static function getPluginWriteDir(): string
+    {
         $path = null;
 
         if (function_exists('wp_upload_dir')) {
@@ -181,7 +187,8 @@ class PluginInformation {
         return $path;
     }
 
-    public static function isPluginActive($pluginFile) {
+    public static function isPluginActive($pluginFile): bool
+    {
         if (defined('ABSPATH')) { // Wrap in case we get invoked via unit testing
             include_once ABSPATH . 'wp-admin/includes/plugin.php';
         }

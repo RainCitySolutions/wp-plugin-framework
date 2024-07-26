@@ -9,47 +9,49 @@ namespace RainCity\WPF;
  * run function to execute the list of actions and filters.
  *
  */
-class ActionFilterLoader {
+class ActionFilterLoader
+{
     /**
      * The array of actions registered with WordPress.
      *
      * @access   protected
-     * @var      array    $actions    The actions registered with WordPress to fire when the plugin loads.
+     * @var      \stdClass[]    $actions    The actions registered with WordPress to fire when the plugin loads.
      */
-    protected $actions;
+    protected array $actions;
 
     /**
      * The array of filters registered with WordPress.
      *
      * @access   protected
-     * @var      array    $filters    The filters registered with WordPress to fire when the plugin loads.
+     * @var      \stdClass[]    $filters    The filters registered with WordPress to fire when the plugin loads.
      */
-    protected $filters;
+    protected array $filters;
 
     /**
      * The array of short codes registered with WordPress.
      *
      * @access   protected
-     * @var      array    $shortcodes    The short codes registered with WordPress to fire when the plugin loads.
+     * @var      \stdClass[]    $shortcodes    The short codes registered with WordPress to fire when the plugin loads.
      */
-    protected $shortcodes;
+    protected array $shortcodes;
 
     /**
      * The array of REST routes registered with WordPress.
      *
      * @access   protected
-     * @var      array    $restRoutes    The REST routes registered with WordPress to fire when the plugin loads.
+     * @var      \stdClass[]    $restRoutes    The REST routes registered with WordPress to fire when the plugin loads.
      */
-    protected $restRoutes;
+    protected array $restRoutes;
 
-    private $pluginSlug;
+    private string $pluginSlug;
 
     /**
      * Initialize the collections used to maintain the actions and filters.
      *
      * @param string $pluginSlug The slug for the plugin
      */
-    public function __construct(string $pluginSlug) {
+    public function __construct(string $pluginSlug)
+    {
         $this->pluginSlug = $pluginSlug;
 
         $this->actions = array();
@@ -67,7 +69,8 @@ class ActionFilterLoader {
      * @param    int                  $priority     Optional. The priority at which the function should be fired. Default is 10.
      * @param    int                  $args         Optional. The number of arguments that should be passed to the $callback. Default is 1.
      */
-    public function addAction( $hook, $component, $callback, $priority = 10, $args = 1 ) {
+    public function addAction( $hook, $component, $callback, $priority = 10, $args = 1 ): void
+    {
         $this->add( $this->actions, $hook, $component, $callback, $priority, $args );
     }
 
@@ -80,7 +83,8 @@ class ActionFilterLoader {
      * @param    int                  $priority     Optional. The priority at which the function should be fired. Default is 10.
      * @param    int                  $args         Optional. The number of arguments that should be passed to the $callback. Default is 1.
      */
-    public function addFilter( $hook, $component, $callback, $priority = 10, $args = 1 ) {
+    public function addFilter( $hook, $component, $callback, $priority = 10, $args = 1 ): void
+    {
         $this->add( $this->filters, $hook, $component, $callback, $priority, $args );
     }
 
@@ -91,7 +95,8 @@ class ActionFilterLoader {
      * @param    string|object|null   $component    A reference to a class for static methods, an object for instance methods or null.
      * @param    string|callable      $callback     The name of the method on the class or object on the $component, the name of a function or a function.
      */
-    public function addShortcode( $hook, $component, $callback) {
+    public function addShortcode( $hook, $component, $callback): void
+    {
         $this->add( $this->shortcodes, $hook, $component, $callback);
     }
 
@@ -113,7 +118,7 @@ class ActionFilterLoader {
         $component,
         $callback,
         array $args = array('methods' => \WP_REST_Server::READABLE)
-        )
+        ): void
     {
         $args['callback'] = $this->getCallback($component, $callback);
 
@@ -151,7 +156,7 @@ class ActionFilterLoader {
         $callback,
         int $priority = 10,
         int $acceptedArgs = 1
-        )
+        ): void
     {
         $hookObj = new \stdClass();
         $hookObj->hook = $hook;
@@ -172,7 +177,8 @@ class ActionFilterLoader {
      *
      * @return callable A reference to a callable method.
      */
-    private function getCallback($component, $callback): callable {
+    private function getCallback($component, $callback): callable
+    {
         // If the $callback parameter is callable, use that ignoring the $component argument
         if (is_callable($callback)) {
             $callbackFunc = $callback;
@@ -201,7 +207,8 @@ class ActionFilterLoader {
      *
      * @since    1.0.0
      */
-    public function run() {
+    public function run(): void
+    {
         foreach ( $this->filters as $hook ) {
             add_filter( $hook->hook, $hook->callback, $hook->priority, $hook->accepted_args );
         }

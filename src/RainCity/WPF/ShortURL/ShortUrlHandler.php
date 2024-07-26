@@ -20,10 +20,10 @@ class ShortUrlHandler
 
     const TABLE_NAME = 'raincity_wpf_short_urls';
 
-    public static $verifyUrlReferences = true;
+    public static bool $verifyUrlReferences = true;
 
     /** @var string */
-    protected $urlPrefix;
+    protected string $urlPrefix;
 
     /**
      * Initialize the class and set its properties.
@@ -55,7 +55,7 @@ class ShortUrlHandler
      *
      * @param ActionFilterLoader $loader
      */
-    public function loadActions(ActionFilterLoader $loader)
+    public function loadActions(ActionFilterLoader $loader): void
     {
         $loader->addAction('plugins_loaded', self::class, 'upgradeDbTable');
 
@@ -69,7 +69,7 @@ class ShortUrlHandler
      *
      * @return bool Returns true on success, otherwise returns false.
      */
-    public static function upgradeDbTable () {
+    public static function upgradeDbTable (): bool {
         global $wpdb;
 
         $tableName = self::getTableName($wpdb);
@@ -211,7 +211,7 @@ KEY long_url (long_url)
      * @return mixed Returns a fully qualified URL or false if the URL format
      *      is invalid.
      */
-    protected function validateUrlFormat(string $url) {
+    protected function validateUrlFormat(string $url): mixed {
         $parsedUrl = parse_url($url);
 
         // If there is no host name on the URL, add the current host
@@ -325,10 +325,10 @@ KEY long_url (long_url)
      *
      * @param string $url The URL to check for.
      *
-     * @return mixed Returns the shortCode for the URL if it exists,
+     * @return string|bool Returns the shortCode for the URL if it exists,
      *      otherwise returns false.
      */
-    protected function urlExists(string $url) {
+    protected function urlExists(string $url): string|bool {
         global $wpdb;
 
         $tableName = self::getTableName($wpdb);

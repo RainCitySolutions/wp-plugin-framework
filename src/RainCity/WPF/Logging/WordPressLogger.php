@@ -1,6 +1,7 @@
 <?php
 namespace RainCity\WPF\Logging;
 
+use Monolog\LogRecord;
 use Psr\Log\LoggerInterface;
 use RainCity\Logging\BaseLogger;
 use RainCity\Logging\Logger;
@@ -28,11 +29,11 @@ class WordPressLogger extends BaseLogger
      * {@inheritDoc}
      * @see \RainCity\Logging\BaseLogger::setupLogger()
      */
-    protected function setupLogger(\Monolog\Logger $logger)
+    protected function setupLogger(\Monolog\Logger $logger): void
     {
         parent::setupLogger($logger);
 
-        $logger->pushProcessor(function ($record) {
+        $logger->pushProcessor(function (LogRecord $record): LogRecord {
             $reqId = getenv(WordPressPlugin::REQUEST_ID);
 
             if ($reqId) {
@@ -84,7 +85,7 @@ class WordPressLogger extends BaseLogger
      * {@inheritDoc}
      * @see \RainCity\Logging\BaseLogger::getLogLevel()
      */
-    protected function getLogLevel() {
+    protected function getLogLevel(): mixed {
         $pluginName = PluginInformation::getPluginName();
         $option = get_option(LOGGER_OPTION_NAME, array());
 
@@ -102,7 +103,7 @@ class WordPressLogger extends BaseLogger
      * {@inheritDoc}
      * @see \RainCity\Logging\BaseLogger::setLogLevel()
      */
-    protected function setLogLevel($level) {
+    protected function setLogLevel($level): void {
         $pluginName = PluginInformation::getPluginPackageName();
 
         $option = get_option(LOGGER_OPTION_NAME);
@@ -115,7 +116,7 @@ class WordPressLogger extends BaseLogger
         update_option(LOGGER_OPTION_NAME, $option);
     }
 
-    public static function uninstall() {
+    public static function uninstall(): void {
         Logger::getLogger(static::BASE_LOGGER)->info('Logger::uninstall() called');
 
         $option = get_option(LOGGER_OPTION_NAME);
@@ -152,5 +153,4 @@ class WordPressLogger extends BaseLogger
             $handler->close();
         }
     }
-
 }

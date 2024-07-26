@@ -6,6 +6,7 @@ use RainCity\Singleton;
 use RainCity\Logging\Logger;
 use RainCity\WPF\AdminHelperInf;
 use RainCity\WPF\PluginInformation;
+use Psr\Log\LoggerInterface;
 
 abstract class AdminSettings
     extends Singleton
@@ -14,20 +15,21 @@ abstract class AdminSettings
     /**
      * @var string  $plugin_name    The ID of this plugin.
      */
-    protected $pluginName;
+    protected string $pluginName;
 
     /**
      * @var string  $version    The current version of this plugin.
      */
-    protected $version;
+    protected string $version;
 
-    protected $log;
+    protected LoggerInterface $log;
 
-    protected $optionsPageTitle;
-    protected $optionsPageSlug;
-    protected $optionsMenuTitle;
+    protected string $optionsPageTitle;
+    protected string $optionsPageSlug;
+    protected string $optionsMenuTitle;
 
-    private $tabs = array();
+    /** @var AdminSettingsTab[] */
+    private array $tabs = array();
 
     /**
      * Initialize the class and set its properties.
@@ -59,7 +61,8 @@ abstract class AdminSettings
      *
      * Hooked into the 'admin_menu' event.
      */
-    final public function addSettingsMenu() {
+    final public function addSettingsMenu(): void
+    {
         if (isset($this->optionsPageTitle) &&
             isset($this->optionsPageSlug) &&
             isset($this->optionsMenuTitle))
@@ -83,7 +86,8 @@ abstract class AdminSettings
      * Hooked into the 'admin_init' event and called as a result of the child
      * class being registered with the plugin as the admin helper.
      */
-    final public function addSettings() {
+    final public function addSettings(): void
+    {
         foreach ($this->tabs as $tab) {
             $tab->registerActions();
         }
@@ -97,13 +101,15 @@ abstract class AdminSettings
      *
      * Hooked into the 'admin_enqueue_scripts' event.
      */
-    final public function onAdminEnqueueScripts () {
+    final public function onAdminEnqueueScripts(): void
+    {
         $activeTab = $this->getActiveTab();
 
         $activeTab->onEnqueueScripts($this->pluginName, PluginInformation::getPluginUrl(), $this->version);
     }
 
-    private function getActiveTab(): AdminSettingsTab {
+    private function getActiveTab(): AdminSettingsTab
+    {
         $activeTabId = '';
 
         if (isset( $_GET[ 'tab' ] )) {
@@ -125,12 +131,14 @@ abstract class AdminSettings
                         array_key_first($this->tabs)];
     }
 
-    public function localSanitize($input) {
+    public function localSanitize($input): void
+    {
         $activeTab = $this->getActiveTab();
         $activeTab->sanitize($input);
     }
 
-    final public function registerTab(AdminSettingsTab $tab) {
+    final public function registerTab(AdminSettingsTab $tab): void
+    {
         $newTab = true;
 
         foreach ($this->tabs as $existingTab) {
@@ -149,7 +157,8 @@ abstract class AdminSettings
     /**
      * Render the settings page
      */
-    final public function renderSettingsPage () {
+    final public function renderSettingsPage(): void
+    {
         // check user capabilities
         if ( current_user_can( 'manage_options' ) && count($this->tabs) != 0)
         {

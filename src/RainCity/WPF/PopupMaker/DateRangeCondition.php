@@ -15,25 +15,22 @@ final class DateRangeCondition implements ActionHandlerInf
     private const TEMPUS_DOMINUS_HANDLE = 'pum-tempus-dominus';
     private const TEMPUS_DOMINUS_VERSION = '6.9.4';
 
-    private const FONTAWESOME_HANDLE = 'pum-fontawesome';
-    private const FONTAWESOME_VERSION = '5.15.4';    // '6.5.1';
-
     /**
      * Add hooks for the PopupMaker condition.
      *
      * @param ActionFilterLoader $loader
      */
-    public function loadActions(ActionFilterLoader $loader) {
+    public function loadActions(ActionFilterLoader $loader): void {
         if (class_exists('Popup_Maker')) {
             $loader->add_action('admin_enqueue_scripts', $this, 'adminEnqueueScripts');
             $loader->add_action('admin_print_footer_scripts', $this, 'adminPrintFooterScripts', -1);
             $loader->add_filter('wp_script_attributes', $this, 'wpScriptAttributes', 10, 1 );
             $loader->add_filter('style_loader_tag', $this, 'styleLoaderTag', 10, 2);
-            
+
             $loader->add_filter('pum_registered_conditions', $this, 'registerConditions');
         }
     }
-    
+
     /**
      * Callback for the 'pum_registered_conditions' filter.
      *
@@ -66,12 +63,12 @@ final class DateRangeCondition implements ActionHandlerInf
                 ]
             ]
             );
-        
+
         return $conditions;
     }
-    
-    public function isInDateRange(array $condition): bool {
-        
+
+    public function isInDateRange(array $condition): bool
+    {
         return true;
     }
 

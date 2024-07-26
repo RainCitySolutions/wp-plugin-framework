@@ -12,29 +12,32 @@ use RainCity\Logging\Logger;
 class WordPressDataCacheHelper
 {
     /** @var LoggerInterface */
-    private $log;
+    private LoggerInterface $log;
 
     /** @var DataCache */
-    private $cache;
+    private DataCache $cache;
 
     /** @var string */
-    private $pluginName;
+    private string $pluginName;
 
     const AJAX_ACTION_CLEAR_DATA_CACHE = 'wpfDataCacheClear';
 
 
-    public function __construct (DataCache $cache, string $pluginName) {
+    public function __construct (DataCache $cache, string $pluginName)
+    {
         $this->log = Logger::getLogger(get_class($this));
         $this->cache = $cache;
         $this->pluginName = $pluginName;
     }
 
-    public function onRegisterActions() {
+    public function onRegisterActions(): void
+    {
         add_action('wp_ajax_'.self::AJAX_ACTION_CLEAR_DATA_CACHE, array($this, 'ajaxClearDataCache'));
         add_filter('admin_print_footer_scripts ', array($this, 'injectJavaScript'), 100);
     }
 
-    public function onAdminEnqueueScripts() {
+    public function onAdminEnqueueScripts(): void
+    {
         wp_localize_script(
             $this->pluginName,
             'raincity_dataCacheObj',
@@ -45,11 +48,13 @@ class WordPressDataCacheHelper
             ));
     }
 
-    public function injectButton(string $label = 'Clear Data Cache') {
+    public function injectButton(string $label = 'Clear Data Cache'): void
+    {
        printf('<input type="button" class="wpfclearcache button button-secondary" value="%s" name="clearCache">', $label);
     }
 
-    public function injectJavaScript() {
+    public function injectJavaScript(): void
+    {
         echo "<script type='text/javascript'>\n";
         echo 'var pluginUrl = ' . wp_json_encode( WP_PLUGIN_URL . '/my_plugin/' ) . ';';
         echo "jQuery(document).ready(function($) {\n";
@@ -64,7 +69,8 @@ class WordPressDataCacheHelper
         echo '</script>';
     }
 
-    public function ajaxClearDataCache() {
+    public function ajaxClearDataCache(): void
+    {
         $this->log->debug('Ajax request to run Clear DataCache');
 
         check_ajax_referer($this->pluginName);

@@ -15,7 +15,7 @@ abstract class BgTask
     use SerializeAsArrayTrait;
 
     /** @var LoggerInterface */
-    protected $logger;
+    protected LoggerInterface $logger;
 
     /**
      *

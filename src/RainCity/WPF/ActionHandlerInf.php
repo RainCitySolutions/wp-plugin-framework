@@ -3,5 +3,5 @@ namespace RainCity\WPF;
 
 interface ActionHandlerInf
 {
-    public function loadActions(ActionFilterLoader $loader);
+    public function loadActions(ActionFilterLoader $loader): void;
 }

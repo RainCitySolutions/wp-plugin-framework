@@ -40,11 +40,11 @@ abstract class WordPressPlugin
     const ON_REGISTER_SHORTCODE_ACTION = 'raincity_wpf_register_shortcode_action';
 
 
-    protected $pluginName;
-    protected $pluginVersion;
-    protected $pluginSlug;
-    protected $mainPluginFilename;
-    protected $basePluginUrl;
+    protected string $pluginName;
+    protected string $pluginVersion;
+    protected string $pluginSlug;
+    protected string $mainPluginFilename;
+    protected string $basePluginUrl;
 
 
     /**
@@ -54,14 +54,14 @@ abstract class WordPressPlugin
      * @access   protected
      * @var      ActionFilterLoader    $loader    Maintains and registers all hooks for the plugin.
      */
-    protected $loader;
+    protected ActionFilterLoader $loader;
 
     /**
      *
      * @var string Version of the database. Used to detect when updates are
      *             needed to the database.
      */
-    private $databaseVersion;
+    private string $databaseVersion;
 
 
     /**
@@ -69,7 +69,8 @@ abstract class WordPressPlugin
      * {@inheritDoc}
      * @see \RainCity\Singleton::__construct()
      */
-    protected function __construct(array $args) {
+    protected function __construct(array $args)
+    {
         parent::__construct();
 
         if (isset($args[0])) {
@@ -89,7 +90,8 @@ abstract class WordPressPlugin
      * {@inheritDoc}
      * @see \RainCity\Singleton::initializeInstance()
      */
-    protected function initializeInstance() {
+    protected function initializeInstance(): void
+    {
         $this->setupActions();
 
         /**
@@ -152,7 +154,8 @@ abstract class WordPressPlugin
     /**
      * Allow any short codes to be registered
      */
-    public function fireRegisterShortCodeAction() {
+    public function fireRegisterShortCodeAction():void
+    {
         // Fire action
         do_action(
             self::ON_REGISTER_SHORTCODE_ACTION,
@@ -189,7 +192,7 @@ abstract class WordPressPlugin
      * {@link AdminSettingsTab::onEnqueueScripts()} function for registering
      * tab specific scripts and styles.
      */
-    public function onAdminEnqueueScripts() {}
+    public function onAdminEnqueueScripts(): void {}
 
 
     /**
@@ -199,7 +202,7 @@ abstract class WordPressPlugin
      * scripts and styles. This function should be used for any scripts
      * or styles that need to be available on any public page.
      */
-    public function onWpEnqueueScripts() {}
+    public function onWpEnqueueScripts(): void {}
 
 
     /**
@@ -213,7 +216,8 @@ abstract class WordPressPlugin
      *
      * @return string  A possibly modified script tag.
      */
-    public function onScriptLoaderTag(string $tag, string $handle) {
+    public function onScriptLoaderTag(string $tag, string $handle): string
+    {
         $replacements = array('<script');
 
         // if the unique handle/name of the registered script has 'async' in it
@@ -322,7 +326,8 @@ abstract class WordPressPlugin
      * @return bool Returns true if the database upgrade should be performed.
      *      Otherwise returns false.
      */
-    private function doDatabaseUpgrade(string $version): bool {
+    private function doDatabaseUpgrade(string $version): bool
+    {
         return version_compare($this->databaseVersion, $version) == -1;
     }
 
@@ -332,7 +337,8 @@ abstract class WordPressPlugin
      *
      * @access protected
      */
-    protected function setupActions() {
+    protected function setupActions(): void
+    {
         $this->loader = new ActionFilterLoader($this->pluginSlug);
 
         // Add actions to plugin activation and deactivation hooks
@@ -354,7 +360,8 @@ abstract class WordPressPlugin
      * @param ShortCodeRegInf $regHandler Interface to use in registering
      *          short code handlers.
      */
-    final public function privRegisterShortCodes(ShortCodeRegInf $regHandler) {
+    final public function privRegisterShortCodes(ShortCodeRegInf $regHandler): void
+    {
         $regHandler->registerShortCode(new UsernameShortCode());
         $regHandler->registerShortCode(new EmailShortCode());
     }
@@ -401,7 +408,8 @@ abstract class WordPressPlugin
      *
      * @return NULL
      */
-    protected function getSettingsPageSlug(): ?string {
+    protected function getSettingsPageSlug(): ?string
+    {
         return null;
     }
 
@@ -409,7 +417,8 @@ abstract class WordPressPlugin
     /**
      * The code that runs during plugin activation.
      */
-    public function activate_plugin() {
+    public function activate_plugin(): void
+    {
         Logger::getLogger(get_called_class(), $this->pluginSlug)->debug('Activating '.$this->pluginName);
 
         $options = static::getOptions();
@@ -433,7 +442,8 @@ abstract class WordPressPlugin
     /**
      * The code that runs during plugin deactivation.
      */
-    public function deactivate_plugin() {
+    public function deactivate_plugin(): void
+    {
         Logger::getLogger(get_called_class ())
             ->debug('Deactivating '.$this->pluginName);
 
@@ -446,7 +456,8 @@ abstract class WordPressPlugin
     /**
      * The code that runs during plugin removal.
      */
-    public static function uninstall_plugin() {
+    public static function uninstall_plugin(): void
+    {
         Logger::getLogger(get_called_class (), PluginInformation::getPluginPackageName())
             ->debug('Uninstalling '.PluginInformation::getPluginName());
 
@@ -477,8 +488,8 @@ abstract class WordPressPlugin
      * @since    1.0.0
      * @param   AdminHelperInf   $adminInst Reference to a class implementing the Admin_Helper_Inf interface.
      */
-    public function register_admin_helper(AdminHelperInf $adminInst) {
-
+    public function register_admin_helper(AdminHelperInf $adminInst): void
+    {
         if (is_admin() && isset($adminInst)) {
             $this->loader->addAction( 'admin_enqueue_scripts', $adminInst, 'onAdminEnqueueScripts' );
 
@@ -494,7 +505,8 @@ abstract class WordPressPlugin
      * @since     1.0.0
      * @return    ActionFilterLoader    Orchestrates the hooks of the plugin.
      */
-    public function get_loader() {
+    public function get_loader(): ActionFilterLoader
+    {
         return $this->loader;
     }
 
@@ -516,7 +528,7 @@ abstract class WordPressPlugin
      *
      * @return object   An instance of the plugin class.
      */
-    public static function kickstart(string $pluginClass, string $entryPointFile)
+    public static function kickstart(string $pluginClass, string $entryPointFile): object
     {
         if (defined('ABSPATH')) { // Wrap in case we get invoked via unit testing
             require_once ABSPATH . '/wp-admin/includes/plugin.php';
@@ -540,7 +552,7 @@ abstract class WordPressPlugin
         return forward_static_call(array($pluginClass, 'instance'), $pluginData);
     }
 
-    private static function shutdownFunction($pluginSlug)
+    private static function shutdownFunction($pluginSlug): void
     {
         $error = error_get_last();
 

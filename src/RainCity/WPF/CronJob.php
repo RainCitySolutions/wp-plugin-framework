@@ -17,15 +17,15 @@ abstract class CronJob implements CronJobInf
     const EVERY_15_MINUTES = 'every15minutes';
     const EVERY_6_HOURS    = 'every6hours';
 
-    static $jobList = array();
+    static array $jobList = array();
 
-    protected $cronJobName;
-    protected $cronJobInterval;
+    protected string $cronJobName;
+    protected string $cronJobInterval;
 
     /** @var LoggerInterface */
     protected $log;
 
-    public function __construct($jobName, $interval) {
+    public function __construct(string $jobName, string $interval) {
         $this->cronJobName = $jobName;
         $this->cronJobInterval = $interval;
         $this->log = Logger::getLogger(get_class($this));
@@ -39,7 +39,7 @@ abstract class CronJob implements CronJobInf
         }
     }
 
-    private function scheduleCron($jobName, $interval) {
+    private function scheduleCron(string $jobName, string $interval): bool {
         $result = false;
 
         if (array_key_exists ($interval, wp_get_schedules())) {
@@ -58,18 +58,22 @@ abstract class CronJob implements CronJobInf
     }
 
 
-    public function cronEntryPoint() {
+    public function cronEntryPoint(): void
+    {
         $this->runJob();
+
         if (self::ONE_TIME_CRONJOB == $this->cronJobInterval) {
             self::$jobList = array_diff(self::$jobList, array($this->cronJobName));
             wp_clear_scheduled_hook($this->cronJobName);
         }
     }
 
-    public static function activate() {
+    public static function activate(): void
+    {
     }
 
-    public static function deactivate() {
+    public static function deactivate(): void
+    {
         Logger::getLogger(get_called_class())->debug('Deactivating cron jobs', CronJob::$jobList);
 
         foreach(self::$jobList as $name) {
@@ -77,17 +81,20 @@ abstract class CronJob implements CronJobInf
         }
     }
 
-    public static function uninstall() {
+    public static function uninstall():void
+    {
     }
 
-    public static function addCustomIntervalsFilter() {
+    public static function addCustomIntervalsFilter():void
+    {
         // Protect for case where running tests without WordPress
         if (function_exists('add_filter')) {
             add_filter( 'cron_schedules', [get_class(), 'addCustomIntervals']);
         }
     }
 
-    public static function addCustomIntervals( $schedules ) {
+    public static function addCustomIntervals(array $schedules): array
+    {
         $schedules[self::ONE_TIME_CRONJOB] = array(
             'interval' => 1 * MINUTE_IN_SECONDS,    // Set to 1 minute but will be cancelled after firing once
             'display'  => esc_html__( 'One Time' )
@@ -117,9 +124,9 @@ interface CronJobInf
 {
     public function runJob();
 
-    public static function activate();
-    public static function deactivate();
-    public static function uninstall();
+    public static function activate(): void;
+    public static function deactivate(): void;
+    public static function uninstall(): void;
 }
 
 CronJob::addCustomIntervalsFilter();

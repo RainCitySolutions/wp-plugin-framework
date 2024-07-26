@@ -21,6 +21,7 @@ class BgProcess extends \WP_Background_Process
     private const ACTION_NAME = 'BaseBgProcess';
 
     // Override prefix and action properties
+    // Note: We don't define the member types as they are not defined in the parent classes.
     protected $prefix = 'raincity';
     protected $action = self::ACTION_NAME;
 

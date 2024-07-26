@@ -12,7 +12,7 @@ class ShortUrlOptions extends WordPressOptions
     /**
      * Initialize the collections used to maintain the values.
      */
-    protected function initializeInstance() {
+    protected function initializeInstance(): void {
         parent::initializeInstance();
 
         $this->initializeOptions(

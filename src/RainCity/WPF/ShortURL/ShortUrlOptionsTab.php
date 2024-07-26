@@ -16,7 +16,7 @@ class ShortUrlOptionsTab
     const AJAX_DELETE_SHORT_URL = 'deleteShortUrlAction';
 
     /** @var ShortUrlHandler */
-    private $handler;
+    private ShortUrlHandler $handler;
 
     public function __construct()
     {
@@ -25,7 +25,7 @@ class ShortUrlOptionsTab
         $this->handler = ShortUrlHandler::getInstance();
     }
 
-    public function addSettings(string $pageSlug)
+    public function addSettings(string $pageSlug): void
     {
         add_settings_section(
             self::OPTIONS_SECTION_MAPPINGS_ID,

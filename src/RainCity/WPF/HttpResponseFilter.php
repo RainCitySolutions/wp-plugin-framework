@@ -2,31 +2,35 @@
 namespace RainCity\WPF;
 
 use RainCity\Logging\Logger;
+use GuzzleHttp\Exception\ClientException;
+use Psr\Http\Message\UriInterface;
+use Psr\Log\LoggerInterface;
 
 
 class HttpResponseFilter
 {
-    /** @var Logger */
-    private $logger;
+    /** @var LoggerInterface */
+    private LoggerInterface $logger;
 
     /** @var int */
-    private $respCode;
+    private int $respCode;
 
     /** @var string */
-    private $respMsg;
+    private string $respMsg;
 
     /** @var string */
-    private $respBody;
+    private string $respBody;
 
-    /** @var \GuzzleHttp\Exception\ClientException */
-    private $clientException;
+    /** @var ClientException */
+    private ClientException $clientException;
 
     /**
      * Hooks into the 'http_response' filter.
      *
      * When an instance goes out of scope the filter is removed.
      */
-    public function __construct() {
+    public function __construct()
+    {
         $this->logger = Logger::getLogger(get_class($this));
 
         add_filter('http_response', array($this, 'capture'), 10, 3);
@@ -38,7 +42,8 @@ class HttpResponseFilter
     }
 
 
-    public function capture ($resp, $reqArgs, $url) {
+    public function capture (array $resp, array $reqArgs, string|UriInterface $url): array
+    {
         $this->logger->debug('Capturing HTTP Response for {url}', array('url' => $url));
 
         $this->respCode = wp_remote_retrieve_response_code( $resp );
@@ -51,7 +56,7 @@ class HttpResponseFilter
                 $respHeaders = $respHeaders->getAll();
             }
 
-            $this->clientException = new \GuzzleHttp\Exception\ClientException(
+            $this->clientException = new ClientException(
                 $this->respMsg,
                 new \GuzzleHttp\Psr7\Request (
                     $reqArgs['method'],
@@ -75,19 +80,23 @@ class HttpResponseFilter
         return $resp;
     }
 
-    public function getRespCode() {
+    public function getRespCode(): int
+    {
         return $this->respCode;
     }
 
-    public function getRespMsg() {
+    public function getRespMsg(): string
+    {
         return $this->respMsg;
     }
 
-    public function getRespBody() {
+    public function getRespBody(): string
+    {
         return $this->respBody;
     }
 
-    public function getException () {
+    public function getException(): ClientException
+    {
         return $this->clientException;
     }
 }

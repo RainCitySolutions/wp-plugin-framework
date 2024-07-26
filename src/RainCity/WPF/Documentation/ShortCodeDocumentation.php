@@ -4,13 +4,13 @@ namespace RainCity\WPF\Documentation;
 class ShortCodeDocumentation
 {
     /** @var string */
-    private $name;
+    private string $name;
 
     /** @var string */
-    private $description;
+    private string $description;
 
     /** @var string */
-    private $example;
+    private string $example;
 
     /** @var ShortCodeAttribute[] */
     private $attributes = array();
@@ -20,7 +20,7 @@ class ShortCodeDocumentation
         $this->description = $desciption;
     }
 
-    public function addAttribute(ShortCodeAttribute $attribute) {
+    public function addAttribute(ShortCodeAttribute $attribute): void {
         $this->attributes[] = $attribute;
     }
 
@@ -40,4 +40,3 @@ class ShortCodeDocumentation
         return $this->attributes;
     }
 }
-

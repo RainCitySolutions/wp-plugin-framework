@@ -16,10 +16,10 @@ abstract class WordPressUserData
     const USER_META_KEY = self::USER_META_KEY;
 
     /** @var int WordPress user id */
-    protected $wpUserId;
+    protected int $wpUserId;
 
     /* @var array data storage array */
-    private $data = array();
+    private array $data = array();
 
     /**
      * Construct an instance by fetching the object from the user's meta data.
@@ -36,12 +36,13 @@ abstract class WordPressUserData
         }
     }
 
-    public function setData(string $key, $value) {
+    public function setData(string $key, $value): void
+    {
         $this->data[$key] = serialize($value);
         $this->save();
     }
 
-    public function getData(string $key) {
+    public function getData(string $key): mixed {
         $result = null;
 
         if (isset($this->data[$key])) {
@@ -54,7 +55,8 @@ abstract class WordPressUserData
     /**
      * Saves the current object state to the user's meta data.
      */
-    private function save() {
+    private function save(): void
+    {
         update_user_meta($this->wpUserId, static::USER_META_KEY, $this);
     }
 }

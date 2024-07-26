@@ -4,16 +4,16 @@ namespace RainCity\WPF\Documentation;
 class ShortCodeAttribute
 {
     /** @var string */
-    private $name;
+    private string $name;
 
     /** @var bool */
-    private $required;
+    private bool $required;
 
     /** @var string */
-    private $default;
+    private string $default;
 
     /** @var string */
-    private $description;
+    private string $description;
 
     public function __construct(string $name, string $description, bool $required = false, ?string $default = null) {
         if ($required && isset($default)) {

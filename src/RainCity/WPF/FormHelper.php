@@ -10,7 +10,7 @@ abstract class FormHelper
         $this->formKey = $formKey;
     }
 
-    public function getFormId() {
+    public function getFormId(): int {
         return Formidable::getFormId($this->formKey);
     }
 
@@ -19,6 +19,7 @@ abstract class FormHelper
      *
      * @param ActionFilterLoader $loader
      */
-    public function loadActions(ActionFilterLoader $loader) {
+    public function loadActions(ActionFilterLoader $loader): void
+    {
     }
 }

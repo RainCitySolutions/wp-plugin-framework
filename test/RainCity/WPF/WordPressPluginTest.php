@@ -86,7 +86,8 @@ class TestPlugin extends WordPressPlugin
         return array();
     }
 
-    protected function initializeInstance() {
+    protected function initializeInstance(): void
+    {
         // Don't call parent when testing
     }
 }

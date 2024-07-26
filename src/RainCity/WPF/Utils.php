@@ -1,8 +1,6 @@
 <?php
 namespace RainCity\WPF;
 
-use RainCity\Logging\Helper;
-
 /**
  *
  * @since      1.0.0
@@ -14,7 +12,7 @@ class Utils
      * Injects a hook to require that users are logged in in order to access pages
      *
      */
-    public static function requireLogin ()
+    public static function requireLogin(): void
     {
         /**
          * Filter 'login_url' to account for Formidable User Registration plugin
@@ -68,7 +66,8 @@ class Utils
         });
     }
 
-    private static function isIgnoredRequestType(): bool {
+    private static function isIgnoredRequestType(): bool
+    {
         $result = false;
 
         if (( defined( 'DOING_AJAX' ) && DOING_AJAX ) ||
@@ -81,7 +80,8 @@ class Utils
         return $result;
     }
 
-    private static function checkInvalidMultiSiteAccess() {
+    private static function checkInvalidMultiSiteAccess(): void
+    {
         // Only allow Multisite users access to their assigned sites
         if (function_exists('is_multisite') &&
             is_multisite() &&
@@ -95,7 +95,8 @@ class Utils
         }
     }
 
-    private static function getVisitedUrl(): string {
+    private static function getVisitedUrl(): string
+    {
         $url  = isset( $_SERVER['HTTPS'] ) && 'on' === $_SERVER['HTTPS'] ? 'https' : 'http';
         $url .= '://' . $_SERVER['HTTP_HOST'];
 
@@ -127,7 +128,8 @@ class Utils
      * @return \WP_User An object representing a WordPress user which may be
      *      a non-existent user.
      */
-    public static function getWPUser (int $userId = null): \WP_User {
+    public static function getWPUser (int $userId = null): \WP_User
+    {
         if (is_null($userId)) {
             $wpUser = wp_get_current_user();
         } else {
@@ -166,7 +168,7 @@ class Utils
                 'post_status' => $postStatus,
                 'name' => $postName
             ]);
-        
+
         return $query->have_posts() ? reset($query->posts) : null;
     }
 }
