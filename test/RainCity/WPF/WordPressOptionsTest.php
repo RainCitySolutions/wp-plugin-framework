@@ -53,8 +53,8 @@ class WordPressOptionsTest extends WordpressTestCase
         foreach (TestOptions::OPTION_NAMES as $option) {
             $value = $this->testOptions->getValue($option);
 
-            $this->assertNotNull($value);
-            $this->assertEquals('', $value);
+            self::assertNotNull($value);
+            self::assertEquals('', $value);
         }
     }
 
@@ -71,9 +71,9 @@ class WordPressOptionsTest extends WordpressTestCase
         // Reset test object
         $this->resetTestObject();
 
-        $this->assertNull($this->testOptions->getValue($oldOption));
-        $this->assertEquals('value1', $this->testOptions->getValue(TestOptions::OPTION_1));
-        $this->assertEquals('value2', $this->testOptions->getValue(TestOptions::OPTION_2));
+        self::assertNull($this->testOptions->getValue($oldOption));
+        self::assertEquals('value1', $this->testOptions->getValue(TestOptions::OPTION_1));
+        self::assertEquals('value2', $this->testOptions->getValue(TestOptions::OPTION_2));
     }
 
     public function testInitializeOptions_addNewOption () {
@@ -87,8 +87,8 @@ class WordPressOptionsTest extends WordpressTestCase
 
         $value = $this->testOptions->getValue(TestOptions::OPTION_1);
 
-        $this->assertNotNull($value);
-        $this->assertEquals('', $value);
+        self::assertNotNull($value);
+        self::assertEquals('', $value);
     }
 
     public function testGetValues_noData () {
@@ -99,11 +99,11 @@ class WordPressOptionsTest extends WordpressTestCase
 
         $values = $this->testOptions->getValues();
 
-        $this->assertCount(count(TestOptions::OPTION_NAMES), $values);
+        self::assertCount(count(TestOptions::OPTION_NAMES), $values);
 
         foreach (TestOptions::OPTION_NAMES as $option) {
-            $this->assertArrayHasKey($option, $values);
-            $this->assertEquals('', $values[$option]);
+            self::assertArrayHasKey($option, $values);
+            self::assertEquals('', $values[$option]);
         }
     }
 
@@ -114,7 +114,7 @@ class WordPressOptionsTest extends WordpressTestCase
 
         $value = $this->testOptions->getValue($invalidOption);
 
-        $this->assertNull($value);
+        self::assertNull($value);
     }
 
     public function testSetValue_validOption () {
@@ -124,7 +124,7 @@ class WordPressOptionsTest extends WordpressTestCase
 
         $value = $this->testOptions->getValue(TestOptions::OPTION_2);
 
-        $this->assertEquals($testValue, $value);
+        self::assertEquals($testValue, $value);
     }
 
     public function testSave () {
@@ -135,22 +135,22 @@ class WordPressOptionsTest extends WordpressTestCase
         // Verify the new value is not saved yet
         $options = get_option(TestOptions::OPTIONS_NAME);
 
-        $this->assertArrayHasKey(TestOptions::OPTION_2, $options);
-        $this->assertNotEquals($testValue, $options[TestOptions::OPTION_2]);
+        self::assertArrayHasKey(TestOptions::OPTION_2, $options);
+        self::assertNotEquals($testValue, $options[TestOptions::OPTION_2]);
 
         $this->testOptions->save();
 
         // Verify the new value has now been saved
         $options = get_option(TestOptions::OPTIONS_NAME);
 
-        $this->assertArrayHasKey(TestOptions::OPTION_2, $options);
-        $this->assertEquals($testValue, $options[TestOptions::OPTION_2]);
+        self::assertArrayHasKey(TestOptions::OPTION_2, $options);
+        self::assertEquals($testValue, $options[TestOptions::OPTION_2]);
     }
 
     public function testGetFormFieldInfo_invalidKey() {
         $value = $this->testOptions->getFormFieldInfo('invalidKey');
 
-        $this->assertNull($value);
+        self::assertNull($value);
     }
 
     public function testGetFormFieldInfo_validKeyNoValue() {
@@ -165,11 +165,11 @@ class WordPressOptionsTest extends WordpressTestCase
         $this->resetTestObject();
         $value = $this->testOptions->getFormFieldInfo(TestOptions::OPTION_2);
 
-        $this->assertIsArray($value);
-        $this->assertCount(3, $value);
-        $this->assertEquals(TestOptions::OPTION_2, $value[0]);
-        $this->assertEquals(TestOptions::OPTIONS_NAME.'['.TestOptions::OPTION_2.']' , $value[1]);
-        $this->assertEquals('', $value[2]);
+        self::assertIsArray($value);
+        self::assertCount(3, $value);
+        self::assertEquals(TestOptions::OPTION_2, $value[0]);
+        self::assertEquals(TestOptions::OPTIONS_NAME.'['.TestOptions::OPTION_2.']' , $value[1]);
+        self::assertEquals('', $value[2]);
     }
 
     public function testGetFormFieldInfo_validKeyWithValue() {
@@ -184,11 +184,11 @@ class WordPressOptionsTest extends WordpressTestCase
         $this->resetTestObject();
         $value = $this->testOptions->getFormFieldInfo(TestOptions::OPTION_2);
 
-        $this->assertIsArray($value);
-        $this->assertCount(3, $value);
-        $this->assertEquals(TestOptions::OPTION_2, $value[0]);
-        $this->assertEquals(TestOptions::OPTIONS_NAME.'['.TestOptions::OPTION_2.']' , $value[1]);
-        $this->assertEquals('bValue', $value[2]);
+        self::assertIsArray($value);
+        self::assertCount(3, $value);
+        self::assertEquals(TestOptions::OPTION_2, $value[0]);
+        self::assertEquals(TestOptions::OPTIONS_NAME.'['.TestOptions::OPTION_2.']' , $value[1]);
+        self::assertEquals('bValue', $value[2]);
     }
 }
 

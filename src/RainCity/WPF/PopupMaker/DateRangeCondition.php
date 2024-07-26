@@ -69,6 +69,7 @@ final class DateRangeCondition implements ActionHandlerInf
 
     public function isInDateRange(array $condition): bool
     {
+        //TODO: check if data is in range
         return true;
     }
 
@@ -134,7 +135,7 @@ final class DateRangeCondition implements ActionHandlerInf
                     }
                 #>
             </script>
-			<?php
+            <?php
         }
 
     }
@@ -163,13 +164,6 @@ final class DateRangeCondition implements ActionHandlerInf
             [],
             '5.15.4'
             );
-
-        //         wp_enqueue_style(
-        //             self::BOOTSTRAP_HANDLE,
-        //             'https://cdn.jsdelivr.net/npm/bootstrap@'.self::BOOTSTRAP_VERSION.'/dist/css/bootstrap.min.css',
-        //             [],
-        //             self::BOOTSTRAP_VERSION
-        //             );
 
         wp_enqueue_style(
             self::TEMPUS_DOMINUS_HANDLE,

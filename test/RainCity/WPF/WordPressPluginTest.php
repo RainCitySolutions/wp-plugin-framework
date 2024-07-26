@@ -48,29 +48,29 @@ class WordPressPluginTest extends WordpressTestCase
     public function testOnScriptLoaderTag_plain () {
         $result = $this->wordPressPlugin->onScriptLoaderTag(self::TEST_SCRIPT_TAG, 'plain');
 
-        $this->assertStringNotContainsString(self::ASYNC_FLAG, $result);
-        $this->assertStringNotContainsString(self::DEFER_FLAG, $result);
+        self::assertStringNotContainsString(self::ASYNC_FLAG, $result);
+        self::assertStringNotContainsString(self::DEFER_FLAG, $result);
     }
 
     public function testOnScriptLoaderTag_async () {
         $result = $this->wordPressPlugin->onScriptLoaderTag(self::TEST_SCRIPT_TAG, 'handle_async');
 
-        $this->assertStringContainsString(self::ASYNC_FLAG, $result);
-        $this->assertStringNotContainsString(self::DEFER_FLAG, $result);
+        self::assertStringContainsString(self::ASYNC_FLAG, $result);
+        self::assertStringNotContainsString(self::DEFER_FLAG, $result);
     }
 
     public function testOnScriptLoaderTag_defer () {
         $result = $this->wordPressPlugin->onScriptLoaderTag(self::TEST_SCRIPT_TAG, 'handle_defer');
 
-        $this->assertStringNotContainsString(self::ASYNC_FLAG, $result);
-        $this->assertStringContainsString(self::DEFER_FLAG, $result);
+        self::assertStringNotContainsString(self::ASYNC_FLAG, $result);
+        self::assertStringContainsString(self::DEFER_FLAG, $result);
     }
 
     public function testOnScriptLoaderTag_asyncAndDefer () {
         $result = $this->wordPressPlugin->onScriptLoaderTag(self::TEST_SCRIPT_TAG, 'handle_async_defer');
 
-        $this->assertStringContainsString(self::ASYNC_FLAG, $result);
-        $this->assertStringContainsString(self::DEFER_FLAG, $result);
+        self::assertStringContainsString(self::ASYNC_FLAG, $result);
+        self::assertStringContainsString(self::DEFER_FLAG, $result);
     }
 }
 

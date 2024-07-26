@@ -46,7 +46,7 @@ class WordPressUserDataTest extends WordpressTestCase
 
         $propValue = ReflectionHelper::getObjectProperty(WordPressUserData::class, 'wpUserId', $obj);
 
-        $this->assertEquals(self::TEST_USER_ID, $propValue);
+        self::assertEquals(self::TEST_USER_ID, $propValue);
     }
 
     public function testCtor_existingData () {
@@ -57,7 +57,7 @@ class WordPressUserDataTest extends WordpressTestCase
 
         $data = ReflectionHelper::getObjectProperty(WordPressUserData::class, 'data', $obj2);
 
-        $this->assertEquals(self::TEST_DATA, unserialize($data[self::TEST_KEY]));
+        self::assertEquals(self::TEST_DATA, unserialize($data[self::TEST_KEY]));
     }
 
     public function testGetData_noData () {
@@ -65,7 +65,7 @@ class WordPressUserDataTest extends WordpressTestCase
 
         $result = $obj->getData('unknown_key');
 
-        $this->assertNull($result, 'Request for unknown data should have returned null');
+        self::assertNull($result, 'Request for unknown data should have returned null');
     }
 
     public function testGetData_hasData() {
@@ -80,7 +80,7 @@ class WordPressUserDataTest extends WordpressTestCase
 
         $data = $obj->getData(self::TEST_KEY);
 
-        $this->assertEquals(self::TEST_DATA, $data);
+        self::assertEquals(self::TEST_DATA, $data);
     }
 
     public function testSetData() {
@@ -90,7 +90,7 @@ class WordPressUserDataTest extends WordpressTestCase
 
         $data = ReflectionHelper::getObjectProperty(WordPressUserData::class, 'data', $obj);
 
-        $this->assertEquals(self::TEST_DATA, unserialize($data[self::TEST_KEY]));
+        self::assertEquals(self::TEST_DATA, unserialize($data[self::TEST_KEY]));
     }
 }
 

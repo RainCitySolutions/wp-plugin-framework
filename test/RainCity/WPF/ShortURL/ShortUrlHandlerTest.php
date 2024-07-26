@@ -53,8 +53,8 @@ class ShortUrlHandlerTest extends WordpressTestCase
         /** @var ShortUrlHandler */
         $handler = ShortUrlHandler::instance();
 
-        $this->assertNotNull($handler);
-        $this->assertInstanceOf(ShortUrlHandler::class, $handler);
+        self::assertNotNull($handler);
+        self::assertInstanceOf(ShortUrlHandler::class, $handler);
     }
 
     public function testNotShortUrl () {

@@ -32,7 +32,7 @@ class BgProcessTest extends WordpressTestCase
 
         $result = ReflectionHelper::invokeObjectMethod(BgProcess::class, $bgp, 'task', $mockTask);
 
-        $this->assertFalse($result);
+        self::assertFalse($result);
     }
 
     public function testParamsPassedToTask_four()
@@ -59,6 +59,6 @@ class BgProcessTest extends WordpressTestCase
 
             $result = ReflectionHelper::invokeObjectMethod(BgProcess::class, $bgp, 'task', $mockTask);
 
-            $this->assertFalse($result);
+            self::assertFalse($result);
     }
 }

@@ -6,7 +6,7 @@ use RainCity\WPF\Helpers\WordpressTestCase;
 
 
 // Override method in our namespace for testing
-function debug_backtrace() {
+function debug_backtrace() {    // NOSONAR
     return TestStackTrace::$testBacktrace;
 }
 
@@ -73,8 +73,8 @@ class PluginInformationTest extends WordpressTestCase
 
         $info = PluginInformation::getPluginInfo();
 
-        $this->assertEquals('unknown', $info->getPackage());
-        $this->assertEmpty($info->getPath());
+        self::assertEquals('unknown', $info->getPackage());
+        self::assertEmpty($info->getPath());
     }
 
     public function testGetPluginInfo_withNoPlugins() {
@@ -83,8 +83,8 @@ class PluginInformationTest extends WordpressTestCase
 
         $info = PluginInformation::getPluginInfo();
 
-        $this->assertEquals('test-plugin', $info->getPackage());
-        $this->assertEquals(self::TEST_PLUGIN_DIRECTOR, $info->getPath());
+        self::assertEquals('test-plugin', $info->getPackage());
+        self::assertEquals(self::TEST_PLUGIN_DIRECTOR, $info->getPath());
     }
 
     public function testGetPluginInfo_withActivePlugins() {
@@ -93,8 +93,8 @@ class PluginInformationTest extends WordpressTestCase
 
         $info = PluginInformation::getPluginInfo();
 
-        $this->assertEquals('test-plugin', $info->getPackage());
-        $this->assertEquals(self::TEST_PLUGIN_DIRECTOR, $info->getPath());
+        self::assertEquals('test-plugin', $info->getPackage());
+        self::assertEquals(self::TEST_PLUGIN_DIRECTOR, $info->getPath());
     }
 
     public function testGetPluginInfo_withSitewidePlugins() {
@@ -106,8 +106,8 @@ class PluginInformationTest extends WordpressTestCase
 
         $info = PluginInformation::getPluginInfo();
 
-        $this->assertEquals('test-plugin', $info->getPackage());
-        $this->assertEquals(self::TEST_PLUGIN_DIRECTOR, $info->getPath());
+        self::assertEquals('test-plugin', $info->getPackage());
+        self::assertEquals(self::TEST_PLUGIN_DIRECTOR, $info->getPath());
     }
 
     public function testGetPluginInfo_withBothPlugins() {
@@ -116,7 +116,7 @@ class PluginInformationTest extends WordpressTestCase
 
         $info = PluginInformation::getPluginInfo();
 
-        $this->assertEquals('test-plugin', $info->getPackage());
-        $this->assertEquals(self::TEST_PLUGIN_DIRECTOR, $info->getPath());
+        self::assertEquals('test-plugin', $info->getPackage());
+        self::assertEquals(self::TEST_PLUGIN_DIRECTOR, $info->getPath());
     }
 }

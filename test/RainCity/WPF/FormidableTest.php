@@ -76,7 +76,7 @@ class FormidableTest extends TestCase
     }
 
     private function assertCacheEmpty(string $cacheField) {
-        $this->assertEmpty(
+        self::assertEmpty(
             ReflectionHelper::getClassProperty(__NAMESPACE__.'\Formidable', $cacheField)
             );
     }
@@ -89,33 +89,33 @@ class FormidableTest extends TestCase
 
         $id = Formidable::getFormId(self::FORM_KEY);
 
-        $this->assertNull($id);
+        self::assertNull($id);
     }
 
     public function testGetFormId_notCached () {
         $testId = 27;
         $this->setTestId($testId);
 
-        $this->assertCacheEmpty('formIdCache');
+        self::assertCacheEmpty('formIdCache');
 
         $id = Formidable::getFormId(self::FORM_KEY);
 
-        $this->assertEquals($testId, $id);
+        self::assertEquals($testId, $id);
     }
 
     public function testGetFormId_cached () {
         $testId = 97;
         $this->setTestId($testId);
 
-        $this->assertCacheEmpty('formIdCache');
+        self::assertCacheEmpty('formIdCache');
         $id = Formidable::getFormId(self::FORM_KEY);
 
-        $this->assertEquals(self::$testId, $id);
+        self::assertEquals(self::$testId, $id);
 
         $this->setTestId(-1);   // Cached id should be returned
         $id = Formidable::getFormId(self::FORM_KEY);
 
-        $this->assertEquals($testId, $id);
+        self::assertEquals($testId, $id);
     }
 
     /************************************************************************
@@ -126,32 +126,32 @@ class FormidableTest extends TestCase
 
         $id = Formidable::getFieldId(self::FIELD_KEY);
 
-        $this->assertNull($id);
+        self::assertNull($id);
     }
 
     public function testGetFieldId_notCached () {
         $testId = 39;
         $this->setTestId($testId);
 
-        $this->assertCacheEmpty('fieldIdCache');
+        self::assertCacheEmpty('fieldIdCache');
         $id = Formidable::getFieldId(self::FIELD_KEY);
 
-        $this->assertEquals($testId, $id);
+        self::assertEquals($testId, $id);
     }
 
     public function testGetFieldId_cached () {
         $testId = 79;
         $this->setTestId($testId);
 
-        $this->assertCacheEmpty('fieldIdCache');
+        self::assertCacheEmpty('fieldIdCache');
         $id = Formidable::getFieldId(self::FIELD_KEY);
 
-        $this->assertEquals($testId, $id);
+        self::assertEquals($testId, $id);
 
         $this->setTestId(-1);   // Cached id should be returned
         $id = Formidable::getFieldId(self::FIELD_KEY);
 
-        $this->assertEquals($testId, $id);
+        self::assertEquals($testId, $id);
     }
 
     /************************************************************************
@@ -162,32 +162,32 @@ class FormidableTest extends TestCase
 
         $id = Formidable::getViewId(self::VIEW_KEY);
 
-        $this->assertNull($id);
+        self::assertNull($id);
     }
 
     public function testGetViewId_notCached () {
         $testId = 72;
         $this->setTestId($testId);
 
-        $this->assertCacheEmpty('viewIdCache');
+        self::assertCacheEmpty('viewIdCache');
         $id = Formidable::getViewId(self::VIEW_KEY);
 
-        $this->assertEquals(self::$testId, $id);
+        self::assertEquals(self::$testId, $id);
     }
 
     public function testGetViewId_cached () {
         $testId = 82;
         $this->setTestId($testId);
 
-        $this->assertCacheEmpty('viewIdCache');
+        self::assertCacheEmpty('viewIdCache');
         $id = Formidable::getViewId(self::VIEW_KEY);
 
-        $this->assertEquals($testId, $id);
+        self::assertEquals($testId, $id);
 
         $this->setTestId(-1);   // Cached id should be returned
         $id = Formidable::getViewId(self::VIEW_KEY);
 
-        $this->assertEquals($testId, $id);
+        self::assertEquals($testId, $id);
     }
 
     public function testGetAllId_unique () {
@@ -197,9 +197,9 @@ class FormidableTest extends TestCase
         $testFieldId = 88;
         $testViewId = 99;
 
-        $this->assertCacheEmpty('formIdCache');
-        $this->assertCacheEmpty('fieldIdCache');
-        $this->assertCacheEmpty('viewIdCache');
+        self::assertCacheEmpty('formIdCache');
+        self::assertCacheEmpty('fieldIdCache');
+        self::assertCacheEmpty('viewIdCache');
 
         $this->setTestId($testFormId);
         $formId = Formidable::getFormId($key);
@@ -210,9 +210,9 @@ class FormidableTest extends TestCase
         $this->setTestId($testViewId);
         $viewId = Formidable::getViewId($key);
 
-        $this->assertEquals($testFormId, $formId);
-        $this->assertEquals($testFieldId, $fieldId);
-        $this->assertEquals($testViewId, $viewId);
+        self::assertEquals($testFormId, $formId);
+        self::assertEquals($testFieldId, $fieldId);
+        self::assertEquals($testViewId, $viewId);
 
         $this->setTestId(-1);
 
@@ -221,8 +221,8 @@ class FormidableTest extends TestCase
         $fieldId = Formidable::getFieldId($key);
         $viewId = Formidable::getViewId($key);
 
-        $this->assertEquals($testFormId, $formId);
-        $this->assertEquals($testFieldId, $fieldId);
-        $this->assertEquals($testViewId, $viewId);
+        self::assertEquals($testFormId, $formId);
+        self::assertEquals($testFieldId, $fieldId);
+        self::assertEquals($testViewId, $viewId);
     }
 }

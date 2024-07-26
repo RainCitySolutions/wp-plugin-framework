@@ -26,7 +26,7 @@ class BaseShortUrlHandler {
 	}
 
 	reloadTable(tableHtml) {
-		var obj = this;
+		let obj = this;
 		this.table.html(tableHtml);
 
 		jQuery('[data-raincity-wpf-shorturlcode]').each(function () {
@@ -48,7 +48,7 @@ class DeleteShortUrlHandler
 	}
 
 	deleteUrl(event) {
-		var obj = this;
+		let obj = this;
 
 		document.body.style.cursor = 'wait';
 		jQuery.post(
@@ -59,7 +59,7 @@ class DeleteShortUrlHandler
 				shortcode: this.code
 			},
 			function(data) { //callback
-				var json = JSON.parse(data);
+				let json = JSON.parse(data);
 				if (200 == json.code) {
 					obj.reloadTable(json.table);
 				}
@@ -85,7 +85,7 @@ class AddShortUrlHandler
 	}
 
 	addUrl(event) {
-		var obj = this;
+		let obj = this;
 
 		document.body.style.cursor = 'wait';
 		jQuery.post(
@@ -97,7 +97,7 @@ class AddShortUrlHandler
 				new_url: this.inputUrl.val().trim()
 			},
 			function(data, textStatus, jqXHR) { //callback
-				var json = JSON.parse(data);
+				let json = JSON.parse(data);
 				if (200 == json.code) {
 					obj.inputCode.val('');
 					obj.inputUrl.val('');
