@@ -2,16 +2,13 @@
 namespace RainCity\WPF\ShortURL;
 
 use function PHPUnit\Framework\any;
+use PHPUnit\Framework\Attributes\CoversClass;
 use RainCity\Logging\Logger;
 use RainCity\TestHelper\ReflectionHelper;
 use RainCity\TestHelper\StubLogger;
 use RainCity\WPF\Helpers\WordpressTestCase;
 
-/**
- * @require(s) extension skip_tests
- * @covers \RainCity\WPF\ShortURL\ShortUrlHandler
- *
- */
+#[CoversClass(\RainCity\WPF\ShortURL\ShortUrlHandler::class)]
 class ShortUrlHandlerTest extends WordpressTestCase
 {
     const TEST_PREFIX = 'test_prefix';

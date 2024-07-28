@@ -2,12 +2,11 @@
 namespace RainCity\WPF;
 
 use RainCity\WPF\Helpers\WordpressTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversMethod;
 
-/**
- * @covers \RainCity\WPF\WordPressPlugin
- *
- * @covers RainCity\WPF\PluginInformation::getPluginFile
- */
+#[CoversClass(\RainCity\WPF\WordPressPlugin::class)]
+#[CoversMethod(\RainCity\WPF\PluginInformation::class, 'getPluginFile')]
 class WordPressPluginTest extends WordpressTestCase
 {
     const TEST_SCRIPT_TAG = '<script src="noScript.js"></script>';

@@ -50,8 +50,7 @@ jobs:
       # Run the build
       - name: Full build
         run: |
-          PHING_PHAR="bin/phing*.phar"
-          php $PHING_PHAR
+          vendor/bin/robo release
 
       # Save versioned files 
       - name: Commit version files
@@ -113,18 +112,21 @@ jobs:
         id: build-vars
         run: |
           echo "version=$(cat version.txt)" >> $GITHUB_OUTPUT
-          # From build.xml: grab the "project" element, then the "name" attribute value, then strip the leading and trailing quotes
-          PROJ_NAME=$(awk '/<project .*>/ {for (i=1;i<=NF;i++) { if (split($i,parts,"=")==2 && parts[1]=="name") print parts[2]}}' build.xml | sed "s/^\(\"\)\(.*\)\1\$/\2/g")
-          echo "project-name=$PROJ_NAME" >> $GITHUB_OUTPUT
+          # From RoboFile.php: grab the "PROJECT_NAME" const and extract the value
+          echo "project-name=$(sed -nr "s/.*PROJECT_NAME[ \t]*=[ \t]*'(.+)';/\1/p" RoboFile.php)" >> $GITHUB_OUTPUT
 
       # Run composer install (based on the current composer.lock file) 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress --no-dev
 
+      - name: Download Robo
+        run: |
+          wget -q https://robo.li/robo.phar
+          chmod +x robo.phar
+
       - name: Create Package
         run: |
-          PHING_PHAR="bin/phing*.phar"
-          php $PHING_PHAR package -Dbuild.version=${{ steps.build-vars.outputs.version }}
+          ./robo.phar package ${{ steps.build-vars.outputs.version }}
 
       - name: Create Release
         id: create-release

@@ -1,6 +1,7 @@
 <?php
 namespace RainCity\WPF;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use RainCity\TestHelper\TestStackTrace;
 use RainCity\WPF\Helpers\WordpressTestCase;
 
@@ -10,10 +11,7 @@ function debug_backtrace() {    // NOSONAR
     return TestStackTrace::$testBacktrace;
 }
 
-/**
- * @covers \RainCity\WPF\PluginInformation
- *
- */
+#[CoversClass(\RainCity\WPF\PluginInformation::class)]
 class PluginInformationTest extends WordpressTestCase
 {
     private $orgBackTrace;

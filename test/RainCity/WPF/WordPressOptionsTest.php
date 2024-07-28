@@ -5,11 +5,9 @@ use RainCity\Logging\Logger;
 use RainCity\TestHelper\ReflectionHelper;
 use RainCity\TestHelper\StubLogger;
 use RainCity\WPF\Helpers\WordpressTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \RainCity\WPF\WordPressOptions
- *
- */
+#[CoversClass(\RainCity\WPF\WordPressOptions::class)]
 class WordPressOptionsTest extends WordpressTestCase
 {
     /* @var WordPressOptions */

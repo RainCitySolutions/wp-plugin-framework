@@ -3,11 +3,9 @@ namespace RainCity\WPF;
 
 use RainCity\TestHelper\ReflectionHelper;
 use RainCity\WPF\Helpers\WordpressTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \RainCity\WPF\WordPressUserData
- *
- */
+#[CoversClass(\RainCity\WPF\WordPressUserData::class)]
 class WordPressUserDataTest extends WordpressTestCase
 {
     const TEST_USER_ID = 98765;
@@ -22,6 +20,8 @@ class WordPressUserDataTest extends WordpressTestCase
     {
         global $_TestData;
         unset($_TestData[TestWordPressUserData::USER_META_KEY]);
+
+        parent::tearDown();
     }
 
     /**
@@ -32,6 +32,8 @@ class WordPressUserDataTest extends WordpressTestCase
     {
         global $_TestData;
         unset($_TestData);
+
+        parent::tearDownAfterClass();
     }
 
 
@@ -92,9 +94,9 @@ class WordPressUserDataTest extends WordpressTestCase
 
         self::assertEquals(self::TEST_DATA, unserialize($data[self::TEST_KEY]));
     }
+
 }
 
 class TestWordPressUserData extends WordPressUserData {
     const USER_META_KEY = 'AnonUserData';
 }
-

@@ -3,12 +3,9 @@ namespace RainCity\WPF\Background;
 
 use RainCity\TestHelper\ReflectionHelper;
 use RainCity\WPF\Helpers\WordpressTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- *
- * @covers \RainCity\WPF\Background\BgProcess
- *
- */
+#[CoversClass(\RainCity\WPF\Background\BgProcess::class)]
 class BgProcessTest extends WordpressTestCase
 {
 
