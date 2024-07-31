@@ -11,5 +11,5 @@ interface ShortCodeRegInf
      *
      * @param ShortCodeImplInf $shortCode A class implementing a short code.
      */
-    public function registerShortCode(ShortCodeImplInf $shortCode);
+    public function registerShortCode(ShortCodeImplInf $shortCode): void;
 }

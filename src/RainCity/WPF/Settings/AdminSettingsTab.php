@@ -12,9 +12,10 @@ abstract class AdminSettingsTab
     protected string $tabId;
     protected WordPressOptions $options;
 
-    protected $pageSlug;
+    protected string $pageSlug;
 
-    public function __construct(string $tabName, WordPressOptions $options) {
+    public function __construct(string $tabName, WordPressOptions $options)
+    {
         $this->tabName = $tabName;
         $this->tabId = $this->generateTabId();
         $this->options = $options;
@@ -27,7 +28,8 @@ abstract class AdminSettingsTab
      *
      * @return  string  The name of the tab.
      */
-    public function getName(): string {
+    public function getName(): string
+    {
         return $this->tabName;
     }
 
@@ -36,7 +38,8 @@ abstract class AdminSettingsTab
      *
      * @return  string  The id for the tab.
      */
-    public function getId(): string {
+    public function getId(): string
+    {
         return $this->tabId;
     }
 
@@ -53,9 +56,10 @@ abstract class AdminSettingsTab
      *
      * @param   string  $pageSlug The name of the page slug.
      */
-    abstract public function addSettings(string $pageSlug);
+    abstract public function addSettings(string $pageSlug): void;
 
-    final public function initSettings(string $pageSlug) {
+    final public function initSettings(string $pageSlug): void
+    {
         $this->pageSlug = $pageSlug;
 
         register_setting($pageSlug, $this->getOptionName(), function (?array $input): ?array {
@@ -69,9 +73,9 @@ abstract class AdminSettingsTab
      * Sanitize data entered on the tab.
      *
      * @param   string  $pageSlug   The page slug, used for validation classes.
-     * @param   array   $input      An array of value entered on the tab.
+     * @param   array<string, mixed> $input      An array of value entered on the tab.
      *
-     * @return  array|NULL  Returns the, potentially modified, input data.
+     * @return  NULL|array<string, mixed> Returns the, potentially modified, input data.
      */
     abstract public function sanitize(string $pageSlug, ?array $input): ?array;
 
@@ -85,20 +89,25 @@ abstract class AdminSettingsTab
      * @param   string  $pluginBaseUrl  The base URL of the plugin.
      * @param   string  $pluginVersion  The version of the plugin.
      */
-    public function onEnqueueScripts(string $pluginName, string $pluginBaseUrl, string $pluginVersion) {}
+    public function onEnqueueScripts(string $pluginName, string $pluginBaseUrl, string $pluginVersion): void
+    {
+    }
 
     /**
      * Opportunity for tabs to register any additional actions such as Ajax
      * handlers.
      */
-    public function registerActions() {}
+    public function registerActions():void
+    {
+    }
 
     /**
      * Retreive the name of the option used to store values from the tab.
      *
      * @return  string  The name of the option.
      */
-    public function getOptionName(): string {
+    public function getOptionName(): string
+    {
         return $this->options->getOptionName();
     }
 
@@ -113,7 +122,8 @@ abstract class AdminSettingsTab
      *
      * @return string A string to use as the identifier.
      */
-    private function generateTabId(): string {
+    private function generateTabId(): string
+    {
         return hash_hmac(
             'md5',
             get_class($this),   // actual class name as data
@@ -128,7 +138,9 @@ abstract class AdminSettingsTab
      *  Useful for displaying additional information or providing ancillary
      *  functions such as buttons for invoking Ajax calls.
      */
-    public function renderPostFormData() {}
+    public function renderPostFormData(): void
+    {
+    }
 
 
     /**
@@ -141,14 +153,14 @@ abstract class AdminSettingsTab
      * @param WordPressOptions  $optionsObj Options object containing the field.
      * @param string            $optionName Name of the option field being rendered.
      * @param string            $description Optional: A description for the field.
-     * @param array             $attrs Optional: Additional attributes to be added to the input element.
+     * @param array<string, mixed> $attrs Optional: Additional attributes to be added to the input element.
      */
     protected function renderTextField(
         WordPressOptions $optionsObj,
         string $optionName,
         string $description = '',
         array $attrs = array()
-        )
+        ): void
     {
         $fieldInfo = $optionsObj->getFormFieldInfo($optionName);
         $attrs = array_merge (
@@ -164,7 +176,7 @@ abstract class AdminSettingsTab
                 'class' => 'regular-text',
                 'id'    => $fieldInfo[0],
                 'name'  => $fieldInfo[1],
-                'value' => (null !== $fieldInfo[2] ? esc_attr( $fieldInfo[2] ) : '')
+                'value' => (3 == count($fieldInfo)) ? esc_attr( $fieldInfo[2] ) : ''
             )
             );
 
@@ -183,14 +195,14 @@ abstract class AdminSettingsTab
      * @param WordPressOptions  $optionsObj Options object containing the field.
      * @param string            $optionName Name of the option field being rendered.
      * @param string            $description Optional: A description for the field.
-     * @param array             $attrs Optional: Additional attributes to be added to the input element.
+     * @param array<string, mixed> $attrs Optional: Additional attributes to be added to the input element.
      */
     protected function renderPasswordField(
         WordPressOptions $optionsObj,
         string $optionName,
         string $description = '',
         array $attrs = array()
-        )
+        ): void
     {
         $fieldInfo = $optionsObj->getFormFieldInfo($optionName);
         $attrs = array_merge (
@@ -206,7 +218,7 @@ abstract class AdminSettingsTab
                 'class' => 'regular-text',
                 'id'    => $fieldInfo[0],
                 'name'  => $fieldInfo[1],
-                'value' => (null !== $fieldInfo[2] ? esc_attr( $fieldInfo[2] ) : '')
+                'value' => (3 == count($fieldInfo)) ? esc_attr( $fieldInfo[2] ) : ''
             )
             );
 
@@ -221,14 +233,14 @@ abstract class AdminSettingsTab
      * @param WordPressOptions  $optionsObj Options object containing the field.
      * @param string            $optionName Name of the option field being rendered.
      * @param string            $description Optional: A description for the field.
-     * @param array             $attrs Optional: Additional attributes to be added to the input element.
+     * @param array<string, mixed> $attrs Optional: Additional attributes to be added to the input element.
      */
     protected function renderCheckboxField(
         WordPressOptions $optionsObj,
         string $optionName,
         string $description = '',
         array $attrs = array()
-        )
+        ): void
     {
         $fieldInfo = $optionsObj->getFormFieldInfo($optionName);
         $attrs = array_merge (
@@ -265,16 +277,14 @@ abstract class AdminSettingsTab
     }
 
 
-
-
     /**
      * Render a matrix/set of Checkbox fields
      *
      * @param WordPressOptions $optionsObj Options object containing the field.
      * @param string           $optionName Name of the option field being rendered.
      * @param string           $description Optional: A description for the field.
-     * @param array            $matrixEntries The options to display in the matrix. @see CheckboxMatrixEntry
-     * @param array            $attrs Optional: Additional attributes to be added to the input element.
+     * @param array<CheckboxMatrixEntry> $matrixEntries The options to display in the matrix. @see CheckboxMatrixEntry
+     * @param array<string, mixed>  $attrs Optional: Additional attributes to be added to the input element.
      * @param bool             $showSelectAll Optional: Whether to include an option to select/clear all of the options.
      */
     protected function renderCheckboxMatrixField(
@@ -283,7 +293,7 @@ abstract class AdminSettingsTab
         string $description = '',
         array $matrixEntries = array(),
         array $attrs = array(),
-        bool $showSelectAll = false)
+        bool $showSelectAll = false): void
     {
         $fieldInfo = $optionsObj->getFormFieldInfo($optionName);
         $attrs = array_merge (
@@ -356,14 +366,14 @@ abstract class AdminSettingsTab
      * @param WordPressOptions  $optionsObj Options object containing the field.
      * @param string            $optionName Name of the option field being rendered.
      * @param string            $description Optional: A description for the field.
-     * @param array             $attrs Optional: Additional attributes to be added to the input element.
+     * @param array<string, mixed>  $attrs Optional: Additional attributes to be added to the input element.
      */
     protected function renderNumberField(
         WordPressOptions $optionsObj,
         string $optionName,
         string $description = '',
         array $attrs = array()
-        )
+        ): void
     {
         $fieldInfo = $optionsObj->getFormFieldInfo($optionName);
         $attrs = array_merge (
@@ -379,7 +389,7 @@ abstract class AdminSettingsTab
                 'class'     => 'small-text',
                 'id'        => $fieldInfo[0],
                 'name'      => $fieldInfo[1],
-                'value'     => (null !== $fieldInfo[2] ? esc_attr( $fieldInfo[2] ) : ''),
+                'value'     => (3 == count($fieldInfo)) ? esc_attr( $fieldInfo[2] ) : '',
                 'required'  => null
             )
             );
@@ -402,7 +412,7 @@ abstract class AdminSettingsTab
         string $optionName,
         string $description = '',
         int $rows = 10
-        )
+        ): void
     {
         $fieldInfo = $optionsObj->getFormFieldInfo($optionName);
 
@@ -430,7 +440,7 @@ abstract class AdminSettingsTab
      * @param string            $optionName Name of the option field being rendered.
      * @param string            $description Optional: A description for the field.
      * @param bool              $allowMultiple Optional: Whether to allow multiple addresses. Defaults to false.
-     * @param array             $attrs Optional: Additional attributes to be added to the input element.
+     * @param array<string, mixed>  $attrs Optional: Additional attributes to be added to the input element.
      */
     protected function renderEmailField(
         WordPressOptions $optionsObj,
@@ -438,7 +448,7 @@ abstract class AdminSettingsTab
         string $description = '',
         bool $allowMultiple = false,
         array $attrs = array()
-        )
+        ): void
     {
         $fieldInfo = $optionsObj->getFormFieldInfo($optionName);
         $attrs = array_merge (
@@ -453,7 +463,7 @@ abstract class AdminSettingsTab
                 'type'  => 'email',
                 'id'    => $fieldInfo[0],
                 'name'  => $fieldInfo[1],
-                'value' => (null !== $fieldInfo[2] ? esc_attr( $fieldInfo[2] ) : '')
+                'value' => (3 == count($fieldInfo)) ? esc_attr($fieldInfo[2]) : ''
             )
             );
 
@@ -477,14 +487,14 @@ abstract class AdminSettingsTab
      * @param WordPressOptions  $optionsObj  Options object containing the field.
      * @param string            $optionName Name of the option field being rendered.
      * @param string            $description Optional: A description for the field.
-     * @param array             $attrs Optional: Additional attributes to be added to the input element.
+     * @param array<string, mixed>  $attrs Optional: Additional attributes to be added to the input element.
      */
     protected function renderUrlField(
         WordPressOptions $optionsObj,
         string $optionName,
         string $description = '',
         array $attrs = array()
-        )
+        ): void
     {
         $fieldInfo = $optionsObj->getFormFieldInfo($optionName);
         $attrs = array_merge (
@@ -500,7 +510,7 @@ abstract class AdminSettingsTab
                 'class' => 'regular-text',
                 'id'    => $fieldInfo[0],
                 'name'  => $fieldInfo[1],
-                'value' => (null !== $fieldInfo[2] ? esc_attr( $fieldInfo[2] ) : '')
+                'value' => (3 == count($fieldInfo)) ? esc_attr($fieldInfo[2]) : ''
             )
             );
 
@@ -512,13 +522,14 @@ abstract class AdminSettingsTab
     /**
      * Renders an &lt;Input&gt; field using the attributes provided.
      *
-     * @param array $attrs An array of attributes to use.
+     * @param array<string, mixed> $attrs An array of attributes to use.
      */
-    private function renderInputField(array $attrs) {
+    private function renderInputField(array $attrs): void
+    {
         print '<input ';
         array_walk($attrs, function($value, $key) {
             print $key;
-            if (!is_null($value)) {
+            if (!isset($value)) {
                 print '="' . $value . '"';
             }
 
@@ -534,7 +545,8 @@ abstract class AdminSettingsTab
      * @param string $optionName Name of the option field.
      * @param string $description Description for the field.
      */
-    private function renderDescription(string $optionName, string $description) {
+    private function renderDescription(string $optionName, string $description): void
+    {
         if (!empty($description)) {
             printf('<p class="description" id="%s-description">%s</p>', $optionName, $description);
         }
@@ -543,7 +555,7 @@ abstract class AdminSettingsTab
 
 class CheckboxMatrixEntry
 {
-    public $name;
-    public $value;
-    public $isSelected;
+    public string $name;
+    public string $value;
+    public bool $isSelected;
 }

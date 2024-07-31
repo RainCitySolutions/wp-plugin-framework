@@ -131,10 +131,14 @@ abstract class AdminSettings
                         array_key_first($this->tabs)];
     }
 
-    public function localSanitize($input): void
+    /**
+     *
+     * @param array<string, mixed> $input
+     */
+    public function localSanitize(array $input): void
     {
         $activeTab = $this->getActiveTab();
-        $activeTab->sanitize($input);
+        $activeTab->sanitize($this->pluginName, $input);
     }
 
     final public function registerTab(AdminSettingsTab $tab): void

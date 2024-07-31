@@ -65,6 +65,7 @@ abstract class WordPressPlugin
 
 
     /**
+     * @param array<int, string|array<string>> $args
      *
      * {@inheritDoc}
      * @see \RainCity\Singleton::__construct()
@@ -159,14 +160,16 @@ abstract class WordPressPlugin
         // Fire action
         do_action(
             self::ON_REGISTER_SHORTCODE_ACTION,
-            new class() implements ShortCodeRegInf {
+            new class() implements ShortCodeRegInf
+            {
                 /**
                  * Handle registration of any short codes.
                  *
                  * {@inheritDoc}
                  * @see \RainCity\WPF\ShortCode\ShortCodeRegInf::registerShortCode()
                  */
-                public function registerShortCode(ShortCodeImplInf $shortCodeImpl) {
+                public function registerShortCode(ShortCodeImplInf $shortCodeImpl): void
+                {
                     add_shortcode($shortCodeImpl->getTagName(), array($shortCodeImpl, 'renderShortCode'));
                     add_filter(DocumentationTab::DOCUMENTATION_FILTER, array($shortCodeImpl, 'getDocumentation'));
                     add_filter(
@@ -254,7 +257,7 @@ abstract class WordPressPlugin
          * code has run since installation in which case the database would
          * be new and insync with the current plugin version.
          */
-        if (self::DEFAULT_PLUGIN_VERSION === $dbVersions[$this->pluginSlug] ?? self::DEFAULT_PLUGIN_VERSION) {
+        if (self::DEFAULT_PLUGIN_VERSION === ($dbVersions[$this->pluginSlug] ?? self::DEFAULT_PLUGIN_VERSION)) {
             $dbVersions[$this->pluginSlug] = $this->pluginVersion;
             update_option (WordPressPlugin::DATABASE_VERSIONS_OPTIONS_NAME, $dbVersions);
         }
@@ -289,6 +292,12 @@ abstract class WordPressPlugin
         return $dbUpgraded;
     }
 
+    /**
+     *
+     * @param array<string, callable> $upgrades
+     * @param array<string, string> $dbVersions
+     * @return bool
+     */
     private function doDbUpgrades(array $upgrades, array &$dbVersions): bool
     {
         $dbUpgraded = false;
@@ -297,12 +306,11 @@ abstract class WordPressPlugin
 
         foreach ($upgrades as $version => $upgradeFunc) {
             if ($this->doDatabaseUpgrade($version)) {
-                if (is_callable($upgradeFunc)) {
+//                if (is_callable($upgradeFunc)) {
                     call_user_func($upgradeFunc);
-                }
-                else {
-                    throw new \Exception("Unable to call database upgrade function for version {$version}"); // NOSONAR
-                }
+//                 } else {
+//                     throw new \Exception("Unable to call database upgrade function for version {$version}"); // NOSONAR
+//                 }
 
                 $this->log->debug("Upgraded database to $version");
                 // As we've done an upgrade, note it
@@ -370,12 +378,12 @@ abstract class WordPressPlugin
     /**
      * Hook for the 'plugin_action_links' filter.
      *
-     * @param array     $actions    Array of plugin action links
-     * @param string    $pluginFile Path to the plugin file
-     * @param array     $pluginData Array of plugin data
-     * @param string    $context    The plugin context
+     * @param array<string> $actions    Array of plugin action links
+     * @param string        $pluginFile Path to the plugin file
+     * @param array<mixed>  $pluginData Array of plugin data
+     * @param string        $context    The plugin context
      *
-     * @return array    A potentially updated array of plugin action links.
+     * @return array<string> A potentially updated array of plugin action links.
      */
     public function addPluginActionLinks(
         array $actions,
@@ -422,15 +430,14 @@ abstract class WordPressPlugin
         Logger::getLogger(get_called_class(), $this->pluginSlug)->debug('Activating '.$this->pluginName);
 
         $options = static::getOptions();
-        if (isset($options) && is_array($options)) {
-            if (isset($options['name'])) {
-                add_option($options['name'], $options['initialValue']);
-            }
-            else {
-                foreach ($options as $optionEntry) {
-                    if (is_array($optionEntry)) {
-                        add_option($optionEntry['name'], $optionEntry['initialValue']);
-                    }
+
+        if (isset($options['name'])) {
+            add_option($options['name'], $options['initialValue']);
+        }
+        else {
+            foreach ($options as $optionEntry) {
+                if (is_array($optionEntry)) {
+                    add_option($optionEntry['name'], $optionEntry['initialValue']);
                 }
             }
         }
@@ -464,21 +471,19 @@ abstract class WordPressPlugin
         do_action(self::ON_PLUGIN_UNINSTALL_ACTION);
 
         $options = static::getOptions();
-        if (isset($options) && is_array($options)) {
-            if (isset($options['name'])) {
-                delete_option($options['name']);
-            }
-            else {
-                foreach ($options as $optionEntry) {
-                    if (is_array($optionEntry)) {
-                        delete_option($optionEntry['name']);
-                    }
+
+        if (isset($options['name'])) {
+            delete_option($options['name']);
+        }
+        else {
+            foreach ($options as $optionEntry) {
+                if (is_array($optionEntry)) {
+                    delete_option($optionEntry['name']);
                 }
             }
         }
 
         DataCache::uninstall();
-        Logger::uninstall();    // Logger should always be last
     }
 
     /**
@@ -490,7 +495,7 @@ abstract class WordPressPlugin
      */
     public function register_admin_helper(AdminHelperInf $adminInst): void
     {
-        if (is_admin() && isset($adminInst)) {
+        if (is_admin()) {
             $this->loader->addAction( 'admin_enqueue_scripts', $adminInst, 'onAdminEnqueueScripts' );
 
             $this->loader->addAction( 'admin_init', $adminInst, 'addSettings' );
@@ -552,7 +557,7 @@ abstract class WordPressPlugin
         return forward_static_call(array($pluginClass, 'instance'), $pluginData);
     }
 
-    private static function shutdownFunction($pluginSlug): void
+    private static function shutdownFunction(string $pluginSlug): void
     {
         $error = error_get_last();
 

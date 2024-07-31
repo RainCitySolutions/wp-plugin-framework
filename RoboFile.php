@@ -52,6 +52,7 @@ class RoboFile extends \Robo\Tasks
             ->addTask($this->bumpVersion())
             ->addTask($this->composerUpdate())
 //            ->addTask($this->doLint())
+            ->addTask($this->runPhpStan())
             ->addTask($this->test());
 
         return $collection;
@@ -93,7 +94,7 @@ class RoboFile extends \Robo\Tasks
             ->taskReplaceInFile(self::COMPOSER_JSON)
             ->regex('~"version" *: *"[0-9]+\.[0-9]+\.[0-9]+",~')
             ->to('"version" : "'.$newVersion.'",');
-                
+
         return $collection;
     }
 
@@ -126,6 +127,18 @@ class RoboFile extends \Robo\Tasks
 //         </phplint>
     }
 
+    /**
+     * Task to run PHPStan
+     *
+     * @return TaskInterface The task
+     */
+    protected function runPhpStan(): TaskInterface
+    {
+        return $this->taskExec('vendor/bin/phpstan')
+        ->arg('analyze')
+        ->arg('--no-progress')
+        ->arg('--error-format=github');
+    }
 
     /**
      * Task to run the unit tests

@@ -17,7 +17,8 @@ abstract class CronJob implements CronJobInf
     const EVERY_15_MINUTES = 'every15minutes';
     const EVERY_6_HOURS    = 'every6hours';
 
-    static array $jobList = array();
+    /** @var array<string> */
+    static array $jobList = [];
 
     protected string $cronJobName;
     protected string $cronJobInterval;
@@ -93,6 +94,11 @@ abstract class CronJob implements CronJobInf
         }
     }
 
+    /**
+     * @param array<string, array<string, mixed>> $schedules
+     *
+     * @return array<string, array<string, mixed>>
+     */
     public static function addCustomIntervals(array $schedules): array
     {
         $schedules[self::ONE_TIME_CRONJOB] = array(
@@ -122,7 +128,7 @@ abstract class CronJob implements CronJobInf
 
 interface CronJobInf
 {
-    public function runJob();
+    public function runJob(): void;
 
     public static function activate(): void;
     public static function deactivate(): void;

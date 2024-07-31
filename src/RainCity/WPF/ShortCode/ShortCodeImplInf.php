@@ -19,9 +19,9 @@ interface ShortCodeImplInf
      * enforce parameter types. The defaults might not help but they can't
      * hurt.
      *
-     * @param string|array  $attrs  An array of attributes included with the
-     *      short code. Likely an empty string if no attributes were provided.
-     * @param mixed         $content The content, if any between a start and
+     * @param array<string, string>  $attrs  An array of attributes included
+     *      with the short code.
+     * @param string  $content The content, if any between a start and
      *      end tag for the short code. Likely an empty string when there Is
      *      no end tag.
      *
@@ -32,9 +32,9 @@ interface ShortCodeImplInf
     /**
      * Fetch the documentation for the short code.
      *
-     * @param array $documentation An array of ShortCodeDocumentation instances.
+     * @param array<ShortCodeDocumentation> $documentation An array of ShortCodeDocumentation instances.
      *
-     * @return array The array of ShortCodeDocumentation instances with ours added.
+     * @return array<ShortCodeDocumentation> The array of ShortCodeDocumentation instances with ours added.
      *
      * @see ShortCodeDocumentation
      */
@@ -46,13 +46,13 @@ interface ShortCodeImplInf
      * The filter can be used to ensure that integer attributes are
      * represented as integers for example.
      *
-     * @param array $combinedAtts The combined array of default and provided
+     * @param array<string, string> $combinedAtts The combined array of default and provided
      *       shortcode attributes.
-     * @param array $defaultPairs The default shortcode attributes.
-     * @param array $providedAtts The provided attributes.
+     * @param array<string, string> $defaultPairs The default shortcode attributes.
+     * @param array<string, string> $providedAtts The provided attributes.
      * @param string $shortcode   The shortcode name.
      *
-     * @return array The filtered attributes.
+     * @return array<string, string> The filtered attributes.
      */
     public function filterAttributes(
         array $combinedAtts,

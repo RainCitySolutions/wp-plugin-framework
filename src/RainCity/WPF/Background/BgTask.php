@@ -30,7 +30,7 @@ abstract class BgTask
      *
      * Used both during construction and when unserializing an instance.
      */
-    private function initLogger()
+    private function initLogger(): void
     {
         $this->logger = Logger::getLogger(get_class($this));
     }
@@ -40,13 +40,17 @@ abstract class BgTask
      *
      * @param BgProcess $bgProcess The background process instance. Useful
      *      when additional tasks need to be added to the queue.
-     * @param array $params The array of parameters provided to the background
+     * @param array<mixed> $params The array of parameters provided to the background
      *      process when it was created.
      *
      * @return bool Returns true if the task is complete. Otherwise returns false.
      */
     abstract public function run(BgProcess $bgProcess, ...$params) : bool;
 
+    /**
+     *
+     * @param array<string, mixed> $vars
+     */
     protected function preSerialize(array &$vars): void
     {
         unset($vars['logger']); // don't serialize the logger

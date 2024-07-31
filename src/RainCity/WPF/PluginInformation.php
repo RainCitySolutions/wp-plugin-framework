@@ -108,6 +108,12 @@ class PluginInformation {
         return $pluginInfo;
     }
 
+    /**
+     *
+     * @param PluginInformation $pluginInfo
+     * @param string $pluginPathRegex
+     * @param array<mixed> $stackTrace
+     */
     private static function extractPluginInfoFromPath(
         PluginInformation &$pluginInfo,
         string $pluginPathRegex,
@@ -187,7 +193,7 @@ class PluginInformation {
         return $path;
     }
 
-    public static function isPluginActive($pluginFile): bool
+    public static function isPluginActive(string $pluginFile): bool
     {
         if (defined('ABSPATH')) { // Wrap in case we get invoked via unit testing
             include_once ABSPATH . 'wp-admin/includes/plugin.php';

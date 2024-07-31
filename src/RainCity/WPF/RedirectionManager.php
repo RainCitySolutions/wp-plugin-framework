@@ -1,19 +1,14 @@
 <?php
 namespace RainCity\WPF;
 
-use RainCity\Logging\Logger;
-use Psr\Log\LoggerInterface;
-
 
 final class RedirectionManager
     implements ActionHandlerInf
 {
-    private LoggerInterface $logger;
     private RedirectionHelperInf $helper;
 
     public function __construct(RedirectionHelperInf $helper)
     {
-        $this->logger = Logger::getLogger(get_class($this));
         $this->helper = $helper;
     }
 
@@ -33,8 +28,8 @@ final class RedirectionManager
      * Handles login redirection
      *
      * @param string $redirectTo Default redirect
-     * @param string $request Requested redirect
-     * @param WP_User|WP_Error WP_User if user logged in, WP_Error otherwise
+     * @param string $requestedRedirectTo Requested redirect
+     * @param \WP_User|\WP_Error $user WP_User if user logged in, WP_Error otherwise
      *
      * @return string New redirect
      */
@@ -56,12 +51,12 @@ final class RedirectionManager
      * Handles logout redirection
      *
      * @param string $redirectTo Default redirect
-     * @param string $request Requested redirect
-     * @param WP_User|WP_Error WP_User if user logged in, WP_Error otherwise
+     * @param string $requestedRedirectTo Requested redirect
+     * @param \WP_User|\WP_Error $user WP_User if user logged in, WP_Error otherwise
      *
      * @return string New redirect
      */
-    public function logoutRedirect(string $redirectTo, string $request, \WP_User|\WP_Error $user): string
+    public function logoutRedirect(string $redirectTo, string $requestedRedirectTo, \WP_User|\WP_Error $user): string
     {
         $redirectUrl = $redirectTo;
 

@@ -11,20 +11,21 @@ use RainCity\Singleton;
  */
 abstract class WordPressOptions extends Singleton
 {
-    /* @var string */
+    /** @var string */
     private string $optionName;
 
-    /* @var string[] */
+    /** @var string[] */
     private array $validKeys = array();
 
-    /* @var array */
+    /** @var array<string, string> */
     private array $values = array();
 
 
     /**
      * Initialize the collections used to maintain the values.
      *
-     * @since    1.0.0
+     * @param string $name
+     * @param array<string> $validKeys
      */
     protected function initializeOptions(string $name, array $validKeys): void
     {
@@ -63,6 +64,10 @@ abstract class WordPressOptions extends Singleton
         return $this->optionName;
     }
 
+    /**
+     *
+     * @return array<string, string>
+     */
     public function getValues(): array
     {
         return $this->values;
@@ -89,7 +94,7 @@ abstract class WordPressOptions extends Singleton
      *
      * @param string $key The option to retrieve the information for.$this
      *
-     * @return array|NULL The array of values or null if the key is invalid.
+     * @return array<string>|NULL The array of values or null if the key is invalid.
      */
     public function getFormFieldInfo(string $key): ?array
     {

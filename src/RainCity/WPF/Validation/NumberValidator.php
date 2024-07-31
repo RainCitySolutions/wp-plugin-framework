@@ -3,8 +3,8 @@ namespace RainCity\WPF\Validation;
 
 class NumberValidator extends BaseValidator
 {
-    private $min = 0;
-    private $max = PHP_INT_MAX;
+    private int $min = 0;
+    private int $max = PHP_INT_MAX;
 
     /**
      * Sets the allowed valid range.
@@ -12,7 +12,7 @@ class NumberValidator extends BaseValidator
      * @param   int $min    The minimum value allowed
      * @param   int $max    The maximum value allowed
      */
-    public function setRange($min, $max): void
+    public function setRange(int $min, int $max): void
     {
         $this->min = $min;
         $this->max = $max;

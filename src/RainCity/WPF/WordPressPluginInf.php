@@ -6,9 +6,9 @@ interface WordPressPluginInf
      * Fetches the Options from the child class. Used to initialize or
      * cleanup options used by a plugin
      *
-     * @return array    An array with entries for 'name' and 'initialValue'.
-     *                  Can also be an array of these arrays if there is more
-     *                  than one option being used by the plugin.
+     * @return array<string, string|array<string>> An array with entries for
+     *      'name' and 'initialValue'. Can also be an array of these arrays
+     *      if there is more than one option being used by the plugin.
      */
     public static function getOptions(): array;
 
@@ -31,7 +31,7 @@ interface WordPressPluginInf
      *     '1.0.1' => function() {//do work to upgrade to version 1.0.1}<br/>
      *     );
      *
-     * @return array An associative array of database upgrade functions.
+     * @return array<string, callable> An associative array of database upgrade functions.
      */
     public function getDatabaseUpgrades(): array;
 }

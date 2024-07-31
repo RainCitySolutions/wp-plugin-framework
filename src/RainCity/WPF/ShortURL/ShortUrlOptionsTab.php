@@ -120,15 +120,17 @@ class ShortUrlOptionsTab
      *
      * @param string $pageSlug
      *            The page slug for any errors.
-     * @param array $input
+     * @param array<string, string> $input
      *            Contains all settings fields as array keys
+     *
+     * @return array<string, string>
      */
     public function sanitize(string $pageSlug, ?array $input): ?array
     {
         return $input;
     }
 
-    public function onEnqueueScripts(string $pluginName, string $pluginBaseUrl, string $pluginVersion)
+    public function onEnqueueScripts(string $pluginName, string $pluginBaseUrl, string $pluginVersion): void
     {
         wp_enqueue_script(
             $this->tabId,
@@ -155,13 +157,13 @@ class ShortUrlOptionsTab
      * {@inheritdoc}
      * @see \RainCity\WPF\Settings\AdminSettingsTab::registerActions()
      */
-    public function registerActions()
+    public function registerActions(): void
     {
         add_action('wp_ajax_' . self::AJAX_ADD_SHORT_URL, array($this, 'ajaxAddUrl') );
         add_action('wp_ajax_' . self::AJAX_DELETE_SHORT_URL, array($this, 'ajaxDeleteUrl') );
     }
 
-    public function ajaxAddUrl()
+    public function ajaxAddUrl(): void
     {
         $this->log->debug('Ajax request to run add new Short URL');
 
@@ -196,7 +198,7 @@ class ShortUrlOptionsTab
         wp_die(); // All ajax handlers die when finished
     }
 
-    public function ajaxDeleteUrl()
+    public function ajaxDeleteUrl(): void
     {
         $result = '';
         $this->log->debug('Ajax request to run add new Short URL');

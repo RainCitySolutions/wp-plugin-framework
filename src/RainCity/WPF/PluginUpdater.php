@@ -21,8 +21,8 @@ class PluginUpdater
     private string $entryPointFile;
     private string $currentVersion;
 
-    private $updateSearchDone = false;  // avoid looking for updates more than once per HTTP request
-    private $updateEntry = null;        // cache the result of finding the update entry
+    private bool $updateSearchDone = false;  // avoid looking for updates more than once per HTTP request
+    private ?ZipEntry $updateEntry = null;        // cache the result of finding the update entry
 
     public function __construct(string $pluginName, string $pluginSlug, string $entryPointFile, string $currentVersion) {
         $this->pluginName = $pluginName;
@@ -44,10 +44,11 @@ class PluginUpdater
     /**
      * Add our self-hosted autoupdate plugin to the filter transient
      *
-     * @param $transient
-     * @return object $ transient
+     * @param \stdClass $value
+     *
+     * @return \stdClass $ transient
      */
-    public function checkUpdate($value, $transientName = '')        // NOSONAR
+    public function checkUpdate(\stdClass $value): \stdClass
     {
 
         if (!empty( $value->checked ) ) {
@@ -72,32 +73,33 @@ class PluginUpdater
     /**
      * Add our self-hosted description to the filter
      *
-     * @param boolean $false
-     * @param array $action
-     * @param object $arg
-     * @return bool|object
+     * @param false|object|array<mixed> $result
+     * @param string $action
+     * @param object $args
+     *
+     * @return false|object|array<mixed>
      */
-    public function checkInfo($obj, $action, $arg)
+    public function checkInfo(false|object|array $result, string $action, object $args): false|object|array
     {
         if (($action=='query_plugins' || $action=='plugin_information') &&
-            isset($arg->slug) && $arg->slug === $this->pluginSlug)
+            isset($args->slug) && $args->slug === $this->pluginSlug)
         {
             $entry = $this->getUpdateEntry();
 
             if (isset($entry)) {
-                $obj                = new \stdClass();
-                $obj->slug          = $this->pluginSlug;
-                $obj->plugin_name   = $this->pluginName;
-                $obj->name          = $this->pluginName;
-                $obj->new_version   = $entry->version;
-                $obj->sections      = array(
+                $result                = new \stdClass();
+                $result->slug          = $this->pluginSlug;
+                $result->plugin_name   = $this->pluginName;
+                $result->name          = $this->pluginName;
+                $result->new_version   = $entry->version;
+                $result->sections      = array(
                     'description'   => 'The latest version of ' . $this->pluginName
                 );
-                $obj->download_link = $entry->url;
+                $result->download_link = $entry->url;
             }
         }
 
-        return $obj;
+        return $result;
     }
 
     /**
@@ -122,7 +124,8 @@ class PluginUpdater
      * goes.
      *
      */
-    private function getUpdateEntry () {
+    private function getUpdateEntry (): ?ZipEntry
+    {
         // have we already looked this up once?
         if (false === $this->updateSearchDone) {
             /** @var ZipEntry */
@@ -147,7 +150,8 @@ class PluginUpdater
         return $this->updateEntry;
     }
 
-    private function inspectZipFile(?ZipEntry &$newestEntry, ZipEntry $entry, IgnorePostsManager $ipm) {
+    private function inspectZipFile(?ZipEntry &$newestEntry, ZipEntry $entry, IgnorePostsManager $ipm): void
+    {
         $entry->version = $this->getPluginVersion($entry->path);
 
         if (is_string($entry->version)) {
@@ -170,7 +174,7 @@ class PluginUpdater
                 }
             }
             else {
-                $this->deleteUpdatePost ($entry);
+                $this->deleteUpdatePost($entry);
             }
         }
         else {
@@ -182,7 +186,14 @@ class PluginUpdater
         }
     }
 
-    private function findPluginUpdates($ignorePosts) {
+    /**
+     *
+     * @param array<int> $ignorePosts
+     *
+     * @return array<ZipEntry>
+     */
+    private function findPluginUpdates(array $ignorePosts): array
+    {
         $zipEntries = array();
 
         $posts = get_posts(array('post_type' => 'attachment',
@@ -197,13 +208,15 @@ class PluginUpdater
     }
 
 
-    private function deleteUpdatePost ($entry) {
+    private function deleteUpdatePost (ZipEntry $entry): void
+    {
         $this->log->info('Removing old plugin update', array ('Version' => $entry->version, 'File' => $entry->path));
         wp_delete_post($entry->id, true);
     }
 
 
-    private function getPluginVersion($zipFile) {
+    private function getPluginVersion(string $zipFile): ?string
+    {
         $version = null;
 
         // Create a temporary folder to work in
@@ -266,12 +279,13 @@ class PluginUpdater
 
 class ZipEntry
 {
-    public $id;
-    public $url;
-    public $path;
-    public $version;
+    public int $id;
+    public string $url;
+    public string $path;
+    public ?string $version;
 
-    public function __construct($id, $url, $path) {
+    public function __construct(int $id, string $url, string $path)
+    {
         $this->id = $id;
         $this->url = $url;
         $this->path = $path;
@@ -281,10 +295,12 @@ class ZipEntry
 class IgnorePostsManager {
     const OPTION_NAME = 'raincity_wpf_ignore_posts_manager';
 
-    private $pluginSlug;
-    private $postArray = array();
+    private string $pluginSlug;
+    /** @var array<int> */
+    private array $postArray = [];
 
-    public function __construct($slug) {
+    public function __construct(string $slug)
+    {
         $this->pluginSlug = $slug;
 
         $options = get_option(self::OPTION_NAME, array());
@@ -294,15 +310,22 @@ class IgnorePostsManager {
         }
     }
 
-    public function getPosts() {
+    /**
+     *
+     * @return array<int>
+     */
+    public function getPosts(): array
+    {
         return $this->postArray;
     }
 
-    public function addPost($postId) {
+    public function addPost(int $postId): void
+    {
         array_push($this->postArray, $postId);
     }
 
-    public function storePosts() {
+    public function storePosts(): void
+    {
         $options = get_option(self::OPTION_NAME, array());
 
         $options[$this->pluginSlug] = $this->postArray;

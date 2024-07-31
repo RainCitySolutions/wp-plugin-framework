@@ -15,9 +15,10 @@ class ShortCodeDocumentation
     /** @var ShortCodeAttribute[] */
     private $attributes = array();
 
-    public function __construct(string $name, string $desciption = '') {
+    public function __construct(string $name, string $desciption = '', string $example = '') {
         $this->name = $name;
         $this->description = $desciption;
+        $this->example = $example;
     }
 
     public function addAttribute(ShortCodeAttribute $attribute): void {
@@ -36,6 +37,10 @@ class ShortCodeDocumentation
         return $this->example ?? '';
     }
 
+    /**
+     *
+     * @return array<ShortCodeAttribute>
+     */
     public function getAttributes(): array {
         return $this->attributes;
     }

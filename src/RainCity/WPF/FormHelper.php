@@ -1,16 +1,17 @@
 <?php
 namespace RainCity\WPF;
 
-abstract class FormHelper
-    implements ActionHandlerInf
+abstract class FormHelper implements ActionHandlerInf
 {
-    protected $formKey;
+    protected string $formKey;
 
-    public function __construct($formKey) {
+    public function __construct(string $formKey)
+    {
         $this->formKey = $formKey;
     }
 
-    public function getFormId(): int {
+    public function getFormId(): int
+    {
         return Formidable::getFormId($this->formKey);
     }
 

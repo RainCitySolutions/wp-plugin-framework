@@ -42,6 +42,14 @@ class HttpResponseFilter
     }
 
 
+    /**
+     *
+     * @param array<mixed> $resp
+     * @param array<string, mixed> $reqArgs
+     * @param string|UriInterface $url
+     *
+     * @return array<mixed>
+     */
     public function capture (array $resp, array $reqArgs, string|UriInterface $url): array
     {
         $this->logger->debug('Capturing HTTP Response for {url}', array('url' => $url));

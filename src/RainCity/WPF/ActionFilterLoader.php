@@ -110,7 +110,7 @@ class ActionFilterLoader
      * @param string                $route      The route URI
      * @param string|object|null    $component  A reference to a class for static methods, an object for instance methods or null.
      * @param string|callable       $callback   The name of a method on the class or object on the $component, the name of a function or a function.
-     * @param array                 $args       The arguments to be provided to register_rest_route.
+     * @param array<string, mixed>  $args       The arguments to be provided to register_rest_route.
      */
     public function addEndpoint(
         int $version,
@@ -142,7 +142,7 @@ class ActionFilterLoader
      * @since    1.0.0
      * @access   private
      *
-     * @param    array                $hooks            A reference to a collection of hooks that is being registered (that is, actions, filters, short codes).
+     * @param    array<\stdClass>     $hooks            A reference to a collection of hooks that is being registered (that is, actions, filters, short codes).
      * @param    string               $hook             The name of the WordPress filter that is being registered.
      * @param    string|object|null   $component        A reference to the instance of the object on which the filter is defined.
      * @param    string|callable      $callback         The name of the function definition on the $component.

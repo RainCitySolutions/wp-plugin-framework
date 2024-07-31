@@ -62,9 +62,9 @@ final class LastLoginManager
      *
      * Adds the last login column to the admin user list.
      *
-     * @param  array $cols The default columns.
+     * @param  array<string, string> $columns The default columns.
      *
-     * @return array
+     * @return array<string, string>
      */
     public function addLastLoginColumn(array $columns): array
     {
@@ -95,7 +95,7 @@ final class LastLoginManager
      *
      * @param string $output The value to be output by default.
      * @param string $columnName The name of the column.
-     * @param int    $user_id The user's id.
+     * @param int    $userId The user's id.
      *
      * @return string The last login date if available otherwise 'Never'.
      */
@@ -118,9 +118,9 @@ final class LastLoginManager
      *
      * Mark the column as sortable.
      *
-     * @param  array $columns User table columns.
+     * @param  array<string, string> $columns User table columns.
      *
-     * @return array
+     * @return array<string, string>
      */
     public function markColumnSortable(array $columns): array
     {
@@ -138,7 +138,7 @@ final class LastLoginManager
      *
      * @return \WP_User_Query
      */
-    public function preGetUsersAction(\WP_User_Query $userQuery): \WP_USER_QUERY
+    public function preGetUsersAction(\WP_User_Query $userQuery): \WP_User_Query
     {
         if ( isset( $userQuery->query_vars['orderby'] ) && self::COLUMN_NAME === $userQuery->query_vars['orderby'] ) {
             $userQuery->query_vars = array_merge(

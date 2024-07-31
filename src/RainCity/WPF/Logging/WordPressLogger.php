@@ -5,7 +5,6 @@ use Monolog\LogRecord;
 use Psr\Log\LoggerInterface;
 use RainCity\Logging\BaseLogger;
 use RainCity\Logging\Logger;
-use RainCity\Logging\RotatingFileHandler;
 use RainCity\WPF\PluginInformation;
 use RainCity\WPF\WordPressPlugin;
 
@@ -21,7 +20,8 @@ class WordPressLogger extends BaseLogger
      * {@inheritDoc}
      * @see \RainCity\Logging\Logger
      */
-    public static function getLogger(string $loggerName, ?string $loggerKey = null): LoggerInterface {
+    public static function getLogger(string $loggerName, ?string $loggerKey = null): LoggerInterface
+    {
         return parent::getLogger($loggerName, PluginInformation::getPluginPackageName());
     }
 
@@ -75,7 +75,8 @@ class WordPressLogger extends BaseLogger
      * {@inheritDoc}
      * @see \RainCity\Logging\BaseLogger::getLogFile()
      */
-    protected function getLogFile (): string {
+    protected function getLogFile (): string
+    {
         return PluginInformation::getPluginWriteDir() . '/logs/application.log';
     }
 
@@ -85,7 +86,8 @@ class WordPressLogger extends BaseLogger
      * {@inheritDoc}
      * @see \RainCity\Logging\BaseLogger::getLogLevel()
      */
-    protected function getLogLevel(): mixed {
+    protected function getLogLevel(): int
+    {
         $pluginName = PluginInformation::getPluginName();
         $option = get_option(LOGGER_OPTION_NAME, array());
 
@@ -103,7 +105,8 @@ class WordPressLogger extends BaseLogger
      * {@inheritDoc}
      * @see \RainCity\Logging\BaseLogger::setLogLevel()
      */
-    protected function setLogLevel($level): void {
+    protected function setLogLevel(int $level): void
+    {
         $pluginName = PluginInformation::getPluginPackageName();
 
         $option = get_option(LOGGER_OPTION_NAME);
@@ -116,7 +119,8 @@ class WordPressLogger extends BaseLogger
         update_option(LOGGER_OPTION_NAME, $option);
     }
 
-    public static function uninstall(): void {
+    public static function uninstall(): void
+    {
         Logger::getLogger(static::BASE_LOGGER)->info('Logger::uninstall() called');
 
         $option = get_option(LOGGER_OPTION_NAME);
@@ -131,26 +135,6 @@ class WordPressLogger extends BaseLogger
             else {
                 update_option(LOGGER_OPTION_NAME, $option);
             }
-        }
-
-        // close the handlers
-        $logger = static::getLogger(static::BASE_LOGGER);
-        foreach ($logger->getHandlers() as $handler) {
-            if ($handler instanceof RotatingFileHandler) {
-                $filename = $handler->getLogFilename();
-
-                $pattern = $handler->getFilenameGlobPattern();
-
-                // remove the log files
-                foreach (glob($pattern, GLOB_NOSORT) as $file) {
-                    unlink($file);
-                }
-
-                // remove the log directory
-                rmdir(dirname($filename));
-
-            }
-            $handler->close();
         }
     }
 }

@@ -1,25 +1,20 @@
 <?php
 namespace RainCity\WPF;
 
-
 use RainCity\SerializeAsArrayTrait;
 
-/**
- *
- *
- */
 abstract class WordPressUserData
 {
     use SerializeAsArrayTrait;
 
-    /** @var string Key for data stored per user in the WordPress usermeta table */
+    /** Key for data stored per user in the WordPress usermeta table */
     const USER_META_KEY = self::USER_META_KEY;
 
     /** @var int WordPress user id */
     protected int $wpUserId;
 
-    /* @var array data storage array */
-    private array $data = array();
+    /** @var array<string, string> Data storage array */
+    private array $data = [];
 
     /**
      * Construct an instance by fetching the object from the user's meta data.
@@ -36,13 +31,25 @@ abstract class WordPressUserData
         }
     }
 
-    public function setData(string $key, $value): void
+    /**
+     *
+     * @param string $key
+     * @param string|array<mixed> $value
+     */
+    public function setData(string $key, string|array $value): void
     {
         $this->data[$key] = serialize($value);
         $this->save();
     }
 
-    public function getData(string $key): mixed {
+    /**
+     *
+     * @param string $key
+     *
+     * @return null|string|array<mixed>
+     */
+    public function getData(string $key): null|string|array
+    {
         $result = null;
 
         if (isset($this->data[$key])) {

@@ -199,7 +199,8 @@ class TestOptions extends WordPressOptions
 
     const OPTION_NAMES = array(self::OPTION_1, self::OPTION_2);
 
-    protected function initializeInstance() {
+    protected function initializeInstance():void
+    {
         parent::initializeInstance();
 
         $this->initializeOptions(TestOptions::OPTIONS_NAME, self::OPTION_NAMES);

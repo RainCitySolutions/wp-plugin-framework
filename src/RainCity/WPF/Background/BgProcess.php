@@ -27,6 +27,7 @@ class BgProcess extends \WP_Background_Process
 
     protected LoggerInterface $logger;
 
+    /** @var array<mixed> */
     protected array $taskParams;
 
     /**
@@ -44,7 +45,7 @@ class BgProcess extends \WP_Background_Process
     /**
      * Initialize the instance.
      *
-     * @param array $params A set of parameters that will be provided to each
+     * @param array<mixed> $params A set of parameters that will be provided to each
      *      task when it is run.
      */
     public function __construct(...$params)
@@ -62,7 +63,7 @@ class BgProcess extends \WP_Background_Process
      *
      * @return $this
      */
-    public function addTask(BgTask $task)
+    public function addTask(BgTask $task): BgProcess
     {
         return parent::push_to_queue($task);
     }
@@ -71,9 +72,11 @@ class BgProcess extends \WP_Background_Process
      * {@inheritDoc}
      * @see WP_Background_Process::push_to_queue()
      */
-    public function push_to_queue($data)
+    public function push_to_queue($data): BgProcess
     {
         _doing_it_wrong(__FUNCTION__, __('Don\'t call this function, call addTask() instead.', 'raincity'), '1.0');
+
+        return $this;
     }
 
     /**
@@ -84,10 +87,10 @@ class BgProcess extends \WP_Background_Process
      *
      * @param BgTask $task The background task to be run.
      *
-     * @return boolean|BgTask Returns false if the task is complete, otherwise
+     * @return bool|BgTask Returns false if the task is complete, otherwise
      *      the task is returned.
      */
-    protected function runTask(BgTask $task)
+    protected function runTask(BgTask $task): BgTask|bool
     {
         $result = $task;
 

@@ -26,17 +26,28 @@ class ShortUrlHandler
     protected string $urlPrefix;
 
     /**
+     * {@inheritDoc}
+     * @see \RainCity\Singleton::getInstance()
+     */
+    public static function getInstance($class = null): ShortUrlHandler
+    {
+        /** @var ShortUrlHandler */
+        return parent::getInstance($class);
+    }
+
+    /**
      * Initialize the class and set its properties.
      *
      * This class expects a single, optional argument which is the prefix to
      * use for short URLs.
      *
-     * @param   array  $args    An array of arguments for the class.
+     * @param   array<int, string>  $args    An array of arguments for the class.
      */
-    public function __construct($args) {
+    public function __construct(array $args)
+    {
         parent::__construct();
 
-        if (is_array($args) && !empty($args)) {
+        if (!empty($args)) {
             $urlPrefix = $this->slashUrl($args[0]);
 
             if ($this->validatePrefix($urlPrefix)) {
@@ -69,7 +80,8 @@ class ShortUrlHandler
      *
      * @return bool Returns true on success, otherwise returns false.
      */
-    public static function upgradeDbTable (): bool {
+    public static function upgradeDbTable (): bool
+    {
         global $wpdb;
 
         $tableName = self::getTableName($wpdb);
@@ -109,7 +121,8 @@ KEY long_url (long_url)
      * @throws \Exception Thrown if the prefix does not match the required
      *      pattern.
      */
-    protected function validatePrefix(string $prefix): bool {
+    protected function validatePrefix(string $prefix): bool
+    {
         // check that the prefix matches the required pattern
         return 1 === preg_match('/^\/.{1,30}\/$/', $prefix);
     }
@@ -127,7 +140,8 @@ KEY long_url (long_url)
      *      empty, is an invalid URL format or doesn't refer to a valid
      *      location.
      */
-    public function createShortUrl (string $url, bool $isFrontEnd = false): string {
+    public function createShortUrl (string $url, bool $isFrontEnd = false): string
+    {
         if (empty($url)) {
             throw new \InvalidArgumentException("No URL was supplied.", 400);
         }
@@ -152,7 +166,8 @@ KEY long_url (long_url)
     /**
      * Create a short url for the provided URL.
      *
-     * @param string $url The long URL to be mapped.
+     * @param string $shortCode The short url code
+     * @param string $longUrl The long URL to be mapped.
      * @param bool $isFrontEnd True if the URL is being generated from the
      *      front-end (UI), or False if it is being generated internally.
      *
@@ -162,7 +177,8 @@ KEY long_url (long_url)
      *      empty, is an invalid URL format or doesn't refer to a valid
      *      location.
      */
-    public function addShortUrl (string $shortCode, string $longUrl, bool $isFrontEnd = false): string {
+    public function addShortUrl (string $shortCode, string $longUrl, bool $isFrontEnd = false): string
+    {
         if (empty($shortCode)) {
             throw new \InvalidArgumentException("No Short URL supplied.", 400);
         }
@@ -211,7 +227,8 @@ KEY long_url (long_url)
      * @return mixed Returns a fully qualified URL or false if the URL format
      *      is invalid.
      */
-    protected function validateUrlFormat(string $url): mixed {
+    protected function validateUrlFormat(string $url): mixed
+    {
         $parsedUrl = parse_url($url);
 
         // If there is no host name on the URL, add the current host
@@ -278,11 +295,12 @@ KEY long_url (long_url)
     /**
      * Given the parts of a URL (from parse_url), recompose a URL string.
      *
-     * @param array $parts An associative array of URL parts.
+     * @param array<string, string> $parts An associative array of URL parts.
      *
      * @return string A composed URL string.
      */
-    protected function build_url(array $parts): string {
+    protected function build_url(array $parts): string
+    {
         return join (
             '',
             array (
@@ -308,7 +326,8 @@ KEY long_url (long_url)
      * @return bool Returns true if the URL is accessible, otherwise returns
      *      false.
      */
-    protected function verifyUrlExists(string $fqUrl): bool {
+    protected function verifyUrlExists(string $fqUrl): bool
+    {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $fqUrl);
         curl_setopt($ch, CURLOPT_NOBODY, true);
@@ -328,7 +347,8 @@ KEY long_url (long_url)
      * @return string|bool Returns the shortCode for the URL if it exists,
      *      otherwise returns false.
      */
-    protected function urlExists(string $url): string|bool {
+    protected function urlExists(string $url): string|bool
+    {
         global $wpdb;
 
         $tableName = self::getTableName($wpdb);
@@ -346,7 +366,8 @@ KEY long_url (long_url)
      * @return bool Returns true if the short code exists, otherwise returns
      *      false.
      */
-    protected function shortCodeExists(string $shortCode): bool {
+    protected function shortCodeExists(string $shortCode): bool
+    {
         global $wpdb;
 
         $tableName = self::getTableName($wpdb);
@@ -365,7 +386,8 @@ KEY long_url (long_url)
      *
      * @return string A short code that is mapped to the long URL.
      */
-    protected function createShortCode(string $url, bool $isFrontEnd = false): string {
+    protected function createShortCode(string $url, bool $isFrontEnd = false): string
+    {
         $shortCode = null;
 
         do {
@@ -387,7 +409,8 @@ KEY long_url (long_url)
      *
      * @return string A short code that is mapped to the long URL.
      */
-    protected function insertShortCode(string $shortCode, string $url, bool $isFrontEnd = false): string {
+    protected function insertShortCode(string $shortCode, string $url, bool $isFrontEnd = false): string
+    {
         global $wpdb;
 
         $tableName = self::getTableName($wpdb);
@@ -413,9 +436,10 @@ KEY long_url (long_url)
     /**
      * Fetch the URLs previously generated by the front-end(UI)
      *
-     * @return array An array of \stdClass objects.
+     * @return array<\stdClass> An array of \stdClass objects.
      */
-    public function getFrontEndUrls(): array {
+    public function getFrontEndUrls(): array
+    {
         global $wpdb;
         $urlArray = array();
 
@@ -440,7 +464,8 @@ KEY long_url (long_url)
      *
      * @param string $shortCode The code for the short URL.
      */
-    public function deleteShortCode(string $shortCode) {
+    public function deleteShortCode(string $shortCode): void
+    {
         global $wpdb;
 
         if ($this->shortCodeExists($shortCode)) {
@@ -456,7 +481,8 @@ KEY long_url (long_url)
      * If it does, and the remainder of the URI is a short code in the
      * database, the user is redirected to the URL mapped to the short code.
      */
-    public function templateRedirectAction () {
+    public function templateRedirectAction (): void
+    {
         if (isset($_SERVER['REQUEST_URI']) &&
             strpos($_SERVER['REQUEST_URI'], $this->urlPrefix) === 0)
         {
@@ -485,7 +511,8 @@ KEY long_url (long_url)
      *
      * @return string The name of the database table.
      */
-    private static function getTableName(object $wpdb) {
+    private static function getTableName(object $wpdb): string
+    {
         return $wpdb->prefix . self::TABLE_NAME;
     }
 
@@ -496,7 +523,8 @@ KEY long_url (long_url)
      *
      * @return string The slashed URL.
      */
-    private static function slashUrl(string $url): string {
+    private static function slashUrl(string $url): string
+    {
         $url = ltrim($url, " \n\r\t\v\0\\\/");
         $url = rtrim($url, " \n\r\t\v\0\\\/");
         $url = '/' . $url . '/';

@@ -2,22 +2,19 @@
 namespace RainCity\WPF\Validation;
 
 /**
- * This class is responsible for validating email addresses.
- *
- * @since         1.0.0
- *
- * @implements    Input_Validator
- * @package       Acme/classes
+ * This class is responsible for validating URLs.
  */
 class UrlValidator extends StringValidator
 {
     /**
      * Determines if the specified input is valid.
      *
-     * @param   mixed   $input  A single address as a string or multiple addresses as an array of strings
-     * @return  bool            True if the input is valid; otherwise, false
+     * @param string|array<string> $input A single address as a string or
+     *      multiple addresses as an array of strings
+     *
+     * @return bool True if the input is valid; otherwise, false
      */
-    public function isValid(string $input): bool
+    public function isValid(string|array $input): bool
     {
         $isValid = parent::isValid($input);
 

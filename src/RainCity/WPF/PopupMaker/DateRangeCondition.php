@@ -22,12 +22,12 @@ final class DateRangeCondition implements ActionHandlerInf
      */
     public function loadActions(ActionFilterLoader $loader): void {
         if (class_exists('Popup_Maker')) {
-            $loader->add_action('admin_enqueue_scripts', $this, 'adminEnqueueScripts');
-            $loader->add_action('admin_print_footer_scripts', $this, 'adminPrintFooterScripts', -1);
-            $loader->add_filter('wp_script_attributes', $this, 'wpScriptAttributes', 10, 1 );
-            $loader->add_filter('style_loader_tag', $this, 'styleLoaderTag', 10, 2);
+            $loader->addAction('admin_enqueue_scripts', $this, 'adminEnqueueScripts');
+            $loader->addAction('admin_print_footer_scripts', $this, 'adminPrintFooterScripts', -1);
+            $loader->addFilter('wp_script_attributes', $this, 'wpScriptAttributes', 10, 1 );
+            $loader->addFilter('style_loader_tag', $this, 'styleLoaderTag', 10, 2);
 
-            $loader->add_filter('pum_registered_conditions', $this, 'registerConditions');
+            $loader->addFilter('pum_registered_conditions', $this, 'registerConditions');
         }
     }
 
@@ -36,11 +36,12 @@ final class DateRangeCondition implements ActionHandlerInf
      *
      * Adds our custom conditions to the list of possible conditions.
      *
-     * @param array $conditions An array of conditions.
+     * @param array<string, array<mixed>> $conditions An array of conditions.
      *
-     * @return array The modified conditions array.
+     * @return array<string, array<mixed>> The modified conditions array.
      */
-    public function registerConditions(array $conditions = array()): array {
+    public function registerConditions(array $conditions = []): array
+    {
         $conditions = array_merge(
             $conditions,
             [
@@ -67,13 +68,19 @@ final class DateRangeCondition implements ActionHandlerInf
         return $conditions;
     }
 
+    /**
+     *
+     * @param array<string, array<mixed>> $condition
+     *
+     * @return bool
+     */
     public function isInDateRange(array $condition): bool
     {
         //TODO: check if data is in range
         return true;
     }
 
-    public function adminPrintFooterScripts()
+    public function adminPrintFooterScripts(): void
     {
         if ((wp_script_is('pum-admin-general') || wp_script_is('popup-maker-admin')) &&
             (did_action('admin_footer') || doing_action('admin_footer')) )
@@ -140,7 +147,7 @@ final class DateRangeCondition implements ActionHandlerInf
 
     }
 
-    public function adminEnqueueScripts()
+    public function adminEnqueueScripts(): void
     {
         wp_enqueue_script(
             self::POPPER_HANDLE,
@@ -173,7 +180,13 @@ final class DateRangeCondition implements ActionHandlerInf
             );
     }
 
-    public function wpScriptAttributes(array $attr)
+    /**
+     *
+     * @param array<string, mixed> $attr
+     *
+     * @return array<string, mixed>
+     */
+    public function wpScriptAttributes(array $attr): array
     {
         if (self::POPPER_HANDLE.'-js' == $attr['id'] ||
             self::TEMPUS_DOMINUS_HANDLE.'-js' == $attr['id'])
@@ -184,7 +197,7 @@ final class DateRangeCondition implements ActionHandlerInf
         return $attr;
     }
 
-    public function styleLoaderTag($html, $handle)
+    public function styleLoaderTag(string $html, string $handle): string
     {
         if ('font-awesome-official-css' === $handle) {
             $html = str_replace(

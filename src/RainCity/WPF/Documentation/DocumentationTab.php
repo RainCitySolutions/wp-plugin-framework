@@ -14,12 +14,13 @@ class DocumentationTab
     const DOCUMENTATION_FILTER = 'rcsDocumentationFilter';
 
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct(self::TAB_NAME, DocumentationOptions::instance());
     }
 
 
-    public function addSettings(string $pageSlug)
+    public function addSettings(string $pageSlug): void
     {
         /**
          * ShortCodes section
@@ -40,6 +41,7 @@ class DocumentationTab
     public function sanitize(string $pageSlug, ?array $input): ?array
     {
         // Presentation only page, with no inputs so nothing to sanitize
+        return $input;
     }
 }
 
