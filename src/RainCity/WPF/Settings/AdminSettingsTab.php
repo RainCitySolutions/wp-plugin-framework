@@ -529,7 +529,7 @@ abstract class AdminSettingsTab
         print '<input ';
         array_walk($attrs, function($value, $key) {
             print $key;
-            if (!isset($value)) {
+            if (isset($value)) {
                 print '="' . $value . '"';
             }
 
