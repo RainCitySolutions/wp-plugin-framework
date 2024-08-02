@@ -154,4 +154,32 @@ class Formidable
 
         return $result;
     }
+
+    /**
+     * Retrieve the value for the specified option label on a field.
+     *
+     * @param int $fieldId A field identier
+     * @param string $optionLabel The label for a field option
+     *
+     * @return string The value associated with the field label, or an empty
+     *      string if the field doesn't exist, is not an options field, or
+     *      the provided label is not valid for the field.
+     */
+    public static function getFieldOptionValue(int $fieldId, string $optionLabel): string
+    {
+        $result = '';
+
+        $field = \FrmField::getOne($fieldId);
+
+        if (isset($field) && isset($field->options)) {
+            foreach ($field->options as $option) {
+                if ($option['label'] == $optionLabel) {
+                    $result = $option['value'];
+                    break;
+                }
+            }
+        }
+
+        return $result;
+    }
 }
