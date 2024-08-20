@@ -17,7 +17,7 @@ class Formidable
     private static array $fieldIdCache = [];
     /** @var array<string, int> */
     private static array $viewIdCache = [];
-    /** @var array<string, int> */
+    /** @var int[] */
     private static array $dbCacheState = [];
 
     /**
@@ -104,6 +104,29 @@ class Formidable
 
         return $id;
     }
+
+    /**
+     * Disable Formidable from caching results from database queries.
+     *
+     * Calls to disableDbCache() should be paired with calls to
+     * restoreDbCache().
+     */
+    public static function disableDbCache(): void
+    {
+        global $frm_vars;
+
+        if (isset($frm_vars[self::FRM_CACHE_FLAG])) {
+            array_push(self::$dbCacheState, $frm_vars[self::FRM_CACHE_FLAG]);
+        }
+        else {
+            // In the event that the flag gets removed elsewhere (e.g. by
+            // Formidable) ensure that our state is starting from scratch.
+            self::$dbCacheState = array(-1);
+        }
+
+        $frm_vars[self::FRM_CACHE_FLAG] = true;
+    }
+
 
     /**
      * Restore Formidable caching state to the previous value.
