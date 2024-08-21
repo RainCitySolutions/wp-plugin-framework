@@ -154,13 +154,13 @@ class Formidable
      * Retrieve the label for the specified option value on a field.
      *
      * @param int $fieldId A field identier
-     * @param string $optionValue The value for a field option
+     * @param string|int $optionValue The value for a field option
      *
      * @return string The label associated with the field value, or an empty
      *      string if the field doesn't exist, is not an options field, or
      *      the provided value is not valid for the field.
      */
-    public static function getFieldOptionLabel(int $fieldId, string $optionValue): string
+    public static function getFieldOptionLabel(int $fieldId, string|int $optionValue): string
     {
         $result = '';
 
@@ -184,11 +184,11 @@ class Formidable
      * @param int $fieldId A field identier
      * @param string $optionLabel The label for a field option
      *
-     * @return string The value associated with the field label, or an empty
+     * @return string|int The value associated with the field label, or an empty
      *      string if the field doesn't exist, is not an options field, or
      *      the provided label is not valid for the field.
      */
-    public static function getFieldOptionValue(int $fieldId, string $optionLabel): string
+    public static function getFieldOptionValue(int $fieldId, string $optionLabel): string|int
     {
         $result = '';
 

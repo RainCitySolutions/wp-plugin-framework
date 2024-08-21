@@ -13,11 +13,18 @@ class FormidableTest extends TestCase
     const FIELD_KEY = 'fieldKey';
     const VIEW_KEY = 'viewKey';
 
+    private const OPTION_1_LABEL = 'Test Option 1 Label';
+    private const OPTION_1_VALUE = 'Test Option 1 Value';
+    private const OPTION_2_LABEL = 'Test Option 2 Label';
+    private const OPTION_2_VALUE = 2;
+
     private static $mockFrmForm;
     private static $mockFrmField;
     private static $mockFrmViewsDisplay;
 
     private static int $testId = 0;
+
+    private static \stdClass $testEntry;
 
     /**
      * Set the identifier to be returned by the mock object
@@ -28,6 +35,25 @@ class FormidableTest extends TestCase
     {
         self::$testId = $id;
     }
+
+
+    private static function initTestEntry(): void
+    {
+        $options = [
+            [
+                'label' => self::OPTION_1_LABEL,
+                'value' => self::OPTION_1_VALUE
+            ],
+            [
+                'label' => self::OPTION_2_LABEL,
+                'value' => self::OPTION_2_VALUE
+            ]
+        ];
+
+        self::$testEntry = new \stdClass();
+        self::$testEntry->options = $options;
+    }
+
 
     /**
      * {@inheritDoc}
@@ -47,11 +73,14 @@ class FormidableTest extends TestCase
             // We expect the exception to be throw if the Formidable classes are not loaded
         }
 
+        self::initTestEntry();
+
         self::$mockFrmForm = \Mockery::mock('overload:\FrmForm');
         self::$mockFrmForm->shouldReceive('get_id_by_key')->andReturnUsing(fn() => self::$testId);
 
         self::$mockFrmField = \Mockery::mock('overload:\FrmField');
         self::$mockFrmField->shouldReceive('get_id_by_key')->andReturnUsing(fn() => self::$testId);
+        self::$mockFrmField->shouldReceive('getOne')->andReturnUsing(fn() => self::$testEntry);
 
         self::$mockFrmViewsDisplay = \Mockery::mock('overload:\FrmViewsDisplay');
         self::$mockFrmViewsDisplay->shouldReceive('get_id_by_key')->andReturnUsing(fn() => self::$testId);
@@ -221,5 +250,42 @@ class FormidableTest extends TestCase
         self::assertEquals($testFormId, $formId);
         self::assertEquals($testFieldId, $fieldId);
         self::assertEquals($testViewId, $viewId);
+    }
+
+    /************************************************************************
+     * Get Label/Value Tests
+     ************************************************************************/
+    public function testGetFieldOptionLabel_string()
+    {
+        $label = Formidable::getFieldOptionLabel(0, self::OPTION_1_VALUE);
+
+        self::assertNotEmpty($label);
+        self::assertEquals(self::OPTION_1_LABEL, $label);
+    }
+
+    public function testGetFieldOptionLabel_int()
+    {
+        $label = Formidable::getFieldOptionLabel(0, self::OPTION_2_VALUE);
+
+        self::assertNotEmpty($label);
+        self::assertEquals(self::OPTION_2_LABEL, $label);
+    }
+
+    public function testGetFieldOptionValue_string()
+    {
+        $label = Formidable::getFieldOptionValue(0, self::OPTION_1_LABEL);
+
+        self::assertNotEmpty($label);
+        self::assertIsString($label);
+        self::assertEquals(self::OPTION_1_VALUE, $label);
+    }
+
+    public function testGetFieldOptionValue_int()
+    {
+        $label = Formidable::getFieldOptionValue(0, self::OPTION_2_LABEL);
+
+        self::assertNotEmpty($label);
+        self::assertIsNumeric($label);
+        self::assertEquals(self::OPTION_2_VALUE, $label);
     }
 }
