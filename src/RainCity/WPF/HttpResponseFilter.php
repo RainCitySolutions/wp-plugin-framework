@@ -9,20 +9,11 @@ use Psr\Log\LoggerInterface;
 
 class HttpResponseFilter
 {
-    /** @var LoggerInterface */
     private LoggerInterface $logger;
-
-    /** @var int */
     private int $respCode;
-
-    /** @var string */
     private string $respMsg;
-
-    /** @var string */
     private string $respBody;
-
-    /** @var ClientException */
-    private ClientException $clientException;
+    private ?ClientException $clientException;
 
     /**
      * Hooks into the 'http_response' filter.
@@ -50,7 +41,7 @@ class HttpResponseFilter
      *
      * @return array<mixed>
      */
-    public function capture (array $resp, array $reqArgs, string|UriInterface $url): array
+    public function capture(array $resp, array $reqArgs, string|UriInterface $url): array
     {
         $this->logger->debug('Capturing HTTP Response for {url}', array('url' => $url));
 
@@ -103,7 +94,7 @@ class HttpResponseFilter
         return $this->respBody;
     }
 
-    public function getException(): ClientException
+    public function getException(): ?ClientException
     {
         return $this->clientException;
     }
