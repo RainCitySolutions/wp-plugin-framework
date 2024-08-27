@@ -75,7 +75,6 @@ class PluginInformation {
         // Create a Regex pattern with the plugin names
         $pluginPathRegex = sprintf(self::PLUGIN_PATH_PATTERN, implode ('|', $plugins));
 
-        $matches = array();
         $stackTrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
 
         /*
@@ -85,14 +84,17 @@ class PluginInformation {
         foreach ($stackTrace as $entry) {
             if (isset($entry['file'])) {
                 $normalizedPath = wp_normalize_path($entry['file']);
+                /** @var string[] */
+                $matches = array();
 
-                if (!preg_match(self::VENDOR_IN_PATH_REGEX, $normalizedPath, $matches) &&
-                    preg_match($pluginPathRegex, $normalizedPath, $matches) ) {
-                        // Now that we've found a match, save the info and exit the loop
-                        $pluginInfo->pluginPackage = $matches[2];
-                        $pluginInfo->pluginPath = $matches[1];
-                        break;
-                    }
+                if (0 === preg_match(self::VENDOR_IN_PATH_REGEX, $normalizedPath, $matches) &&
+                    1 === preg_match($pluginPathRegex, $normalizedPath, $matches))
+                {
+                    // Now that we've found a match, save the info and exit the loop
+                    $pluginInfo->pluginPath = $matches[1];
+                    $pluginInfo->pluginPackage = $matches[2];
+                    break;
+                }
             }
         }
 
