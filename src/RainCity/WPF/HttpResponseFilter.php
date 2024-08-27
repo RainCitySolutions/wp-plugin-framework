@@ -13,7 +13,7 @@ class HttpResponseFilter
     private int $respCode;
     private string $respMsg;
     private string $respBody;
-    private ?ClientException $clientException;
+    private ?ClientException $clientException = null;
 
     /**
      * Hooks into the 'http_response' filter.
