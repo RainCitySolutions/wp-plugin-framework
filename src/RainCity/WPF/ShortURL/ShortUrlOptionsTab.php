@@ -140,16 +140,16 @@ class ShortUrlOptionsTab
             true
             );
 
-        wp_localize_script(
-            $this->tabId,
-            'raincity_wpf_shorturl_ajax_obj',
-            array(
-                'ajax_url' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce($this->tabId),
-                'addUrlAction' => self::AJAX_ADD_SHORT_URL,
-                'deleteUrlAction' => self::AJAX_DELETE_SHORT_URL
-                )
-            );
+//         wp_localize_script(
+//             $this->tabId,
+//             'raincity_wpf_shorturl_ajax_obj',
+//             array(
+//                 'ajax_url' => admin_url('admin-ajax.php'),
+//                 'nonce' => wp_create_nonce($this->tabId),
+//                 'addUrlAction' => self::AJAX_ADD_SHORT_URL,
+//                 'deleteUrlAction' => self::AJAX_DELETE_SHORT_URL
+//                 )
+//             );
     }
 
     /**
