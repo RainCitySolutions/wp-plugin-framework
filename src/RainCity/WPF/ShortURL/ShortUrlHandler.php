@@ -2,7 +2,7 @@
 namespace RainCity\WPF\ShortURL;
 
 use RainCity\Singleton;
-use RainCity\TestHelper\InterceptDie;
+use RainCity\InterceptDie;
 use RainCity\WPF\ActionFilterLoader;
 use RainCity\WPF\ActionHandlerInf;
 
