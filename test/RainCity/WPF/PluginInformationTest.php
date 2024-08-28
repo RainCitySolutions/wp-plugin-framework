@@ -117,4 +117,23 @@ class PluginInformationTest extends WordpressTestCase
         self::assertEquals('test-plugin', $info->getPackage());
         self::assertEquals(self::TEST_PLUGIN_DIRECTOR, $info->getPath());
     }
+    
+    public function testIsPluginActive_true() {
+        $testPlugin = 'testPlugin.php';
+
+        $pluginInfo =array(
+            'Name' => 'TestPlugin',
+            'Version' => '1.0.0',
+            'TextDomain' => 'testPlugin'
+        );
+        
+        $this->addPlugin($testPlugin, $pluginInfo);
+        
+        self::assertTrue(PluginInformation::isPluginActive($testPlugin));
+    }
+
+    public function testIsPluginActive_false() {
+        
+        self::assertFalse(PluginInformation::isPluginActive('inactive/plugin.php'));
+    }
 }

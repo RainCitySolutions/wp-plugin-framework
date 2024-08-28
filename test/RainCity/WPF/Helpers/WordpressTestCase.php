@@ -70,6 +70,7 @@ abstract class WordpressTestCase extends RainCityTestCase
         \Brain\Monkey\Functions\when('register_uninstall_hook')->alias(function () { /* Do nothing */ });
 
         \Brain\Monkey\Functions\when('get_plugins')->alias(fn () => $this->plugins);
+        \Brain\Monkey\Functions\when('is_plugin_active')->alias(fn (string $plugin) => isset($this->plugins[$plugin]));
         \Brain\Monkey\Functions\when('wp_get_schedules')->alias(fn () => $this->cronSchedules);
 
         \Brain\Monkey\Functions\when('add_theme_support')->justReturn();
