@@ -63,7 +63,7 @@ class PluginInformation {
         // Get the names of the currently active plugins
         $plugins = array_unique(
             array_merge(
-                get_option('active_plugins'),
+                \get_option('active_plugins'),
                 array_keys((array) get_site_option( 'active_sitewide_plugins', array() ))
                 ),
             SORT_REGULAR);
@@ -83,7 +83,7 @@ class PluginInformation {
          */
         foreach ($stackTrace as $entry) {
             if (isset($entry['file'])) {
-                $normalizedPath = wp_normalize_path($entry['file']);
+                $normalizedPath = \wp_normalize_path($entry['file']);
                 /** @var string[] */
                 $matches = array();
 
@@ -124,7 +124,7 @@ class PluginInformation {
     {
         $matches = array();
 
-        $path = wp_normalize_path(plugin_dir_path( __FILE__ ) ) ;
+        $path = \wp_normalize_path(plugin_dir_path( __FILE__ ) ) ;
 
         if (preg_match($pluginPathRegex, $path, $matches) ) {
             $pluginInfo->pluginPackage = $matches[2];
@@ -166,7 +166,7 @@ class PluginInformation {
     {
         $pluginPackage = self::getPluginPackageName();
 
-        $plugins = get_plugins();
+        $plugins = \get_plugins();
         foreach( $plugins as $plugin_info ) {
             if ( $plugin_info['TextDomain'] == $pluginPackage ) {
                 return $plugin_info['Name'];
@@ -178,7 +178,7 @@ class PluginInformation {
 
     public static function getPluginUrl(): string
     {
-        return plugins_url() .'/'. self::getPluginPackageName() .'/';
+        return \plugins_url() .'/'. self::getPluginPackageName() .'/';
     }
 
 
@@ -187,7 +187,7 @@ class PluginInformation {
         $path = null;
 
         if (function_exists('wp_upload_dir')) {
-            $path = wp_upload_dir()['basedir'] . '/'. self::getPluginPackageName();
+            $path = \wp_upload_dir()['basedir'] . '/'. self::getPluginPackageName();
         } else {
             $path = sys_get_temp_dir();
         }
@@ -201,6 +201,6 @@ class PluginInformation {
             include_once ABSPATH . 'wp-admin/includes/plugin.php';
         }
 
-        return is_plugin_active($pluginFile);
+        return \is_plugin_active($pluginFile);
     }
 }
