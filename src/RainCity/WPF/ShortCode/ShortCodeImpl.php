@@ -40,5 +40,17 @@ trait ShortCodeImpl
     {
         return $combinedAtts;
     }
-}
 
+    protected function isEditPreviewMode(): bool
+    {
+        $result = false;
+
+        if ((isset($_GET['action']) && $_GET['action'] === 'edit') ||
+            (isset($_REQUEST['action']) && $_REQUEST['action'] === 'avia_ajax_text_to_preview') )
+        {
+            $result = true;
+        }
+
+        return $result;
+    }
+}
