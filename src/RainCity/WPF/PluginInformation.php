@@ -4,34 +4,94 @@ namespace RainCity\WPF;
 use RainCity\Logging\Helper;
 
 class PluginInformation {
-    private string $pluginPackage;
-    private string $pluginPath;
+    // Local keys
+    private const PLUGIN_DATA_SLUG = 'Slug';    // Plugin slug
+    private const PLUGIN_DATA_FILE = 'File';    // Entrypoint file relative to plugins directory
+    private const PLUGIN_DATA_PATH = 'Path';    // TBD
+
+    // WordPress keys
+    private const PLUGIN_DATA_NAME = 'Name';
+    private const PLUGIN_DATA_VERSION = 'Version';
+    /*
+     private const PLUGIN_DATA_PLUGIN_URI = 'PluginURI';
+     private const PLUGIN_DATA_DESCRIPTION = 'Description';
+     private const PLUGIN_DATA_AUTHOR = 'Author';
+     private const PLUGIN_DATA_AUTHOR_URI = 'AuthorURI';
+     private const PLUGIN_DATA_TEXT_DOMAIN = 'TextDomain';
+     private const PLUGIN_DATA_DOMAIN_PATH = 'DomainPath';
+     private const PLUGIN_DATA_NETWORK = 'Network';
+     private const PLUGIN_DATA_REQUIRES_WP = 'RequiresWP';
+     private const PLUGIN_DATA_REQUIRES_PHP = 'RequiresPHP';
+     private const PLUGIN_DATA_UPDATE_URI = 'UpdateURI';
+     private const PLUGIN_DATA_REQUIRES_PLUGINS = 'RequiresPlugins';
+     private const PLUGIN_DATA_TITLE = 'Title';
+     private const PLUGIN_DATA_AUTHOR_NAME = 'AuthorName';
+     */
+
     /** @var array<string, mixed> @see \get_plugin_data() */
     private array $pluginData = [];
 
-    private function __construct() {
-        $this->pluginPackage = 'unknown';
-        $this->pluginPath = '';
+    /**
+     * @param string $pluginFile
+     * @param array<string, mixed> $pluginInfo
+     */
+    private function __construct(string $pluginFile = '', array $pluginInfo = [])
+    {
+        $this->pluginData = array_merge(
+            [
+                self::PLUGIN_DATA_SLUG => empty($pluginFile) ? 'unknown' : dirname(plugin_basename($pluginFile)),
+                self::PLUGIN_DATA_PATH => empty($pluginFile) ? '' : WP_PLUGIN_DIR . '/' . dirname($pluginFile),
+                self::PLUGIN_DATA_FILE => $pluginFile
+            ],
+            $pluginInfo
+            );
     }
 
-    public function getPackage(): string
+    public function getSlug(): string
     {
-        return $this->pluginPackage;
+        return $this->pluginData[self::PLUGIN_DATA_SLUG];
     }
 
     public function getPath(): string
     {
-        return $this->pluginPath;
+        return $this->pluginData[self::PLUGIN_DATA_PATH];
     }
 
     public function getVersion(): string
     {
-        return $this->pluginData['Version'];
+        return $this->pluginData[self::PLUGIN_DATA_VERSION];
     }
 
-
-    public static function getPluginFile(string $pluginName): ?string
+    public function getPluginFile(): ?string
     {
+        return $this->pluginData[self::PLUGIN_DATA_FILE] ?? null;
+    }
+
+    public function getPluginName(): ?string
+    {
+        return $this->pluginData[self::PLUGIN_DATA_NAME] ?? null;
+    }
+
+    public function getPluginUrl(): string
+    {
+        return \plugins_url() .'/'. $this->getSlug() .'/';
+    }
+
+    public function getPluginWriteDir(): string
+    {
+        if (function_exists('wp_upload_dir')) {
+            $path = \wp_upload_dir()['basedir'] . '/'. $this->getSlug();
+        } else {
+            $path = sys_get_temp_dir();
+        }
+
+        return $path;
+    }
+
+    public static function getPluginInfoByPluginName(string $pluginName): PluginInformation
+    {
+        $info = new PluginInformation();
+
         if (defined('ABSPATH')) { // Wrap in case we get invoked via unit testing
             require_once ABSPATH . '/wp-admin/includes/plugin.php';
         }
@@ -39,34 +99,29 @@ class PluginInformation {
         $plugins = get_plugins();
         foreach( $plugins as $pluginFile => $pluginInfo ) {
             if ( $pluginInfo['Name'] == $pluginName ) {
-                return $pluginFile;
+                $info = new PluginInformation($pluginFile, $pluginInfo);
             }
         }
 
-        return null;
+        return $info;
     }
 
-    public static function getPluginFileByName(string $pluginName): ?string
+    public static function getPluginInfoByPluginSlug(string $pluginSlug): PluginInformation
     {
-        return self::getPluginFile($pluginName);
-    }
+        $info = new PluginInformation();
 
-    public static function getPluginFileBySlug(string $pluginSlug): ?string
-    {
         if (defined('ABSPATH')) { // Wrap in case we get invoked via unit testing
             require_once ABSPATH . '/wp-admin/includes/plugin.php';
         }
 
         $plugins = get_plugins();
-        foreach (array_keys($plugins) as $pluginFile) {
-            $slug = dirname(plugin_basename($pluginFile));
-
-            if ($slug == $pluginSlug) {
-                return $pluginFile;
+        foreach ($plugins as $pluginFile => $pluginInfo) {
+            if (dirname(plugin_basename($pluginFile)) == $pluginSlug) {
+                $info = new PluginInformation($pluginFile, $pluginInfo);
             }
         }
 
-        return null;
+        return $info;
     }
 
 
@@ -85,7 +140,6 @@ class PluginInformation {
      * first folder where the call isn't against the 'vendor' folder. This
      * will be a call within the plugin itself.
      *
-     * @access private
      * @return PluginInformation An instance of a PluginInformation class
      */
     public static function getPluginInfo(): PluginInformation
@@ -123,9 +177,10 @@ class PluginInformation {
                     1 === preg_match($pluginPathRegex, $normalizedPath, $matches))
                 {
                     // Now that we've found a match, save the info and exit the loop
-                    $pluginInfo->pluginPath = $matches[1];
-                    $pluginInfo->pluginPackage = $matches[2];
-                    $pluginInfo->pluginData = \get_plugin_data($normalizedPath);
+                    $pluginInfo = PluginInformation::getPluginInfoByPluginSlug($matches[2]);
+                    //                     $pluginInfo->pluginPath = $matches[1];
+                    //                     $pluginInfo->pluginPackage = $matches[2];
+                    //                     $pluginInfo->pluginData = \get_plugin_data($normalizedPath);
                     break;
                 }
             }
@@ -136,8 +191,8 @@ class PluginInformation {
          * within the plugin's code base and get the information from this
          * file's path.
          */
-        if (strcmp('unknown', $pluginInfo->pluginPackage) == 0) {
-            self::extractPluginInfoFromPath($pluginInfo, $pluginPathRegex, $stackTrace);
+        if (strcmp('unknown', $pluginInfo->getSlug()) == 0) {
+            $pluginInfo = self::extractPluginInfoFromPath($pluginPathRegex, $stackTrace);
         }
 
         return $pluginInfo;
@@ -145,99 +200,39 @@ class PluginInformation {
 
     /**
      *
-     * @param PluginInformation $pluginInfo
      * @param string $pluginPathRegex
      * @param array<mixed> $stackTrace
      */
     private static function extractPluginInfoFromPath(
-        PluginInformation &$pluginInfo,
         string $pluginPathRegex,
         array $stackTrace
-        ): void
-    {
-        $matches = array();
+        ): PluginInformation
+        {
+            $pluginInfo = new PluginInformation();
 
-        $path = \wp_normalize_path(plugin_dir_path( __FILE__ ) ) ;
+            $matches = array();
 
-        if (preg_match($pluginPathRegex, $path, $matches) ) {
-            self::updatePluginInfoFromSlug($matches[2], $matches[1], $pluginInfo);
-        }
-        else {
-            // Assume the plugin is immediately prior to the vendor folder
-            if (preg_match('/(.+\/(.*))\/vendor\/.*/', $path, $matches)) {
-                self::updatePluginInfoFromSlug($matches[2], $matches[1], $pluginInfo);
+            $path = \wp_normalize_path(plugin_dir_path( __FILE__ ) ) ;
+
+            if (preg_match($pluginPathRegex, $path, $matches) ) {
+                $pluginInfo = PluginInformation::getPluginInfoByPluginSlug($matches[2]);
             }
             else {
-                Helper::log(
-                    'Unable to determine plugin package name: ',
-                    array('regex' => $pluginPathRegex, 'stack' =>  $stackTrace)
-                    );
+                // Assume the plugin is immediately prior to the vendor folder
+                if (preg_match('/(.+\/(.*))\/vendor\/.*/', $path, $matches)) {
+                    $pluginInfo = PluginInformation::getPluginInfoByPluginSlug($matches[2]);
+                }
+                else {
+                    Helper::log(
+                        'Unable to determine plugin package name: ',
+                        array('regex' => $pluginPathRegex, 'stack' =>  $stackTrace)
+                        );
+                }
             }
-        }
+
+            return $pluginInfo;
     }
 
-    private static function updatePluginInfoFromSlug(
-        string $slug,
-        string $path,
-        PluginInformation &$pluginInfo): void
-    {
-        $pluginFile = self::getPluginFileBySlug($slug);
-        $normalizedPath = \wp_normalize_path($pluginFile);
-
-        $pluginInfo->pluginPackage = $slug;
-        $pluginInfo->pluginPath = $path;
-        $pluginInfo->pluginData = \get_plugin_data($normalizedPath);
-    }
-
-
-    /**
-     * Returns the plugin package name based on the folder name following
-     * 'plugins' in the file path. This is the name used by the plugin zip
-     * file, the root folder within it and thus the name of the folder under
-     * the 'plugins' folder.
-     *
-     * @return string Name of the current plugin
-     */
-    public static function getPluginPackageName (): string
-    {
-        $pluginInfo = self::getPluginInfo();
-
-        return $pluginInfo->pluginPackage;
-    }
-
-
-    public static function getPluginName(): ?string
-    {
-        $pluginPackage = self::getPluginPackageName();
-
-        $plugins = \get_plugins();
-        foreach( $plugins as $plugin_info ) {
-            if ( $plugin_info['TextDomain'] == $pluginPackage ) {
-                return $plugin_info['Name'];
-            }
-        }
-        return null;
-    }
-
-
-    public static function getPluginUrl(): string
-    {
-        return \plugins_url() .'/'. self::getPluginPackageName() .'/';
-    }
-
-
-    public static function getPluginWriteDir(): string
-    {
-        $path = null;
-
-        if (function_exists('wp_upload_dir')) {
-            $path = \wp_upload_dir()['basedir'] . '/'. self::getPluginPackageName();
-        } else {
-            $path = sys_get_temp_dir();
-        }
-
-        return $path;
-    }
 
     public static function isPluginActive(string $pluginFile): bool
     {

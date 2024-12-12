@@ -22,7 +22,9 @@ class WordPressLogger extends BaseLogger
      */
     public static function getLogger(string $loggerName, ?string $loggerKey = null): LoggerInterface
     {
-        return parent::getLogger($loggerName, PluginInformation::getPluginPackageName());
+        $pluginInfo = PluginInformation::getPluginInfo();
+
+        return parent::getLogger($loggerName, $pluginInfo->getPluginName());
     }
 
     /**
@@ -77,7 +79,9 @@ class WordPressLogger extends BaseLogger
      */
     protected function getLogFile (): string
     {
-        return PluginInformation::getPluginWriteDir() . '/logs/application.log';
+        $pluginInfo = PluginInformation::getPluginInfo();
+
+        return $pluginInfo->getPluginWriteDir() . '/logs/application.log';
     }
 
 
@@ -88,7 +92,8 @@ class WordPressLogger extends BaseLogger
      */
     protected function getLogLevel(): int
     {
-        $pluginName = PluginInformation::getPluginName();
+        $pluginInfo = PluginInformation::getPluginInfo();
+        $pluginName = $pluginInfo->getPluginName();
         $option = get_option(LOGGER_OPTION_NAME, array());
 
         if (!isset($option[$pluginName])) {
@@ -107,7 +112,7 @@ class WordPressLogger extends BaseLogger
      */
     protected function setLogLevel(int $level): void
     {
-        $pluginName = PluginInformation::getPluginPackageName();
+        $pluginInfo = PluginInformation::getPluginInfo();
 
         $option = get_option(LOGGER_OPTION_NAME);
 
@@ -115,7 +120,7 @@ class WordPressLogger extends BaseLogger
             $option = array();
         }
 
-        $option[$pluginName] = $level;
+        $option[$pluginInfo->getPluginName()] = $level;
         update_option(LOGGER_OPTION_NAME, $option);
     }
 
@@ -124,10 +129,10 @@ class WordPressLogger extends BaseLogger
         Logger::getLogger(static::BASE_LOGGER)->info('Logger::uninstall() called');
 
         $option = get_option(LOGGER_OPTION_NAME);
-        $pluginName = PluginInformation::getPluginPackageName();
+        $pluginInfo = PluginInformation::getPluginInfo();
 
         if (is_array($option)) {
-            unset($option[$pluginName]);
+            unset($option[$pluginInfo->getPluginName()]);
 
             if (empty($option)) {
                 delete_option(LOGGER_OPTION_NAME);

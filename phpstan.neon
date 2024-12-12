@@ -96,3 +96,4 @@ parameters:
         - '#Constant MINUTE_IN_SECONDS not found#'
         - '#Constant OBJECT not found#'
         - '#Constant WP_PLUGIN_URL not found#'
+        - '#Constant WP_PLUGIN_DIR not found#'

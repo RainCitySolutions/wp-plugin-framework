@@ -3,6 +3,8 @@ namespace RainCity\WPF\Helpers;
 
 use RainCity\TestHelper\RainCityTestCase;
 
+!defined('WP_PLUGIN_DIR') && define( 'WP_PLUGIN_DIR', '/var/www/wp-content/plugins' );
+
 /**
  * WordpressTestCase base class.
  */
@@ -47,7 +49,7 @@ abstract class WordpressTestCase extends RainCityTestCase
         \Brain\Monkey\Functions\when('is_admin')->alias(fn () => true);
         \Brain\Monkey\Functions\when('wp_normalize_path')->alias(fn ($path) => $path);
         \Brain\Monkey\Functions\when('plugin_dir_path')->alias(
-            fn ($file) => '/var/www/wp-content/plugins/test-plugin/'.basename($file)
+            fn ($file) => dirname($file) // '/var/www/wp-content/plugins/test-plugin/'.basename($file)
             );
         \Brain\Monkey\Functions\when('plugin_basename')->alias(
             fn ($file) => dirname($file) . '/' . basename($file)

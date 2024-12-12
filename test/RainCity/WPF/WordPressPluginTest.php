@@ -6,6 +6,8 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\CoversMethod;
 
 #[CoversClass(\RainCity\WPF\WordPressPlugin::class)]
+#[CoversMethod(\RainCity\WPF\PluginInformation::class, '__construct')]
+#[CoversMethod(\RainCity\WPF\PluginInformation::class, 'getPluginInfoByPluginName')]
 #[CoversMethod(\RainCity\WPF\PluginInformation::class, 'getPluginFile')]
 class WordPressPluginTest extends WordpressTestCase
 {

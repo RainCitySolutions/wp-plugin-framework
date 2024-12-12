@@ -73,11 +73,11 @@ class PluginInformationTest extends WordpressTestCase
         \Brain\Monkey\Functions\when('plugin_dir_path')->alias(function ($file) {   // NOSONAR
             return '/var/www/wp-content/plugins/'.self::TEST_PLUGIN_PACKAGE.'/vendor/raincity/wp-plugin-framework/src/RainCity/WPF/PluginInformation.php';
         });
-        \Brain\Monkey\Functions\when('get_plugin_data')->alias(function($file) {
-           return self::TEST_PLUGIN_DATA;
-        });
+            \Brain\Monkey\Functions\when('get_plugin_data')->alias(function($file) {
+                return self::TEST_PLUGIN_DATA;
+            });
 
-        $this->addPlugin(self::TEST_PLUGIN_ENTRYPOINT, self::TEST_PLUGIN_DATA);
+                $this->addPlugin(self::TEST_PLUGIN_ENTRYPOINT, self::TEST_PLUGIN_DATA);
     }
 
     /**
@@ -98,10 +98,10 @@ class PluginInformationTest extends WordpressTestCase
             return '/var/www/wp-content/plugins/'.self::TEST_PLUGIN_PACKAGE.'/src/RainCity/WPF/PluginInformation.php';
         });
 
-        $info = PluginInformation::getPluginInfo();
+            $info = PluginInformation::getPluginInfo();
 
-        self::assertEquals('unknown', $info->getPackage());
-        self::assertEmpty($info->getPath());
+            self::assertEquals('unknown', $info->getSlug());
+            self::assertEmpty($info->getPath());
     }
 
     public function testGetPluginInfo_withNoPlugins() {
@@ -110,7 +110,7 @@ class PluginInformationTest extends WordpressTestCase
 
         $info = PluginInformation::getPluginInfo();
 
-        self::assertEquals(self::TEST_PLUGIN_PACKAGE, $info->getPackage());
+        self::assertEquals(self::TEST_PLUGIN_PACKAGE, $info->getSlug());
         self::assertEquals(self::TEST_PLUGIN_DIRECTORY, $info->getPath());
     }
 
@@ -120,7 +120,7 @@ class PluginInformationTest extends WordpressTestCase
 
         $info = PluginInformation::getPluginInfo();
 
-        self::assertEquals(self::TEST_PLUGIN_PACKAGE, $info->getPackage());
+        self::assertEquals(self::TEST_PLUGIN_PACKAGE, $info->getSlug());
         self::assertEquals(self::TEST_PLUGIN_DIRECTORY, $info->getPath());
     }
 
@@ -133,7 +133,7 @@ class PluginInformationTest extends WordpressTestCase
 
         $info = PluginInformation::getPluginInfo();
 
-        self::assertEquals(self::TEST_PLUGIN_PACKAGE, $info->getPackage());
+        self::assertEquals(self::TEST_PLUGIN_PACKAGE, $info->getSlug());
         self::assertEquals(self::TEST_PLUGIN_DIRECTORY, $info->getPath());
     }
 
@@ -143,7 +143,7 @@ class PluginInformationTest extends WordpressTestCase
 
         $info = PluginInformation::getPluginInfo();
 
-        self::assertEquals(self::TEST_PLUGIN_PACKAGE, $info->getPackage());
+        self::assertEquals(self::TEST_PLUGIN_PACKAGE, $info->getSlug());
         self::assertEquals(self::TEST_PLUGIN_DIRECTORY, $info->getPath());
     }
 

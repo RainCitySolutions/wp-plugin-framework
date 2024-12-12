@@ -80,7 +80,8 @@ abstract class WordPressPlugin
             $this->pluginVersion = $pluginData['Version'];
             $this->pluginSlug    = $pluginData['TextDomain'];
 
-            $this->mainPluginFilename = PluginInformation::getPluginFile($this->pluginName);
+            $pluginInfo = PluginInformation::getPluginInfoByPluginName($this->pluginName);
+            $this->mainPluginFilename = $pluginInfo->getPluginFile();
             $this->basePluginUrl = plugin_dir_url($this->mainPluginFilename);
         }
     }
@@ -108,7 +109,9 @@ abstract class WordPressPlugin
             'after_setup_theme',
             null,
             function () {
-                $functionsPhp = PluginInformation::getPluginWriteDir() . '/functions.php';
+                $pluginInfo = PluginInformation::getPluginInfo();
+
+                $functionsPhp = $pluginInfo->getPluginWriteDir() . '/functions.php';
 
                 if (file_exists($functionsPhp)) {
                     require_once $functionsPhp;
@@ -465,8 +468,10 @@ abstract class WordPressPlugin
      */
     public static function uninstall_plugin(): void
     {
-        Logger::getLogger(get_called_class (), PluginInformation::getPluginPackageName())
-            ->debug('Uninstalling '.PluginInformation::getPluginName());
+        $pluginInfo = PluginInformation::getPluginInfo();
+
+        Logger::getLogger(get_called_class (), $pluginInfo->getSlug())
+            ->debug('Uninstalling '.$pluginInfo->getPluginName());
 
         do_action(self::ON_PLUGIN_UNINSTALL_ACTION);
 

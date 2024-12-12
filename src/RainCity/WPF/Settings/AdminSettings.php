@@ -105,7 +105,9 @@ abstract class AdminSettings
     {
         $activeTab = $this->getActiveTab();
 
-        $activeTab->onEnqueueScripts($this->pluginName, PluginInformation::getPluginUrl(), $this->version);
+        $pluginInfo = PluginInformation::getPluginInfoByPluginName($this->pluginName);
+
+        $activeTab->onEnqueueScripts($this->pluginName, $pluginInfo->getPluginUrl(), $this->version);
     }
 
     private function getActiveTab(): AdminSettingsTab
