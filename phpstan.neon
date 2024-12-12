@@ -48,6 +48,7 @@ parameters:
         - '#Function is_user_member_of_blog not found#'
         - '#Function is_wp_error not found#'
         - '#Function nocache_headers not found#'
+        - '#Function plugin_basename not found#'
         - '#Function plugin_dir_path not found#'
         - '#Function plugin_dir_url not found#'
         - '#Function plugins_url not found#'

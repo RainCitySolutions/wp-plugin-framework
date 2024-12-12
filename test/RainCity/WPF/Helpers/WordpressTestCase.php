@@ -49,6 +49,9 @@ abstract class WordpressTestCase extends RainCityTestCase
         \Brain\Monkey\Functions\when('plugin_dir_path')->alias(
             fn ($file) => '/var/www/wp-content/plugins/test-plugin/'.basename($file)
             );
+        \Brain\Monkey\Functions\when('plugin_basename')->alias(
+            fn ($file) => dirname($file) . '/' . basename($file)
+            );
         \Brain\Monkey\Functions\when('plugin_dir_url')->alias(
             fn ($pluginFile) => 'http://test.org/wp-content/plugins/test-plugin/'
             );

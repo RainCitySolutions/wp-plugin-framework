@@ -6,6 +6,8 @@ use RainCity\Logging\Helper;
 class PluginInformation {
     private string $pluginPackage;
     private string $pluginPath;
+    /** @var array<string, mixed> @see \get_plugin_data() */
+    private array $pluginData = [];
 
     private function __construct() {
         $this->pluginPackage = 'unknown';
@@ -22,6 +24,12 @@ class PluginInformation {
         return $this->pluginPath;
     }
 
+    public function getVersion(): string
+    {
+        return $this->pluginData['Version'];
+    }
+
+
     public static function getPluginFile(string $pluginName): ?string
     {
         if (defined('ABSPATH')) { // Wrap in case we get invoked via unit testing
@@ -34,6 +42,30 @@ class PluginInformation {
                 return $pluginFile;
             }
         }
+
+        return null;
+    }
+
+    public static function getPluginFileByName(string $pluginName): ?string
+    {
+        return self::getPluginFile($pluginName);
+    }
+
+    public static function getPluginFileBySlug(string $pluginSlug): ?string
+    {
+        if (defined('ABSPATH')) { // Wrap in case we get invoked via unit testing
+            require_once ABSPATH . '/wp-admin/includes/plugin.php';
+        }
+
+        $plugins = get_plugins();
+        foreach (array_keys($plugins) as $pluginFile) {
+            $slug = dirname(plugin_basename($pluginFile));
+
+            if ($slug == $pluginSlug) {
+                return $pluginFile;
+            }
+        }
+
         return null;
     }
 
@@ -93,6 +125,7 @@ class PluginInformation {
                     // Now that we've found a match, save the info and exit the loop
                     $pluginInfo->pluginPath = $matches[1];
                     $pluginInfo->pluginPackage = $matches[2];
+                    $pluginInfo->pluginData = \get_plugin_data($normalizedPath);
                     break;
                 }
             }
@@ -127,14 +160,12 @@ class PluginInformation {
         $path = \wp_normalize_path(plugin_dir_path( __FILE__ ) ) ;
 
         if (preg_match($pluginPathRegex, $path, $matches) ) {
-            $pluginInfo->pluginPackage = $matches[2];
-            $pluginInfo->pluginPath = $matches[1];
+            self::updatePluginInfoFromSlug($matches[2], $matches[1], $pluginInfo);
         }
         else {
             // Assume the plugin is immediately prior to the vendor folder
             if (preg_match('/(.+\/(.*))\/vendor\/.*/', $path, $matches)) {
-                $pluginInfo->pluginPackage = $matches[2];
-                $pluginInfo->pluginPath = $matches[1];
+                self::updatePluginInfoFromSlug($matches[2], $matches[1], $pluginInfo);
             }
             else {
                 Helper::log(
@@ -143,6 +174,19 @@ class PluginInformation {
                     );
             }
         }
+    }
+
+    private static function updatePluginInfoFromSlug(
+        string $slug,
+        string $path,
+        PluginInformation &$pluginInfo): void
+    {
+        $pluginFile = self::getPluginFileBySlug($slug);
+        $normalizedPath = \wp_normalize_path($pluginFile);
+
+        $pluginInfo->pluginPackage = $slug;
+        $pluginInfo->pluginPath = $path;
+        $pluginInfo->pluginData = \get_plugin_data($normalizedPath);
     }
 
 
