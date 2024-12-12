@@ -119,9 +119,11 @@ abstract class AdminSettings
                 $args = array();
 
                 $urlArgs = parse_url($_POST[ '_wp_http_referer'], PHP_URL_QUERY);
-                parse_str ($urlArgs, $args);
-                if (isset($args[ 'tab' ]) ) {
-                    $activeTabId = $args[ 'tab'];
+                if (!is_null($urlArgs)) {
+                    parse_str ($urlArgs, $args);
+                    if (isset($args[ 'tab' ]) ) {
+                        $activeTabId = $args[ 'tab'];
+                    }
                 }
             }
         }
