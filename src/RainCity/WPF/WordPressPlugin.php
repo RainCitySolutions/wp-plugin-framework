@@ -357,10 +357,6 @@ abstract class WordPressPlugin
         register_deactivation_hook( $this->mainPluginFilename, array($this, 'deactivate_plugin' ));
         register_uninstall_hook( $this->mainPluginFilename, array(get_class($this), 'uninstall_plugin' ));
 
-        $this->loader->addAction('init', null, function () {
-            new PluginUpdater($this->pluginName, $this->pluginSlug, $this->mainPluginFilename, $this->pluginVersion); // NOSONAR
-        });
-
         $this->loader->addFilter('plugin_action_links', $this, 'addPluginActionLinks', 10, 4);
     }
 
