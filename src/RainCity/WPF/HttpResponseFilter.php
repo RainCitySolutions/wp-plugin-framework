@@ -6,7 +6,10 @@ use GuzzleHttp\Exception\ClientException;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 
-
+/**
+ * Filter hooked into 'http_response' filter of requests made throught the
+ * WP_Http class.
+ */
 class HttpResponseFilter
 {
     private LoggerInterface $logger;
