@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "07aa874af96b45ed607542f135dd7f55",
+    "content-hash": "b679bd0e298273e7517c52f142f77af1",
     "packages": [
         {
             "name": "composer/installers",
@@ -1338,11 +1338,11 @@
         },
         {
             "name": "raincity/php-library",
-            "version": "2.1.58",
+            "version": "2.1.59",
             "source": {
                 "type": "git",
                 "url": "https://github.com/RainCitySolutions/php-library",
-                "reference": "47f34d055cb3672dc313fd1472ad80e2058a27df"
+                "reference": "f940d809d917df8e1c265323dda2681ca6644e5d"
             },
             "require": {
                 "composer/installers": "~2.3",
@@ -1377,7 +1377,7 @@
                 "BSD-3-Clause"
             ],
             "description": "Library to support implementations in PHP",
-            "time": "2025-01-08T16:49:31+00:00"
+            "time": "2025-01-08T17:55:24+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
