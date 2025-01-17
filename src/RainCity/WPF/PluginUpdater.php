@@ -128,7 +128,7 @@ class PluginUpdater
     {
         // have we already looked this up once?
         if (false === $this->updateSearchDone) {
-            /** @var ZipEntry */
+            /** @var ?ZipEntry */
             $newestEntry = null;
 
             $ipm = new IgnorePostsManager($this->pluginSlug);

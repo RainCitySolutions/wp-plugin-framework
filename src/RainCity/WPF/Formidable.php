@@ -79,7 +79,7 @@ class Formidable
      * @param string $classname The name of the class to use in looking
      *             the key.
      * @param string $key The key of a Formidable entry.
-     * @param array<string, int> $cache A reference to an array to use for cacing the id.
+     * @param array<string, int> &$cache A reference to an array to use for cacing the id.
      *
      * @return int|NULL The ID of the entry or null if no entry was found
      *         with the specified key.
@@ -94,7 +94,7 @@ class Formidable
                 $id = $cache[$key];
             }
             else {
-                $dbId = $classname::get_id_by_key($key);
+                $dbId = intval($classname::get_id_by_key($key));
                 if (0 !== $dbId) {
                     $cache[$key] = $dbId;
                     $id = $dbId;

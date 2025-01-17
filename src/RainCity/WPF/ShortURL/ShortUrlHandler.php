@@ -492,7 +492,7 @@ KEY long_url (long_url)
             $uriPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
             $shortCode = substr($uriPath, strlen($this->urlPrefix));
-            if ($shortCode !== false) {
+            if (!empty($shortCode)) {
                 $tableName = self::getTableName($wpdb);
                 $stmt = $wpdb->prepare("SELECT long_url FROM {$tableName} WHERE short_code = %s", $shortCode);
                 $longUrl = $wpdb->get_var($stmt);

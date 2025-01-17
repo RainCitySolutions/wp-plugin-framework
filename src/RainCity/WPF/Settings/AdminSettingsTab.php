@@ -243,36 +243,40 @@ abstract class AdminSettingsTab
         ): void
     {
         $fieldInfo = $optionsObj->getFormFieldInfo($optionName);
-        $attrs = array_merge (
-            // these attributes can be overwritten
-            array(
-            ),
-            $attrs,
-            // these attributes cannot be overwritten
-            array(
-                'type'  => 'checkbox',
-                'class' => 'regular-text',
-                'id'    => $fieldInfo[0],
-                'name'  => $fieldInfo[1],
-                'value' => true
-            )
-            );
 
-        if (null !== $fieldInfo[2] && filter_var($fieldInfo[2], FILTER_VALIDATE_BOOLEAN) ) {
-            $attrs['checked'] = null;
+        if (!is_null($fieldInfo)) {
+            $attrs = array_merge (
+                // these attributes can be overwritten
+                array(
+                ),
+                $attrs,
+                // these attributes cannot be overwritten
+                array(
+                    'type'  => 'checkbox',
+                    'class' => 'regular-text',
+                    'id'    => $fieldInfo[0],
+                    'name'  => $fieldInfo[1],
+                    'value' => true
+                )
+                );
+
+            if (!empty($fieldInfo[2]) && filter_var($fieldInfo[2], FILTER_VALIDATE_BOOLEAN) ) {
+                $attrs['checked'] = null;
+            }
+
+            // Include a hidden field with the same name and a "false" value so
+            // something is always posted back to the server.
+            $this->renderInputField(
+                array (
+                    'type'  => 'hidden',
+                    'value' => false,
+                    'name'  => $fieldInfo[1]
+                )
+                );
+
+            $this->renderInputField($attrs);
         }
 
-        // Include a hidden field with the same name and a "false" value so
-        // something is always posted back to the server.
-        $this->renderInputField(
-            array (
-                'type'  => 'hidden',
-                'value' => false,
-                'name'  => $fieldInfo[1]
-            )
-            );
-
-        $this->renderInputField($attrs);
         $this->renderDescription($optionName, $description);
     }
 

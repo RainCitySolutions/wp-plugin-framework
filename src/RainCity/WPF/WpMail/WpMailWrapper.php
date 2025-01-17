@@ -32,7 +32,7 @@ class WpMailWrapper
     /** @var array<string, \stdClass> */
     private array $attachments = [];
 
-    private ?WPMailWrapperPriority $priority;
+    private ?WPMailWrapperPriority $priority = null;
 
     public function __construct()
     {

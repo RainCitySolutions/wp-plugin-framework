@@ -31,12 +31,8 @@ class HookTimer
      * @param callable $logFunction A function, which takes a string parameter,
      *       to log the results.
      */
-    public function __construct(array $hooks = [], $logFunction = 'error_log')
+    public function __construct(array $hooks = [], callable $logFunction = 'error_log')
     {
-        if (!is_callable($logFunction)) {
-            throw new \InvalidArgumentException('$logFunction parameter must be \'callable\'');
-        }
-
         $this->hooks = array_unique($hooks);
         $this->logFunction = $logFunction;
 
