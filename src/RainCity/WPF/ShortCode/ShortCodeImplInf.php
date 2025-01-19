@@ -52,7 +52,7 @@ interface ShortCodeImplInf
      * @param array<string, string> $providedAtts The provided attributes.
      * @param string $shortcode   The shortcode name.
      *
-     * @return array<string, string> The filtered attributes.
+     * @return array<string, mixed> The filtered attributes.
      */
     public function filterAttributes(
         array $combinedAtts,
