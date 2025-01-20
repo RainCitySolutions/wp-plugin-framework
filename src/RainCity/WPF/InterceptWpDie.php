@@ -14,8 +14,8 @@ namespace RainCity\WPF;
  */
 trait InterceptWpDie
 {
-    use RainCity\InterceptDie {
-        RainCity\InterceptDie::die as parentDie;
+    use \RainCity\InterceptDie {
+        \RainCity\InterceptDie::die as parentDie;
     }
     
     public function die(string $msg = '') {
