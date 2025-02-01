@@ -523,7 +523,7 @@ abstract class WordPressPlugin
      */
     public static function deferBgProcessDispatch(\WP_Background_Process $bgProcess): void
     {
-        add_action('wp_footer', array($bgProcess, 'dispatch'), 100);
+        add_action('wp_footer', function() use ($bgProcess) { $bgProcess->dispatch(); }, 100);
     }
 
     /**
@@ -537,7 +537,7 @@ abstract class WordPressPlugin
     public static function kickstart(string $pluginClass, string $entryPointFile): object
     {
         if (defined('ABSPATH')) { // Wrap in case we get invoked via unit testing
-            require_once ABSPATH . '/wp-admin/includes/plugin.php';
+            require_once ABSPATH . '/wp-admin/includes/plugin.php'; // @phpstan-ignore requireOnce.fileNotFound
         }
 
         Logger::setLogger(WordPressLogger::class);

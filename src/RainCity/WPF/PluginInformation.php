@@ -93,7 +93,7 @@ class PluginInformation {
         $info = new PluginInformation();
 
         if (defined('ABSPATH')) { // Wrap in case we get invoked via unit testing
-            require_once ABSPATH . '/wp-admin/includes/plugin.php';
+            require_once ABSPATH . '/wp-admin/includes/plugin.php'; // @phpstan-ignore requireOnce.fileNotFound
         }
 
         $plugins = get_plugins();
@@ -111,7 +111,7 @@ class PluginInformation {
         $info = new PluginInformation();
 
         if (defined('ABSPATH')) { // Wrap in case we get invoked via unit testing
-            require_once ABSPATH . '/wp-admin/includes/plugin.php';
+            require_once ABSPATH . '/wp-admin/includes/plugin.php'; // @phpstan-ignore requireOnce.fileNotFound
         }
 
         $plugins = get_plugins();
@@ -237,7 +237,7 @@ class PluginInformation {
     public static function isPluginActive(string $pluginFile): bool
     {
         if (defined('ABSPATH')) { // Wrap in case we get invoked via unit testing
-            include_once ABSPATH . 'wp-admin/includes/plugin.php';
+            include_once ABSPATH . 'wp-admin/includes/plugin.php';  // @phpstan-ignore includeOnce.fileNotFound
         }
 
         return \is_plugin_active($pluginFile);

@@ -62,12 +62,12 @@ class HookTimer
 
                 foreach($priorities as $priority) {
                     array_push($this->stack, $this->allocateTimer($hook, $priority));
-                    add_action($hook, [$this, 'timerCallback'], $priority, 10);
+                    add_action($hook, [$this, 'timerCallback'], $priority, 10); // @phpstan-ignore return.void
                 }
             }
 
             // Don't add the 'total' callback until have adding any priority callbacks
-            add_action($hook, [$this, 'timerCallback'], PHP_INT_MAX, 10);
+            add_action($hook, [$this, 'timerCallback'], PHP_INT_MAX, 10);   // @phpstan-ignore return.void
         }
     }
 

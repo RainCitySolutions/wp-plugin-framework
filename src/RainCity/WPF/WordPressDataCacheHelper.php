@@ -33,7 +33,7 @@ class WordPressDataCacheHelper
     public function onRegisterActions(): void
     {
         add_action('wp_ajax_'.self::AJAX_ACTION_CLEAR_DATA_CACHE, array($this, 'ajaxClearDataCache'));
-        add_filter('admin_print_footer_scripts ', array($this, 'injectJavaScript'), 100);
+        add_action('admin_print_footer_scripts', array($this, 'injectJavaScript'), 100);
     }
 
     public function onAdminEnqueueScripts(): void

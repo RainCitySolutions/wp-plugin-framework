@@ -29,7 +29,7 @@ class WpMailWrapper
     /** @var string[] */
     private array $customHdrs = [];
 
-    /** @var array<string, \stdClass> */
+    /** @var string[] */
     private array $attachments = [];
 
     private ?WPMailWrapperPriority $priority = null;

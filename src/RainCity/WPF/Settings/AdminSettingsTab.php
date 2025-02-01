@@ -62,9 +62,15 @@ abstract class AdminSettingsTab
     {
         $this->pageSlug = $pageSlug;
 
-        register_setting($pageSlug, $this->getOptionName(), function (?array $input): ?array {
-            return $this->sanitize($this->pageSlug, $input);
-        });
+        register_setting(
+            $pageSlug,
+            $this->getOptionName(),
+            [
+                'sanitize_callback' => function (?array $input): ?array {
+                    return $this->sanitize($this->pageSlug, $input);
+                }
+            ]
+        );
 
         $this->addSettings($pageSlug);
     }

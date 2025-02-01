@@ -99,7 +99,7 @@ KEY long_url (long_url)
     ) {$charsetCollate};";
 
         if (defined('ABSPATH')) { // Wrap in case we get invoked via unit testing
-            require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+            require_once ABSPATH . 'wp-admin/includes/upgrade.php'; // @phpstan-ignore requireOnce.fileNotFound
         }
 
         dbDelta($sql);

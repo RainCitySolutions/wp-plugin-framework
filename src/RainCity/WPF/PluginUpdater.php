@@ -33,7 +33,7 @@ class PluginUpdater
         $this->log = Logger::getLogger(get_class());
 
         // define the alternative API for updating checking
-        add_filter('pre_set_site_transient_update_plugins', array($this, 'checkUpdate'), 10, 2);
+        add_filter('pre_set_site_transient_update_plugins', array($this, 'checkUpdate'));
         // Define the alternative response for information checking
         add_filter('plugins_api', array($this, 'checkInfo'), 10, 3 );
 
@@ -225,7 +225,7 @@ class PluginUpdater
             if (\WP_Filesystem(false, $tempDir) === true) {
                 // Unzip to temp folder
                 $result = unzip_file($zipFile, $tempDir);
-                if (!is_wp_error( $result ) || $result ) {
+                if (!is_wp_error($result)) {
                     $fqEntryPointFile = $tempDir . DIRECTORY_SEPARATOR . $this->entryPointFile;
                     if (file_exists($fqEntryPointFile)) {
                         $pluginData = get_plugin_data($fqEntryPointFile, false, false);
