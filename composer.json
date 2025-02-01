@@ -34,11 +34,14 @@
 		"phpunit/phpunit" : "~11.5",
 		"brain/monkey" : "~2.6",
 		"consolidation/robo" : "~5.1",
-		"phpstan/phpstan" : "~2.1"
+		"phpstan/phpstan" : "~2.1",
+		"phpstan/extension-installer" : "~1.4",
+		"szepeviktor/phpstan-wordpress" : "~2.0"
 	},
 	"config" : {
 		"allow-plugins" : {
-			"composer/installers" : true
+			"composer/installers": true,
+			"phpstan/extension-installer": true
 		}
 	}
 }
