@@ -3,6 +3,8 @@ namespace RainCity\WPF\Settings;
 
 use RainCity\Logging\Logger;
 use RainCity\WPF\WordPressOptions;
+use RainCity\WPF\Validation\EmailValidator;
+use RainCity\WPF\Validation\StringValidator;
 use Psr\Log\LoggerInterface;
 
 abstract class AdminSettingsTab
@@ -559,6 +561,31 @@ abstract class AdminSettingsTab
     {
         if (!empty($description)) {
             printf('<p class="description" id="%s-description">%s</p>', $optionName, $description);
+        }
+    }
+
+
+    protected function validateStringValue(string $key, string $value, string $pageSlug, string $fieldName, string $errMsg = 'Missing value'): void
+    {
+        $validator = new StringValidator($pageSlug, $key, $fieldName);
+
+        if ($validator->isValid($value)) {
+            $this->options->setValue($key, trim($value));
+        }
+        else {
+            $validator->addError($errMsg);
+        }
+    }
+
+    protected function validateEmailAddress(string $key, string $value, string $pageSlug, string $fieldName, string $errMsg = 'Invalid Email address'): void
+    {
+        $validator = new EmailValidator($pageSlug, $key, $fieldName);
+
+        if ($validator->isValid($value)) {
+            $this->options->setValue($key, trim($value));
+        }
+        else {
+            $validator->addError($errMsg);
         }
     }
 }
