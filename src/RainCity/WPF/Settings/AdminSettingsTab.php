@@ -4,6 +4,7 @@ namespace RainCity\WPF\Settings;
 use RainCity\Logging\Logger;
 use RainCity\WPF\WordPressOptions;
 use RainCity\WPF\Validation\EmailValidator;
+use RainCity\WPF\Validation\NumberValidator;
 use RainCity\WPF\Validation\StringValidator;
 use Psr\Log\LoggerInterface;
 
@@ -586,6 +587,20 @@ abstract class AdminSettingsTab
         }
         else {
             $validator->addError($errMsg);
+        }
+    }
+
+    protected function validateNumericValue(string $key, string $value, string $pageSlug, string $fieldName, ?int $min = null, ?int $max = null, ?string $errMsg = null): void
+    {
+        $validator = new NumberValidator($pageSlug, $key, $fieldName);
+        $validator->setRange($min ?? 0, $max ?? PHP_INT_MAX);
+
+        if ($validator->isValid($value)) {
+            $this->options->setValue($key, trim($value));
+        } else {
+            if (!is_null($errMsg)) {
+                $validator->addError($errMsg);
+            }
         }
     }
 }
