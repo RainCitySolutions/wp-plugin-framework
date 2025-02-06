@@ -3,6 +3,7 @@ namespace RainCity\WPF;
 
 use Psr\Log\LoggerInterface;
 use RainCity\Logging\Logger;
+use RainCity\TestHelper\ReflectionHelper;
 
 /**
  * Base class for plugin cron jobs
@@ -124,6 +125,39 @@ abstract class CronJob implements CronJobInf
 
         return $schedules;
     }
+
+    /**
+     * Wrapper method to handle the deliciousbrains vs a5hleyrich versions of
+     * the WP_Background_Process class that might be loaded in memory.
+     *
+     * In the deliciousbrains version we can check if the background process
+     * is active. In the a5shleyrich version we just assume it is not.
+     *
+     * @param \WP_Background_Process $bgProcess An instance of
+     *      \WP_Background_Process from either the deliciousbrains or
+     *      a5shleyrich packages.
+     *
+     * @return bool True if the job is active, false otherwise.
+     */
+    protected static function isJobActive(\WP_Background_Process $bgProcess): bool
+    {
+        $isJobActive = false;
+
+        // Does not exist in the a5shleyrich version
+        if (method_exists($bgProcess, 'is_active')) { // @phpstan-ignore function.alreadyNarrowedType
+            $isJobActive = $bgProcess->is_active();
+        } elseif (method_exists($bgProcess, 'is_process_running')) {
+            // The method is protected so we can't call it directly
+            $isJobActive = ReflectionHelper::invokeObjectMethod(
+                get_class($bgProcess),
+                $bgProcess,
+                'is_process_running'
+                );
+        }
+
+        return $isJobActive;
+    }
+
 }
 
 interface CronJobInf
