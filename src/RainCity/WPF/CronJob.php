@@ -3,7 +3,6 @@ namespace RainCity\WPF;
 
 use Psr\Log\LoggerInterface;
 use RainCity\Logging\Logger;
-use RainCity\TestHelper\ReflectionHelper;
 
 /**
  * Base class for plugin cron jobs
@@ -147,12 +146,8 @@ abstract class CronJob implements CronJobInf
         if (method_exists($bgProcess, 'is_active')) { // @phpstan-ignore function.alreadyNarrowedType
             $isJobActive = $bgProcess->is_active();
         } elseif (method_exists($bgProcess, 'is_process_running')) {
-            // The method is protected so we can't call it directly
-            $isJobActive = ReflectionHelper::invokeObjectMethod(
-                get_class($bgProcess),
-                $bgProcess,
-                'is_process_running'
-                );
+            $method = new \ReflectionMethod($bgProcess, 'is_process_running');
+            $isJobActive = $method->invoke($bgProcess);
         }
 
         return $isJobActive;
