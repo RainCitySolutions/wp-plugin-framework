@@ -40,8 +40,30 @@
 	},
 	"config" : {
 		"allow-plugins" : {
-			"composer/installers": true,
-			"phpstan/extension-installer": true
+			"composer/installers" : true,
+			"phpstan/extension-installer" : true
 		}
-	}
+	},
+    "extra": {
+        "mozart": {
+            "dep_namespace": "RainCity\\WPF\\Vendor\\",
+            "dep_directory": "/src/Vendor/",
+            "classmap_directory": "/classes/Vendor/",
+            "classmap_prefix": "RainCity_WPF_",
+            "packages": [
+                "pimple/pimple"
+            ],
+            "excluded_packages": [
+                "psr/container"
+            ],
+            "override_autoload": {
+                "google/apiclient": {
+                    "classmap": [
+                        "src/"
+                    ]
+                }
+            },
+            "delete_vendor_directories": true
+        }
+    }
 }
