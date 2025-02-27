@@ -18,6 +18,18 @@ abstract class WordpressTestCase extends RainCityTestCase
     private $plugins;
     private $cronSchedules;
 
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+
+        $reflector = new \ReflectionClass(static::class);
+
+        if (empty($reflector->getAttributes('PHPUnit\Framework\Attributes\RunClassInSeparateProcess'))) {
+            // This is because of some funky side effects related to Brain\Monkey
+            fwrite(STDOUT, PHP_EOL.'WARNING: Test cases extending WordpressTestCase may want to use the RunClassInSeparateProcess attribute'.PHP_EOL);
+        }
+    }
+
     /**
      * Runs before each test.
      */
@@ -79,6 +91,12 @@ abstract class WordpressTestCase extends RainCityTestCase
         \Brain\Monkey\Functions\when('wp_get_schedules')->alias(fn () => $this->cronSchedules);
 
         \Brain\Monkey\Functions\when('add_theme_support')->justReturn();
+    }
+
+    protected function tearDown(): void {
+        unset($GLOBALS['wpdb']);
+
+        parent::tearDown();
     }
 
     public function add_option(string $option, $value = '', string $deprecated = '', $autoload = 'yes')
