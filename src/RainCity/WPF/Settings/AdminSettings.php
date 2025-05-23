@@ -63,21 +63,16 @@ abstract class AdminSettings
      */
     final public function addSettingsMenu(): void
     {
-        if (isset($this->optionsPageTitle) &&
-            isset($this->optionsPageSlug) &&
-            isset($this->optionsMenuTitle))
-        {
-            add_options_page(
-                $this->optionsPageTitle,    // page title
-                $this->optionsMenuTitle,    // menu title
-                'manage_options',           // capability reqd
-                $this->optionsPageSlug,     // menu slug name
-                array(                      // function to output page contents
-                    $this,
-                    'renderSettingsPage'
-                )
-            );
-        }
+        add_options_page(
+            $this->optionsPageTitle,    // page title
+            $this->optionsMenuTitle,    // menu title
+            'manage_options',           // capability reqd
+            $this->optionsPageSlug,     // menu slug name
+            array(                      // function to output page contents
+                $this,
+                'renderSettingsPage'
+            )
+        );
     }
 
     /**

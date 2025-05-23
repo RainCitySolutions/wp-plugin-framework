@@ -8,4 +8,3 @@ parameters:
         # WordPress functions
         
         # WordPress Constants
-        - '#Constant WP_PLUGIN_URL not found#'

@@ -10,7 +10,7 @@ class ShortCodeAttribute
     private bool $required;
 
     /** @var string */
-    private string $default;
+    private ?string $default;
 
     /** @var string */
     private string $description;

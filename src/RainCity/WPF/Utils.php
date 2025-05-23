@@ -70,8 +70,8 @@ class Utils
     {
         $result = false;
 
-        if (( defined( 'DOING_AJAX' ) && DOING_AJAX ) ||
-            ( defined( 'DOING_CRON' ) && DOING_CRON ) ||
+        if (wp_doing_ajax() ||
+            wp_doing_cron() ||
             ( defined( 'WP_CLI' ) && WP_CLI ) )
         {
             $result = true;

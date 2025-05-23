@@ -56,7 +56,7 @@ class WordPressDataCacheHelper
     public function injectJavaScript(): void
     {
         echo "<script type='text/javascript'>\n";
-        echo 'var pluginUrl = ' . wp_json_encode( WP_PLUGIN_URL . '/my_plugin/' ) . ';';
+        echo 'var pluginUrl = ' . wp_json_encode( plugin_dir_url('') . '/my_plugin/' ) . ';';
         echo "jQuery(document).ready(function($) {\n";
         echo '    $(".wpfclearcache").click(function() {'."\n";
         echo '        $.post('.admin_url('admin-ajax.php').", {\n";

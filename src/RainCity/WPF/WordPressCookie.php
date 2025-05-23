@@ -81,12 +81,10 @@ class WordPressCookie
     {
         $value = null;
 
-        if (isset($this->hashValue)) {
-            $transient = get_transient($this->hashValue);
+        $transient = get_transient($this->hashValue);
 
-            if ($transient !== false) {
-                $value = $transient;
-            }
+        if ($transient !== false) {
+            $value = $transient;
         }
 
         return $value;
@@ -106,13 +104,7 @@ class WordPressCookie
      */
     public function setCookieValue(mixed $value): bool
     {
-        $result = false;
-
-        if (isset($this->hashValue)) {
-            $result = set_transient($this->hashValue, $value, $this->lifetime);
-        }
-
-        return $result;
+        return set_transient($this->hashValue, $value, $this->lifetime);
     }
 
     /**
@@ -122,9 +114,7 @@ class WordPressCookie
      */
     public function deleteCookieValue(): void
     {
-        if (isset($this->hashValue)) {
-            delete_transient($this->hashValue);
-        }
+        delete_transient($this->hashValue);
     }
 
     /**

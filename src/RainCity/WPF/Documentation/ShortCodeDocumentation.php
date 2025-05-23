@@ -30,11 +30,11 @@ class ShortCodeDocumentation
     }
 
     public function getDescription(): string {
-        return $this->description ?? '';
+        return $this->description;
     }
 
     public function getExample(): string {
-        return $this->example ?? '';
+        return $this->example;
     }
 
     /**
