@@ -1,12 +1,12 @@
 <?php
-namespace RainCity\WPF;
+namespace RainCity\WPF\Formidable;
 
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use ReflectionException;
 use RainCity\TestHelper\ReflectionHelper;
 
-#[CoversClass(\RainCity\WPF\Formidable::class)]
+#[CoversClass(\RainCity\WPF\Formidable\Formidable::class)]
 class FormidableTest extends TestCase
 {
     const FORM_KEY = 'formKey';

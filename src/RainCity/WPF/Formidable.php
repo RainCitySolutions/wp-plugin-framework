@@ -6,20 +6,10 @@ namespace RainCity\WPF;
  *
  * @since    1.0.0
  * @package    formidable
+ * @deprecated Use \RainCity\WPF\Formidable\Formidable
  */
 class Formidable
 {
-    private const FRM_CACHE_FLAG = 'prevent_caching';
-
-    /** @var array<string, int> */
-    private static array $formIdCache = [];
-    /** @var array<string, int> */
-    private static array $fieldIdCache = [];
-    /** @var array<string, int> */
-    private static array $viewIdCache = [];
-    /** @var int[] */
-    private static array $dbCacheState = [];
-
     /**
      * Returns the ID for a Formidable form given its key.
      *
@@ -30,7 +20,7 @@ class Formidable
      */
     public static function getFormId(string $key): ?int
     {
-        return self::getId('\FrmForm', $key, self::$formIdCache);
+        return \RainCity\WPF\Formidable\Formidable::getFormId($key);
     }
 
 
@@ -44,7 +34,7 @@ class Formidable
      */
     public static function getFieldId(string $key): ?int
     {
-        return self::getId('\FrmField', $key, self::$fieldIdCache);
+        return \RainCity\WPF\Formidable\Formidable::getFieldId($key);
     }
 
     /**
@@ -57,52 +47,7 @@ class Formidable
      */
     public static function getViewId(string $key): ?int
     {
-        if (class_exists('\FrmViewsDisplay')) {
-            $classname = '\FrmViewsDisplay';       // new Formidable View plugin (Dec 2020-)
-        } elseif (class_exists('\FrmProDisplay')) {
-            $classname = '\FrmProDisplay';         // Pre Formidable View plugin (-Dec 2020)
-        }
-
-        if (isset($classname)) {
-            $id = self::getId($classname, $key, self::$viewIdCache);
-        } else {
-            $id = null;
-        }
-
-        return $id;
-    }
-
-
-    /**
-     * Returns the ID for a Formidable class entry given its key.
-     *
-     * @param string $classname The name of the class to use in looking
-     *             the key.
-     * @param string $key The key of a Formidable entry.
-     * @param array<string, int> &$cache A reference to an array to use for cacing the id.
-     *
-     * @return int|NULL The ID of the entry or null if no entry was found
-     *         with the specified key.
-     */
-    private static function getId(string $classname, string $key, array &$cache): ?int
-    {
-        $id = null;
-
-        // If the class we need is available, continue
-        if (class_exists($classname)) {
-            if (isset($cache[$key])) {
-                $id = $cache[$key];
-            }
-            else {
-                $dbId = intval($classname::get_id_by_key($key));
-                if (0 !== $dbId) {
-                    $cache[$key] = $dbId;
-                    $id = $dbId;
-                }
-            }
-        }
-
-        return $id;
+        return \RainCity\WPF\Formidable\Formidable::getViewId($key);
     }
 
     /**
@@ -113,18 +58,7 @@ class Formidable
      */
     public static function disableDbCache(): void
     {
-        global $frm_vars;
-
-        if (isset($frm_vars[self::FRM_CACHE_FLAG])) {
-            array_push(self::$dbCacheState, $frm_vars[self::FRM_CACHE_FLAG]);
-        }
-        else {
-            // In the event that the flag gets removed elsewhere (e.g. by
-            // Formidable) ensure that our state is starting from scratch.
-            self::$dbCacheState = array(-1);
-        }
-
-        $frm_vars[self::FRM_CACHE_FLAG] = true;
+        \RainCity\WPF\Formidable\Formidable::disableDbCache();
     }
 
 
@@ -136,18 +70,7 @@ class Formidable
      */
     public static function restoreDbCache(): void
     {
-        global $frm_vars;
-
-        if (!empty(self::$dbCacheState)) {
-            $prevValue = array_pop(self::$dbCacheState);
-
-            if (-1 === $prevValue) {
-                unset($frm_vars[self::FRM_CACHE_FLAG]);
-            }
-            else {
-                $frm_vars[self::FRM_CACHE_FLAG] = $prevValue;
-            }
-        }
+        \RainCity\WPF\Formidable\Formidable::restoreDbCache();
     }
 
     /**
@@ -162,20 +85,7 @@ class Formidable
      */
     public static function getFieldOptionLabel(int $fieldId, string|int $optionValue): string
     {
-        $result = '';
-
-        $field = \FrmField::getOne($fieldId);
-
-        if (isset($field) && isset($field->options)) {
-            foreach ($field->options as $option) {
-                if ($option['value'] == $optionValue) {
-                    $result = $option['label'];
-                    break;
-                }
-            }
-        }
-
-        return $result;
+        return \RainCity\WPF\Formidable\Formidable::getFieldOptionLabel($fieldId, $optionValue);
     }
 
     /**
@@ -190,19 +100,6 @@ class Formidable
      */
     public static function getFieldOptionValue(int $fieldId, string $optionLabel): string|int
     {
-        $result = '';
-
-        $field = \FrmField::getOne($fieldId);
-
-        if (isset($field) && isset($field->options)) {
-            foreach ($field->options as $option) {
-                if ($option['label'] == $optionLabel) {
-                    $result = $option['value'];
-                    break;
-                }
-            }
-        }
-
-        return $result;
+        return \RainCity\WPF\Formidable\Formidable::getFieldOptionValue($fieldId, $optionLabel);
     }
 }
