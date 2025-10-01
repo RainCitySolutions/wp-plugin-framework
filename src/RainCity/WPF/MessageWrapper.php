@@ -1,7 +1,7 @@
 <?php
 namespace RainCity\WPF;
 
-use Soundasleep\Html2Text;
+use Html2Text\Html2Text;
 
 class MessageWrapper {
     private string $fromAddress;
@@ -15,7 +15,7 @@ class MessageWrapper {
 
     public function createMsgBody (string $htmlBody): string
     {
-        $textBody = Html2Text::convert($htmlBody);
+        $textBody = (new Html2Text($htmlBody))->getText();
 
         return
             'Content-Type: text/plain;'.PHP_EOL

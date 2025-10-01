@@ -16,8 +16,8 @@
 		"composer/installers" : "~2.3",
 		"raincity/php-library" : "~2.1",
 		"psr/log" : "~3.0",
-		"soundasleep/html2text" : "~2.1",
-		"deliciousbrains/wp-background-processing" : "~1.4"
+		"deliciousbrains/wp-background-processing" : "~1.4",
+		"html2text/html2text" : "~4.3"
 	},
 	"autoload" : {
 		"classmap" : [
@@ -44,26 +44,26 @@
 			"phpstan/extension-installer" : true
 		}
 	},
-    "extra": {
-        "mozart": {
-            "dep_namespace": "RainCity\\WPF\\Vendor\\",
-            "dep_directory": "/src/Vendor/",
-            "classmap_directory": "/classes/Vendor/",
-            "classmap_prefix": "RainCity_WPF_",
-            "packages": [
-                "pimple/pimple"
-            ],
-            "excluded_packages": [
-                "psr/container"
-            ],
-            "override_autoload": {
-                "google/apiclient": {
-                    "classmap": [
-                        "src/"
-                    ]
-                }
-            },
-            "delete_vendor_directories": true
-        }
-    }
+	"extra" : {
+		"mozart" : {
+			"dep_namespace" : "RainCity\\WPF\\Vendor\\",
+			"dep_directory" : "/src/Vendor/",
+			"classmap_directory" : "/classes/Vendor/",
+			"classmap_prefix" : "RainCity_WPF_",
+			"packages" : [
+				"pimple/pimple"
+			],
+			"excluded_packages" : [
+				"psr/container"
+			],
+			"override_autoload" : {
+				"google/apiclient" : {
+					"classmap" : [
+						"src/"
+					]
+				}
+			},
+			"delete_vendor_directories" : true
+		}
+	}
 }

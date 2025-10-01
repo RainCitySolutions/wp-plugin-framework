@@ -223,6 +223,8 @@ class WpMailWrapper
 
     public function sendMessage(): bool
     {
+        $result = false;
+
         $wpMailFailedHdlr = $this->getWpMailFailedHandler();
         $fromAddressHdlr = $this->getFromAddressHandler();
         $fromNameHdlr = $this->getFromNameHandler();
@@ -267,7 +269,13 @@ class WpMailWrapper
         $headers = array_merge($headers, $this->customHdrs);
 
         try {
-            $result = \wp_mail(
+            if (function_exists('\wp_mail')) {
+                $mailFunction = '\wp_mail';
+            } else {
+                $mailFunction = '\mail';
+            }
+
+            $result = $mailFunction(
                 $this->toAddresses,
                 $this->subject,
                 empty($this->htmlBody) ? $this->plainBody : $this->htmlBody,
