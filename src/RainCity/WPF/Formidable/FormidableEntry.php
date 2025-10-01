@@ -21,7 +21,7 @@ abstract class FormidableEntry
             /** @var \stdClass|null Get the entry with the meta data */
             $entry = \FrmEntry::getOne($entryId, $includeMetaData);
 
-            if (!is_null($entry) && $this->isMatchingForm($formIdKey, $entry->formId)) {
+            if ($entry && isset($entry->form_id) && $this->isMatchingForm($formIdKey, intval($entry->form_id))) {
                 $this->entry = $entry;
             } else {
                 throw new \InvalidArgumentException('Invalid entryId or not for ROI form');
