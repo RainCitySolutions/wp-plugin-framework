@@ -24,7 +24,7 @@ class FormidableTest extends TestCase
 
     private static int $testId = 0;
 
-    private static \stdClass $testEntry;
+    private static ?\stdClass $testEntry;
 
     /**
      * Set the identifier to be returned by the mock object
@@ -54,7 +54,6 @@ class FormidableTest extends TestCase
         self::$testEntry->options = $options;
     }
 
-
     /**
      * {@inheritDoc}
      * @see \PHPUnit\Framework\TestCase::setUpBeforeClass()
@@ -73,14 +72,14 @@ class FormidableTest extends TestCase
             // We expect the exception to be throw if the Formidable classes are not loaded
         }
 
-        self::initTestEntry();
+//        self::initTestEntry();
 
         self::$mockFrmForm = \Mockery::mock('overload:\FrmForm');
         self::$mockFrmForm->shouldReceive('get_id_by_key')->andReturnUsing(fn() => self::$testId);
 
         self::$mockFrmField = \Mockery::mock('overload:\FrmField');
         self::$mockFrmField->shouldReceive('get_id_by_key')->andReturnUsing(fn() => self::$testId);
-        self::$mockFrmField->shouldReceive('getOne')->andReturnUsing(fn() => self::$testEntry);
+        self::$mockFrmField->shouldReceive('getOne')->andReturnUsing(fn() => self::$testEntry)->byDefault();
 
         self::$mockFrmViewsDisplay = \Mockery::mock('overload:\FrmViewsDisplay');
         self::$mockFrmViewsDisplay->shouldReceive('get_id_by_key')->andReturnUsing(fn() => self::$testId);
@@ -95,6 +94,8 @@ class FormidableTest extends TestCase
         $this->resetFormidableCache('formIdCache');
         $this->resetFormidableCache('fieldIdCache');
         $this->resetFormidableCache('viewIdCache');
+
+        self::initTestEntry();
     }
 
     private function resetFormidableCache(string $cacheField) {
@@ -257,7 +258,7 @@ class FormidableTest extends TestCase
      ************************************************************************/
     public function testGetFieldOptions_invalidField()
     {
-        self::$testEntry->options = [];
+        self::$testEntry = null;
 
         $options = Formidable::getFieldOptions(99);
 
