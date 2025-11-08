@@ -127,7 +127,6 @@ class Formidable
         $frm_vars[self::FRM_CACHE_FLAG] = true;
     }
 
-
     /**
      * Restore Formidable caching state to the previous value.
      *
@@ -151,6 +150,27 @@ class Formidable
     }
 
     /**
+     * Retrieve the array of options for a field.
+     *
+     * @param int $fieldId A field identier
+     *
+     * @return array<array<string, mixed>> The array of options for a field, or an empty
+     *      array if the field doesn't exist, or is not an options field.
+     */
+    public static function getFieldOptions(int $fieldId): array
+    {
+        $options = [];
+
+        $field = \FrmField::getOne($fieldId);
+
+        if (isset($field) && isset($field->options)) {
+            $options = $field->options;
+        }
+
+        return $options;
+    }
+
+    /**
      * Retrieve the label for the specified option value on a field.
      *
      * @param int $fieldId A field identier
@@ -164,14 +184,10 @@ class Formidable
     {
         $result = '';
 
-        $field = \FrmField::getOne($fieldId);
-
-        if (isset($field) && isset($field->options)) {
-            foreach ($field->options as $option) {
-                if ($option['value'] == $optionValue) {
-                    $result = $option['label'];
-                    break;
-                }
+        foreach (self::getFieldOptions($fieldId) as $option) {
+            if ($option['value'] == $optionValue) {
+                $result = $option['label'];
+                break;
             }
         }
 
@@ -192,14 +208,10 @@ class Formidable
     {
         $result = '';
 
-        $field = \FrmField::getOne($fieldId);
-
-        if (isset($field) && isset($field->options)) {
-            foreach ($field->options as $option) {
-                if ($option['label'] == $optionLabel) {
-                    $result = $option['value'];
-                    break;
-                }
+        foreach (self::getFieldOptions($fieldId) as $option) {
+            if ($option['label'] == $optionLabel) {
+                $result = $option['value'];
+                break;
             }
         }
 

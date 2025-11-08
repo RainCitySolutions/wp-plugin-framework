@@ -253,6 +253,34 @@ class FormidableTest extends TestCase
     }
 
     /************************************************************************
+     * Get Options Tests
+     ************************************************************************/
+    public function testGetFieldOptions_invalidField()
+    {
+        self::$testEntry->options = [];
+
+        $options = Formidable::getFieldOptions(99);
+
+        self::assertEmpty($options);
+    }
+
+    public function testGetFieldOptions_noOptions()
+    {
+        unset(self::$testEntry->options);
+
+        $options = Formidable::getFieldOptions(99);
+
+        self::assertEmpty($options);
+    }
+
+    public function testGetFieldOptions_validOptions()
+    {
+        $options = Formidable::getFieldOptions(99);
+
+        self::assertNotEmpty($options);
+    }
+
+    /************************************************************************
      * Get Label/Value Tests
      ************************************************************************/
     public function testGetFieldOptionLabel_string()
