@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <buildpath>
 	<buildpathentry kind="con" path="org.eclipse.php.core.LANGUAGE"/>
-	<buildpathentry kind="src" path="src">
+	<buildpathentry excluding="RainCity/WPF/" kind="src" path="src">
 		<attributes>
 			<attribute name="composer" value="source"/>
 		</attributes>
 	</buildpathentry>
-	<buildpathentry kind="src" path="test">
+	<buildpathentry kind="src" path="src/RainCity/WPF">
+		<attributes>
+			<attribute name="composer" value="source"/>
+		</attributes>
+	</buildpathentry>
+	<buildpathentry kind="src" path="test/RainCity/WPF">
 		<attributes>
 			<attribute name="composer" value="source"/>
 		</attributes>
@@ -286,12 +291,22 @@
 			<attribute name="composer" value="vendor"/>
 		</attributes>
 	</buildpathentry>
-	<buildpathentry kind="src" path="vendor/raincity/php-library/src">
+	<buildpathentry excluding="RainCity/" kind="src" path="vendor/raincity/php-library/src">
 		<attributes>
 			<attribute name="composer" value="vendor"/>
 		</attributes>
 	</buildpathentry>
-	<buildpathentry kind="src" path="vendor/raincity/php-library/test">
+	<buildpathentry kind="src" path="vendor/raincity/php-library/src/RainCity">
+		<attributes>
+			<attribute name="composer" value="vendor"/>
+		</attributes>
+	</buildpathentry>
+	<buildpathentry excluding="RainCity/" kind="src" path="vendor/raincity/php-library/test">
+		<attributes>
+			<attribute name="composer" value="vendor"/>
+		</attributes>
+	</buildpathentry>
+	<buildpathentry kind="src" path="vendor/raincity/php-library/test/RainCity">
 		<attributes>
 			<attribute name="composer" value="vendor"/>
 		</attributes>
