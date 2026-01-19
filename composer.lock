@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3f8f1039d4a6df8d99645f489944d33e",
+    "content-hash": "2fe9d662d8fab1e6ad5bebd81ab06ac1",
     "packages": [
         {
             "name": "composer/installers",
@@ -1648,22 +1648,22 @@
         },
         {
             "name": "raincity/php-library",
-            "version": "2.1.64",
+            "version": "2.1.66",
             "source": {
                 "type": "git",
                 "url": "https://github.com/RainCitySolutions/php-library",
-                "reference": "3124801eaca61bf283b4a242eb058d21bccb5918"
+                "reference": "edab701bbaa7961d039b0e184a41499615e1dcd8"
             },
             "require": {
                 "composer/installers": "~2.3",
                 "doctrine/annotations": "~2.0",
-                "guzzlehttp/guzzle": "~7.9",
+                "guzzlehttp/guzzle": "~7.10",
                 "json-mapper/json-mapper": "~2.25",
-                "monolog/monolog": "~3.9",
+                "monolog/monolog": "~3.10",
                 "php": ">=8.2",
                 "psr/log": "~3.0",
                 "psr/simple-cache": "~3.0",
-                "symfony/cache": "~7.2"
+                "symfony/cache": "~7.4"
             },
             "require-dev": {
                 "brain/monkey": "~2.6",
@@ -1677,17 +1677,25 @@
                     "src/"
                 ],
                 "psr-4": {
-                    "": [
-                        "src",
-                        "test"
+                    "RainCity\\": [
+                        "src/RainCity",
+                        "test/RainCity"
                     ]
+                }
+            },
+            "autoload-dev": {
+                "classmap": [
+                    "test/"
+                ],
+                "psr-4": {
+                    "RainCity\\": "test/RainCity"
                 }
             },
             "license": [
                 "BSD-3-Clause"
             ],
             "description": "Library to support implementations in PHP",
-            "time": "2025-10-01T18:18:33+00:00"
+            "time": "2026-01-19T18:58:02+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
@@ -3871,16 +3879,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "11.5.47",
+            "version": "11.5.48",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "a8c3c540923f8a3d499659b927228059bb3809d8"
+                "reference": "fe3665c15e37140f55aaf658c81a2eb9030b6d89"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/a8c3c540923f8a3d499659b927228059bb3809d8",
-                "reference": "a8c3c540923f8a3d499659b927228059bb3809d8",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/fe3665c15e37140f55aaf658c81a2eb9030b6d89",
+                "reference": "fe3665c15e37140f55aaf658c81a2eb9030b6d89",
                 "shasum": ""
             },
             "require": {
@@ -3952,7 +3960,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.47"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.48"
             },
             "funding": [
                 {
@@ -3976,7 +3984,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-01-15T12:00:46+00:00"
+            "time": "2026-01-16T16:26:27+00:00"
         },
         {
             "name": "psr/event-dispatcher",
