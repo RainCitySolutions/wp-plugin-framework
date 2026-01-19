@@ -24,7 +24,10 @@
 			"src/"
 		],
 		"psr-4" : {
-			"RainCity\\WPF\\" : "src/RainCity/WPF"
+			"RainCity\\WPF\\" : [
+				"src/RainCity/WPF",
+				"test/RainCity/WPF"
+			]
 		}
 	},
 	"autoload-dev" : {
