@@ -55,18 +55,23 @@ class WordPressDataCacheHelper
 
     public function injectJavaScript(): void
     {
-        echo "<script type='text/javascript'>\n";
-//        echo 'var pluginUrl = ' . wp_json_encode( plugin_dir_url('') . '/my_plugin/' ) . ';';
-        echo "jQuery(document).ready(function($) {\n";
-        echo '    $(".wpfclearcache").click(function() {'."\n";
-        echo '        $.post("'.admin_url('admin-ajax.php')."\", {\n";
-        echo '            _ajax_nonce: '.wp_create_nonce($this->pluginName).",\n";
-        echo '            action: '.self::AJAX_ACTION_CLEAR_DATA_CACHE.",\n";
-        echo '            plugin: '.$this->pluginName."\n";
-        echo '        }, function(data) {'."\n";
-        echo '    });'."\n";
-        echo '});',"\n";
-        echo '</script>';
+        ?>
+        <script type='text/javascript'>
+        	jQuery(document).ready(function($) {
+        		$(".wpfclearcache").click(function() {
+        			$.post(
+        				"<?php echo admin_url('admin-ajax.php'); ?>",
+        				{
+        					_ajax_nonce: "<?php echo wp_create_nonce($this->pluginName); ?>",
+        					action: "<?php echo self::AJAX_ACTION_CLEAR_DATA_CACHE; ?>",
+        					plugin: "<?php echo $this->pluginName; ?>"
+        				},
+        				function(data) {}
+        				);
+        		});
+        	});
+        </script>
+        <?php
     }
 
     public function ajaxClearDataCache(): void
