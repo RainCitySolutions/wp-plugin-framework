@@ -1,6 +1,7 @@
 .settings/
 build/
 report/
+node_modules/
 vendor/
 coverage.db
 .phpunit.cache/
