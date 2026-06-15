@@ -121,7 +121,7 @@ abstract class WordPressPlugin
         );
 
         // delay running database upgrades until WordPress is initialized
-        $this->loader->addAction( 'init', $this, 'privUpgradeDatabase', 0 );
+        $this->loader->addAction( 'init', $this, 'privUpgradeDatabase', 50 );
         $this->loader->addAction( 'init', $this, 'fireRegisterShortCodeAction');
 
         // Action to generate a unique requestID for each request, used in logging
