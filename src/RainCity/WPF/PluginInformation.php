@@ -12,21 +12,9 @@ class PluginInformation {
     // WordPress keys
     private const PLUGIN_DATA_NAME = 'Name';
     private const PLUGIN_DATA_VERSION = 'Version';
-    /*
-     private const PLUGIN_DATA_PLUGIN_URI = 'PluginURI';
-     private const PLUGIN_DATA_DESCRIPTION = 'Description';
-     private const PLUGIN_DATA_AUTHOR = 'Author';
-     private const PLUGIN_DATA_AUTHOR_URI = 'AuthorURI';
-     private const PLUGIN_DATA_TEXT_DOMAIN = 'TextDomain';
-     private const PLUGIN_DATA_DOMAIN_PATH = 'DomainPath';
-     private const PLUGIN_DATA_NETWORK = 'Network';
-     private const PLUGIN_DATA_REQUIRES_WP = 'RequiresWP';
-     private const PLUGIN_DATA_REQUIRES_PHP = 'RequiresPHP';
-     private const PLUGIN_DATA_UPDATE_URI = 'UpdateURI';
-     private const PLUGIN_DATA_REQUIRES_PLUGINS = 'RequiresPlugins';
-     private const PLUGIN_DATA_TITLE = 'Title';
-     private const PLUGIN_DATA_AUTHOR_NAME = 'AuthorName';
-     */
+
+    // Group to use in the cache
+    private const CACHE_GROUP = 'rcsPluginInfo';
 
     /** @var array<string, mixed> @see \get_plugin_data() */
     private array $pluginData = [];
@@ -90,16 +78,22 @@ class PluginInformation {
 
     public static function getPluginInfoByPluginName(string $pluginName): PluginInformation
     {
-        $info = new PluginInformation();
+        $info = wp_cache_get($pluginName, self::CACHE_GROUP);
 
-        if (defined('ABSPATH')) { // Wrap in case we get invoked via unit testing
-            require_once ABSPATH . '/wp-admin/includes/plugin.php';
-        }
+        if (false === $info) {
+            $info = new PluginInformation();
 
-        $plugins = get_plugins();
-        foreach( $plugins as $pluginFile => $pluginInfo ) {
-            if ( $pluginInfo['Name'] == $pluginName ) {
-                $info = new PluginInformation($pluginFile, $pluginInfo);
+            if (defined('ABSPATH')) { // Wrap in case we get invoked via unit testing
+                require_once ABSPATH . '/wp-admin/includes/plugin.php';
+            }
+
+            $plugins = get_plugins();
+            foreach( $plugins as $pluginFile => $pluginInfo ) {
+                if ( $pluginInfo['Name'] == $pluginName ) {
+                    $info = new PluginInformation($pluginFile, $pluginInfo);
+
+                    wp_cache_set($pluginName, $info, self::CACHE_GROUP);
+                }
             }
         }
 
@@ -108,16 +102,22 @@ class PluginInformation {
 
     public static function getPluginInfoByPluginSlug(string $pluginSlug): PluginInformation
     {
-        $info = new PluginInformation();
+        $info = wp_cache_get($pluginSlug, self::CACHE_GROUP);
 
-        if (defined('ABSPATH')) { // Wrap in case we get invoked via unit testing
-            require_once ABSPATH . '/wp-admin/includes/plugin.php';
-        }
+        if (false === $info) {
+            $info = new PluginInformation();
 
-        $plugins = get_plugins();
-        foreach ($plugins as $pluginFile => $pluginInfo) {
-            if (dirname(plugin_basename($pluginFile)) == $pluginSlug) {
-                $info = new PluginInformation($pluginFile, $pluginInfo);
+            if (defined('ABSPATH')) { // Wrap in case we get invoked via unit testing
+                require_once ABSPATH . '/wp-admin/includes/plugin.php';
+            }
+
+            $plugins = get_plugins();
+            foreach ($plugins as $pluginFile => $pluginInfo) {
+                if (dirname(plugin_basename($pluginFile)) == $pluginSlug) {
+                    $info = new PluginInformation($pluginFile, $pluginInfo);
+
+                    wp_cache_set($pluginSlug, $info, self::CACHE_GROUP);
+                }
             }
         }
 
@@ -125,8 +125,7 @@ class PluginInformation {
     }
 
 
-    const PLUGIN_PATH_PATTERN = '/(.+\/(%s))\/.*/';
-    const VENDOR_IN_PATH_REGEX = '/.+\/vendor\/.*/';
+    const PLUGIN_PATH_PATTERN = '/(.+\/(%s))(?!\/vendor\/)/';
 
     /**
      * Returns information about the currently exectuing plugin by looking
@@ -153,6 +152,8 @@ class PluginInformation {
                 array_keys((array) get_site_option( 'active_sitewide_plugins', array() ))
                 ),
             SORT_REGULAR);
+
+        // Replace the file entrypoint file name with just the path portion
         foreach ($plugins as $ndx => $pluginEntryPoint) {
             $parts = explode('/', $pluginEntryPoint);
             $plugins[$ndx] = $parts[0];
@@ -173,14 +174,9 @@ class PluginInformation {
                 /** @var string[] */
                 $matches = array();
 
-                if (0 === preg_match(self::VENDOR_IN_PATH_REGEX, $normalizedPath, $matches) &&
-                    1 === preg_match($pluginPathRegex, $normalizedPath, $matches))
-                {
-                    // Now that we've found a match, save the info and exit the loop
+                if (1 === preg_match($pluginPathRegex, $normalizedPath, $matches)) {
+                     // Now that we've found a match, save the info and exit the loop
                     $pluginInfo = PluginInformation::getPluginInfoByPluginSlug($matches[2]);
-                    //                     $pluginInfo->pluginPath = $matches[1];
-                    //                     $pluginInfo->pluginPackage = $matches[2];
-                    //                     $pluginInfo->pluginData = \get_plugin_data($normalizedPath);
                     break;
                 }
             }

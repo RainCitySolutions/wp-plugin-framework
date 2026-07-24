@@ -15,6 +15,7 @@ abstract class WordpressTestCase extends RainCityTestCase
     private $optionsTable;
     private $siteOptionsTable;
     private $userMeta;
+    private $cache;
     private $plugins;
     private $cronSchedules;
 
@@ -44,7 +45,7 @@ abstract class WordpressTestCase extends RainCityTestCase
         $wpdb->prefix = self::WP_DB_PREFIX;
 
         // reset mock db tables
-        $this->optionsTable = $this->siteOptionsTable = $this->userMeta = array();
+        $this->optionsTable = $this->siteOptionsTable = $this->userMeta = $this->cache =  array();
 
         // get_plugins() response
         $this->plugins = array();
@@ -81,6 +82,9 @@ abstract class WordpressTestCase extends RainCityTestCase
 
         \Brain\Monkey\Functions\when('get_user_meta')->alias(array($this, 'get_user_meta'));
         \Brain\Monkey\Functions\when('update_user_meta')->alias(array($this, 'update_user_meta'));
+
+        \Brain\Monkey\Functions\when('wp_cache_get')->alias(array($this, 'wp_cache_get'));
+        \Brain\Monkey\Functions\when('wp_cache_set')->alias(array($this, 'wp_cache_set'));
 
         \Brain\Monkey\Functions\when('register_activation_hook')->alias(function () { /* Do nothing */ });
         \Brain\Monkey\Functions\when('register_deactivation_hook')->alias(function () { /* Do nothing */ });
@@ -194,6 +198,24 @@ abstract class WordpressTestCase extends RainCityTestCase
         }
 
         return $result;
+    }
+
+    public function wp_cache_get(int|string $key, string $group = '', bool $force = false, bool|null $found = null ): mixed
+    {
+        $result = false;
+
+        if (isset($this->cache[$key . '_' . $group])) {
+            $result = $this->cache[$key . '_' . $group];
+        }
+
+        return $result;
+    }
+
+    public function wp_cache_set(int|string $key, mixed $data, string $group = '', int $expire = 0 ): bool
+    {
+        $this->cache[$key . '_' . $group] = $data;
+
+        return true;
     }
 
     /**

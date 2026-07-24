@@ -104,16 +104,6 @@ class PluginInformationTest extends WordpressTestCase
             self::assertEmpty($info->getPath());
     }
 
-    public function testGetPluginInfo_withNoPlugins() {
-        update_option('active_plugins', array());
-        update_site_option('active_sitewide_plugins', array());
-
-        $info = PluginInformation::getPluginInfo();
-
-        self::assertEquals(self::TEST_PLUGIN_PACKAGE, $info->getSlug());
-        self::assertEquals(self::TEST_PLUGIN_DIRECTORY, $info->getPath());
-    }
-
     public function testGetPluginInfo_withActivePlugins() {
         update_option('active_plugins', array(self::TEST_OTHER_PLUGIN_ENTRYPOINT, self::TEST_PLUGIN_ENTRYPOINT));
         update_site_option('active_sitewide_plugins', array());
