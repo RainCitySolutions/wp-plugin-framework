@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "29e9dbc98d0d3bffcfe8beeae71d1391",
+    "content-hash": "10b4da25d7227e31da0e5bfa689fb8c8",
     "packages": [
         {
             "name": "composer/installers",
