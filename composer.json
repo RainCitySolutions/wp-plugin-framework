@@ -11,6 +11,12 @@
 			"name" : "php-library"
 		}
 	],
+	"config" : {
+		"allow-plugins" : {
+			"composer/installers" : true,
+			"phpstan/extension-installer" : true
+		}
+	},
 	"require" : {
 		"php" : ">=8.2",
 		"composer/installers" : "~2.3",
@@ -18,6 +24,14 @@
 		"psr/log" : "~3.0",
 		"deliciousbrains/wp-background-processing" : "~1.4",
 		"html2text/html2text" : "~4.3"
+	},
+	"require-dev" : {
+		"phpunit/phpunit" : "~11.5",
+		"brain/monkey" : "~2.7",
+		"phpstan/phpstan" : "~2.1",
+		"phpstan/extension-installer" : "~1.4",
+		"szepeviktor/phpstan-wordpress" : "~2.0",
+		"phpstan/phpstan-deprecation-rules": "^2.0"
 	},
 	"autoload" : {
 		"classmap" : [
@@ -33,41 +47,6 @@
 	"autoload-dev" : {
 		"psr-4" : {
 			"RainCity\\WPF\\" : "test/RainCity/WPF"
-		}
-	},
-	"require-dev" : {
-		"phpunit/phpunit" : "~11.5",
-		"brain/monkey" : "~2.7",
-		"phpstan/phpstan" : "~2.1",
-		"phpstan/extension-installer" : "~1.4",
-		"szepeviktor/phpstan-wordpress" : "~2.0"
-	},
-	"config" : {
-		"allow-plugins" : {
-			"composer/installers" : true,
-			"phpstan/extension-installer" : true
-		}
-	},
-	"extra" : {
-		"mozart" : {
-			"dep_namespace" : "RainCity\\WPF\\Vendor\\",
-			"dep_directory" : "/src/Vendor/",
-			"classmap_directory" : "/classes/Vendor/",
-			"classmap_prefix" : "RainCity_WPF_",
-			"packages" : [
-				"pimple/pimple"
-			],
-			"excluded_packages" : [
-				"psr/container"
-			],
-			"override_autoload" : {
-				"google/apiclient" : {
-					"classmap" : [
-						"src/"
-					]
-				}
-			},
-			"delete_vendor_directories" : true
 		}
 	}
 }

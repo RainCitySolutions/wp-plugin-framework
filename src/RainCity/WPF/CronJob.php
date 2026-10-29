@@ -90,7 +90,7 @@ abstract class CronJob implements CronJobInf
     {
         // Protect for case where running tests without WordPress
         if (function_exists('add_filter')) {
-            add_filter( 'cron_schedules', [get_class(), 'addCustomIntervals']);
+            add_filter( 'cron_schedules', [self::class, 'addCustomIntervals']);
         }
     }
 

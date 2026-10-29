@@ -1,6 +1,8 @@
 <?php
 namespace RainCity\WPF;
 
+use RainCity\WPF\Formidable\Formidable;
+
 abstract class FormHelper implements ActionHandlerInf
 {
     protected string $formKey;

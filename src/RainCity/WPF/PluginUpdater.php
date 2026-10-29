@@ -30,7 +30,7 @@ class PluginUpdater
         $this->entryPointFile = $entryPointFile;
         $this->currentVersion = $currentVersion;
 
-        $this->log = Logger::getLogger(get_class());
+        $this->log = Logger::getLogger($this::class);
 
         // define the alternative API for updating checking
         add_filter('pre_set_site_transient_update_plugins', array($this, 'checkUpdate'));

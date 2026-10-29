@@ -52,7 +52,7 @@ abstract class AdminSettings
         $this->optionsPageSlug = $pageSlug;
         $this->optionsMenuTitle = $menuTitle;
 
-        $this->log = Logger::getLogger(get_class());
+        $this->log = Logger::getLogger($this::class);
     }
 
 

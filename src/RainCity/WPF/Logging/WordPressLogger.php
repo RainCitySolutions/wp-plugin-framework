@@ -97,7 +97,7 @@ class WordPressLogger extends BaseLogger
         $option = get_option(LOGGER_OPTION_NAME, array());
 
         if (!isset($option[$pluginName])) {
-            $option[$pluginName] = \Monolog\Logger::DEBUG;
+            $option[$pluginName] = \Monolog\Level::Debug;
             update_option(LOGGER_OPTION_NAME, $option);
         }
 
