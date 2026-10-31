@@ -3,6 +3,9 @@ name: Build and Release Library
 on:
   workflow_dispatch:
 
+  repository_dispatch:
+    types: [new_php_lib_event]
+
 jobs:
   build:
     name: Build and Package
